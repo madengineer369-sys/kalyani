@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black Stone - Mystery Box</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-container">
+            <a href="index.html" class="logo"><span class="logo-icon"><i class="fa-solid fa-gem"></i></span><span class="logo-text">BLACK <span class="gold-text">STONE</span></span></a>
+            <nav class="main-nav" id="mainNav">
+                <ul>
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="index.html#shop" class="nav-link">Collection</a></li>
+                    <li><a href="code-zone.html" class="nav-link">Code Zone</a></li>
+                    <li><a href="mystery-box.html" class="nav-link active">Mystery Box</a></li>
+                    <li><a href="about.html" class="nav-link">About</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <button class="account-btn-header" id="accountActionBtn" onclick="window.location.href='auth.html'"><i class="fa-solid fa-user"></i> <span id="accountActionText">Login</span></button>
+                <button class="app-btn-header" onclick="window.location.href='app.html'"><i class="fa-solid fa-mobile-screen-button"></i> <span>Get App</span></button>
+                <div class="cart-trigger" onclick="window.location.href='index.html#shop'"><i class="fa-solid fa-bag-shopping"></i><span class="cart-count" id="cartCount">0</span></div>
+                <button class="mobile-menu-toggle" id="menuToggle" aria-label="Toggle menu"><i class="fa-solid fa-bars"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <section class="page-hero-section">
+        <div class="container page-hero-content">
+            <span class="section-tag">Rewards & Surprises</span>
+            <h1>Inside the Mystery Box</h1>
+            <p>Collect five T-shirt label codes, unlock the box, and reveal a Black Stone reward.</p>
+        </div>
+    </section>
+
+    <section id="mystery-box" class="mystery-explainer-section">
+        <div class="container">
+            <div class="rewards-carousel">
+                <div class="reward-item-card">
+                    <div class="reward-badge">Legendary</div>
+                    <div class="reward-icon"><i class="fa-solid fa-gem"></i></div>
+                    <h3>Premium Hoodies</h3>
+                    <p>Heavyweight 450GSM limited-run hoodies featuring pure embroidery and custom tags.</p>
+                </div>
+                <div class="reward-item-card">
+                    <div class="reward-badge">Epic</div>
+                    <div class="reward-icon"><i class="fa-solid fa-ring"></i></div>
+                    <h3>Signature Silver Ring</h3>
+                    <p>Engraved sterling silver signet rings representing the Black Stone community.</p>
+                </div>
+                <div class="reward-item-card">
+                    <div class="reward-badge">Rare</div>
+                    <div class="reward-icon"><i class="fa-solid fa-ticket"></i></div>
+                    <h3>Gift Vouchers</h3>
+                    <p>Store credit vouchers to load your wardrobe with upcoming collection drops.</p>
+                </div>
+            </div>
+            <div class="drop-banner mt-3">
+                <div>
+                    <span class="section-tag">How to Unlock</span>
+                    <h2>Five verified T-shirts open the box.</h2>
+                </div>
+                <p>Shop the collection on the home page, checkout for demo codes, then enter them in Code Zone.</p>
+                <button class="btn btn-gold" onclick="window.location.href='code-zone.html'"><i class="fa-solid fa-key"></i> Open Code Zone</button>
+            </div>
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <div class="container footer-bottom text-center">
+            <p>&copy; 2026 Black Stone Inc. <a href="index.html#shop" class="gold-text">Shop the collection</a></p>
+        </div>
+    </footer>
+    <script src="app.js"></script>
+</body>
+</html>

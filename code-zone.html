@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black Stone - Code Zone</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon"><i class="fa-solid fa-gem"></i></span>
+                <span class="logo-text">BLACK <span class="gold-text">STONE</span></span>
+            </a>
+            <nav class="main-nav" id="mainNav">
+                <ul>
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="index.html#shop" class="nav-link">Collection</a></li>
+                    <li><a href="code-zone.html" class="nav-link active">Code Zone</a></li>
+                    <li><a href="mystery-box.html" class="nav-link">Mystery Box</a></li>
+                    <li><a href="about.html" class="nav-link">About</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <button class="account-btn-header" id="accountActionBtn" onclick="window.location.href='auth.html'">
+                    <i class="fa-solid fa-user"></i> <span id="accountActionText">Login</span>
+                </button>
+                <button class="app-btn-header" onclick="window.location.href='app.html'">
+                    <i class="fa-solid fa-mobile-screen-button"></i> <span>Get App</span>
+                </button>
+                <div class="cart-trigger" onclick="window.location.href='index.html#shop'">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </div>
+                <button class="mobile-menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section class="page-hero-section">
+        <div class="container page-hero-content">
+            <span class="section-tag">Verification</span>
+            <h1>Code Zone</h1>
+            <p>Enter the hidden codes from your Black Stone T-shirt labels. Five valid codes unlock the Mystery Box reward reveal.</p>
+        </div>
+    </section>
+
+    <section id="code-zone" class="code-zone-section">
+        <div class="container">
+            <div class="code-zone-layout">
+                <div class="code-zone-entry-card glass-panel">
+                    <div class="card-glow"></div>
+                    <div class="entry-header">
+                        <span class="badge-zone"><i class="fa-solid fa-shield-halved"></i> Verified System</span>
+                        <h2>Purchase Verification</h2>
+                        <p>Need demo codes? Add T-shirts to your bag on the home page, checkout, then copy the generated codes.</p>
+                    </div>
+                    <form id="codeEntryForm" class="code-entry-form">
+                        <div class="input-group-premium">
+                            <input type="text" id="codeField" placeholder="e.g. BS-X7R8A9" maxlength="9" autocomplete="off" required>
+                            <label for="codeField">Secret Code</label>
+                            <button type="submit" class="btn btn-gold" id="codeSubmitBtn">
+                                <i class="fa-solid fa-plus"></i> Submit Code
+                            </button>
+                        </div>
+                        <div class="error-msg-box" id="codeErrorBox"></div>
+                    </form>
+                    <div class="tracker-container">
+                        <h3>Your Progress</h3>
+                        <div class="progress-info-row">
+                            <span>Codes Entered: <strong id="enteredCodesCount">0</strong> / 5</span>
+                            <span id="trackerPercent" class="gold-text">0%</span>
+                        </div>
+                        <div class="progress-bar-wrapper">
+                            <div class="progress-bar-fill" id="progressBarFill" style="width: 0%"></div>
+                            <div class="milestones-row">
+                                <div class="milestone-dot" id="milestone-1"><div class="dot-inner"><i class="fa-solid fa-shirt"></i></div><span class="milestone-label">1st</span></div>
+                                <div class="milestone-dot" id="milestone-2"><div class="dot-inner"><i class="fa-solid fa-shirt"></i></div><span class="milestone-label">2nd</span></div>
+                                <div class="milestone-dot" id="milestone-3"><div class="dot-inner"><i class="fa-solid fa-shirt"></i></div><span class="milestone-label">3rd</span></div>
+                                <div class="milestone-dot" id="milestone-4"><div class="dot-inner"><i class="fa-solid fa-shirt"></i></div><span class="milestone-label">4th</span></div>
+                                <div class="milestone-dot" id="milestone-5"><div class="dot-inner"><i class="fa-solid fa-gem"></i></div><span class="milestone-label">Unlock</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="entered-codes-section">
+                        <h3>Entered Codes Ledger</h3>
+                        <ul class="entered-codes-list" id="enteredCodesLedger">
+                            <li class="ledger-empty">No codes submitted yet.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="code-zone-box-display glass-panel flex-center">
+                    <div class="mystery-visual-container">
+                        <div class="radar-ping"></div>
+                        <img src="assets/mystery_box.png" alt="Mystery Box Display" class="mystery-box-3d" id="codeZoneMysteryBoxImg">
+                        <div class="unlock-overlay" id="mysteryUnlockOverlay" style="display: none;">
+                            <div class="unlock-action-box">
+                                <span class="glowing-label">BOX UNLOCKED</span>
+                                <h2>Your Reward Awaits</h2>
+                                <p>Open your premium reward containing exclusive Black Stone apparel and gifts.</p>
+                                <button class="btn btn-gold btn-pulse btn-lg" onclick="triggerMysteryBoxReveal()">
+                                    <i class="fa-solid fa-gift"></i> Open Mystery Box
+                                </button>
+                            </div>
+                        </div>
+                        <div class="lock-indicator" id="lockIndicator">
+                            <i class="fa-solid fa-lock"></i> Locked. Submit <span id="remainingCountText">5</span> more codes.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p class="page-home-collection-note">Starter demo codes: BS-WELCME, BS-MEMBER, BS-STREET, BS-MYST-X, BS-LUCKY7</p>
+        </div>
+    </section>
+
+    <div class="mystery-reveal-overlay" id="mysteryRevealOverlay">
+        <canvas id="particleCanvas"></canvas>
+        <div class="mystery-reveal-box-wrapper" id="revealedBoxWrapper">
+            <img src="assets/mystery_box.png" alt="Shaking Mystery Box" class="reveal-box-img" id="shakingBoxImg">
+            <div class="reveal-burst-light"></div>
+        </div>
+        <div class="mystery-reward-card" id="mysteryRewardCard">
+            <div class="reward-sparkles"></div>
+            <span class="reward-rarity" id="rewardRarity">LEGENDARY REWARD</span>
+            <h2 id="rewardTitle">Exclusive Gold Edition Jacket</h2>
+            <p id="rewardDesc">A custom Black Stone reward is ready to claim.</p>
+            <div class="reward-coupon-box">
+                <span>YOUR CLAIM CODE:</span>
+                <div class="coupon-code-container">
+                    <strong id="rewardClaimCode">BS-MYSTERY-777</strong>
+                    <button onclick="copyRewardClaimCode()"><i class="fa-solid fa-copy"></i></button>
+                </div>
+            </div>
+            <button class="btn btn-gold btn-md" onclick="closeMysteryReveal()">Claim Reward & Reset</button>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="container footer-bottom text-center">
+            <p>&copy; 2026 Black Stone Inc. <a href="index.html#shop" class="gold-text">Shop the T-shirt collection</a></p>
+        </div>
+    </footer>
+    <script src="app.js"></script>
+</body>
+</html>

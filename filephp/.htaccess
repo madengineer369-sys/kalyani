@@ -1,0 +1,135 @@
+# Apache .htaccess — SecureShop Security Configuration
+# Place in the project root (filephp/)
+
+# ============================================================
+# BASIC SECURITY
+# ============================================================
+
+# Disable directory listing
+Options -Indexes
+
+# Prevent access to hidden files (.git, .env, etc.)
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# Block .htaccess files from being served
+<Files .htaccess>
+    Require all denied
+</Files>
+
+# ============================================================
+# PROTECT SENSITIVE DIRECTORIES
+# ============================================================
+
+# includes/ — PHP logic files, never serve directly
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block direct access to includes/
+    RewriteRule ^includes/ - [F,L]
+
+    # Block direct access to logs/
+    RewriteRule ^logs/ - [F,L]
+
+    # Block direct access to database/
+    RewriteRule ^database/ - [F,L]
+</IfModule>
+
+# ============================================================
+# FORCE HTTPS (uncomment in production)
+# ============================================================
+# <IfModule mod_rewrite.c>
+#     RewriteCond %{HTTPS} off
+#     RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# </IfModule>
+
+# ============================================================
+# PREVENT SCRIPT EXECUTION IN UPLOADS
+# ============================================================
+<IfModule mod_rewrite.c>
+    RewriteRule ^uploads/.*\.php$ - [F,L]
+    RewriteRule ^uploads/.*\.phtml$ - [F,L]
+    RewriteRule ^uploads/.*\.phps$ - [F,L]
+</IfModule>
+
+# ============================================================
+# MIME TYPE SECURITY
+# ============================================================
+<IfModule mod_mime.c>
+    # Force downloads for potentially dangerous file types
+    AddType application/octet-stream .exe .com .bat .cmd .sh
+</IfModule>
+
+# ============================================================
+# CACHING (Security balance)
+# ============================================================
+<IfModule mod_expires.c>
+    ExpiresActive On
+    # Cache static assets
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/png  "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 month"
+    ExpiresByType text/css   "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+    # Never cache PHP responses
+    ExpiresByType application/x-httpd-php "access plus 0 seconds"
+</IfModule>
+
+# ============================================================
+# CLICKJACKING PROTECTION (belt-and-suspenders with PHP header)
+# ============================================================
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "DENY"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    # Remove server version info
+    Header unset Server
+    Header unset X-Powered-By
+</IfModule>
+
+# ============================================================
+# PHP CONFIGURATION OVERRIDES
+# ============================================================
+<IfModule mod_php8.c>
+    # Disable dangerous functions
+    php_flag  expose_php          Off
+    php_flag  display_errors      Off
+    php_flag  log_errors          On
+    php_value post_max_size       8M
+    php_value upload_max_filesize 5M
+    php_value max_execution_time  30
+    php_value max_input_time      30
+    php_value memory_limit        128M
+    php_value max_input_vars      1000
+
+    # Session hardening
+    php_value session.cookie_httponly 1
+    php_value session.use_only_cookies 1
+    php_value session.use_strict_mode 1
+    php_value session.cookie_samesite Strict
+</IfModule>
+
+# ============================================================
+# BLOCK COMMON ATTACK PATTERNS
+# ============================================================
+<IfModule mod_rewrite.c>
+    # Block SQL injection attempts in query string
+    RewriteCond %{QUERY_STRING} (union|select|insert|update|delete|drop|create|alter|exec|script) [NC]
+    RewriteRule .* - [F,L]
+
+    # Block XSS attempts
+    RewriteCond %{QUERY_STRING} (<|>|%3C|%3E) [NC]
+    RewriteRule .* - [F,L]
+
+    # Block null bytes
+    RewriteCond %{QUERY_STRING} (\x00|%00) [NC]
+    RewriteRule .* - [F,L]
+</IfModule>
+
+# ============================================================
+# ERROR DOCUMENTS
+# ============================================================
+ErrorDocument 403 /BLACK-STONE/filephp/index.php
+ErrorDocument 404 /BLACK-STONE/filephp/index.php
