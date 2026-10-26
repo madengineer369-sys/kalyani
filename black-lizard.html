@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black Lizard Crimson Drop — Black Stone Scroll Experience</title>
+    <meta name="description" content="Experience the Black Lizard 280GSM Crimson Edition interactive scroll animation drop by Black Stone. Limited to 500 numbered pieces worldwide.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Core Brand Styles & Scroll Animation Styles -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="scroll-animation.css">
+</head>
+<body class="black-lizard-page">
+
+    <!-- Preloader Screen for 210 Frames -->
+    <div class="anim-preloader" id="animPreloader">
+        <div class="anim-preloader-content">
+            <div class="anim-preloader-logo">
+                <i class="fa-solid fa-gem"></i>
+                <span>BLACK <span style="color:var(--color-red,#ff1438)">STONE</span></span>
+            </div>
+            <div style="font-family:var(--font-heading); font-size:1.1rem; color:#fff; font-weight:700; letter-spacing:2px; margin-bottom:6px;">
+                BLACK LIZARD // DROP 01
+            </div>
+            <div style="font-size:0.85rem; color:rgba(255,255,255,0.6);">
+                Buffering 210 Ultra-HD Cinematic Scroll Frames...
+            </div>
+            <div class="anim-preloader-bar-wrap">
+                <div class="anim-preloader-bar" id="animPreloaderBar"></div>
+            </div>
+            <div class="anim-preloader-status">
+                <span>SYNCHRONIZING CANVAS</span>
+                <span class="anim-preloader-percent" id="animPreloaderPercent">0%</span>
+            </div>
+            <p class="anim-preloader-tip"><i class="fa-solid fa-arrow-down-long"></i> Scroll to control frame playback once loaded</p>
+        </div>
+    </div>
+
+    <!-- Main Navigation Header -->
+    <header class="main-header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon"><i class="fa-solid fa-gem"></i></span>
+                <span class="logo-text">BLACK <span class="gold-text">STONE</span></span>
+            </a>
+            
+            <nav class="main-nav" id="mainNav">
+                <ul>
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="black-lizard.html" class="nav-link active special-glow"><i class="fa-solid fa-play"></i> Black Lizard <span class="nav-badge-drop">3D Scroll</span></a></li>
+                    <li><a href="index.html#shop" class="nav-link">Collection</a></li>
+                    <li><a href="code-zone.html" class="nav-link">Code Zone</a></li>
+                    <li><a href="mystery-box.html" class="nav-link">Mystery Box</a></li>
+                    <li><a href="owner.html" class="nav-link">Owner Hub</a></li>
+                    <li><a href="about.html" class="nav-link">About</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <button class="owner-btn-header" onclick="openOwnerModal()" title="Owner Product Listing Portal">
+                    <i class="fa-solid fa-plus-circle"></i> <span>List Product</span>
+                </button>
+                <button class="account-btn-header" onclick="window.location.href='auth.html'">
+                    <i class="fa-solid fa-user"></i> <span id="accountActionText">Login</span>
+                </button>
+                <div class="cart-trigger" id="cartTrigger" onclick="toggleCart(true)">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </div>
+                <button class="mobile-menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Cart Drawer Component -->
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-drawer-overlay" onclick="toggleCart(false)"></div>
+        <div class="cart-drawer-content">
+            <div class="cart-drawer-header">
+                <h3>Shopping Bag (<span id="cartDrawerCount">0</span>)</h3>
+                <button class="close-btn" onclick="toggleCart(false)"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="cart-drawer-items" id="cartItemsList"></div>
+            <div class="cart-drawer-footer" id="cartFooter" style="display: none;">
+                <div class="cart-total-row">
+                    <span>Subtotal</span>
+                    <span class="cart-total-price" id="cartTotalVal">$0.00</span>
+                </div>
+                <p class="cart-disclaimer">Includes encrypted garment code for Mystery Box unlock.</p>
+                <button class="btn btn-gold w-100" id="checkoutBtn" onclick="checkoutCart()">Secure Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Quick View Modal Backdrop -->
+    <div class="modal-backdrop" id="productModal">
+        <div class="modal-content product-modal-content">
+            <button class="close-btn modal-close" onclick="closeProductModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="product-modal-grid" id="productModalGrid"></div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="modal-backdrop" id="checkoutModal">
+        <div class="modal-content checkout-modal-content">
+            <div class="checkout-success-header">
+                <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+                <h2>Order Confirmed!</h2>
+                <p>Your Black Stone Black Lizard package is being prepared.</p>
+            </div>
+            <div class="checkout-order-details">
+                <p>Order ID: <span id="checkoutOrderId" class="gold-text">#BS-90210</span></p>
+                <div class="code-reveal-box">
+                    <h3><i class="fa-solid fa-ticket-simple"></i> Your Mystery Box Code</h3>
+                    <p>Enter this scratch code on Code Zone to unlock your Mystery Box reward.</p>
+                    <div class="generated-codes-list" id="generatedCodesList"></div>
+                </div>
+            </div>
+            <div class="checkout-modal-actions">
+                <button class="btn btn-gold" onclick="closeCheckoutModalAndGoToCodes()">Go to Code Zone</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+         CINEMATIC SCROLL EXPERIENCE (450vh Runway + Sticky Canvas)
+         ========================================================================== -->
+    <main class="scroll-experience-section" id="experience">
+        <div class="scroll-track" id="scrollTrack">
+            <div class="sticky-canvas-container" id="stickyContainer">
+                
+                <!-- Background Ambient Effects -->
+                <div class="canvas-crimson-glow"></div>
+                <div class="canvas-vignette"></div>
+
+                <!-- Main Render Canvas -->
+                <canvas id="scrollCanvas" class="scroll-canvas"></canvas>
+
+                <!-- Top Floating HUD -->
+                <div class="scroll-hud-top">
+                    <div class="scroll-brand-badge">
+                        <span class="live-dot"></span>
+                        <span>Black Lizard // Crimson Drop 01</span>
+                    </div>
+                    <div class="scroll-frame-counter" id="scrollFrameCounter">
+                        FRAME <span class="highlight">001</span> / 210
+                    </div>
+                </div>
+
+                <!-- Floating Story Narrative Overlays -->
+                <div class="story-overlays-container">
+                    
+                    <!-- Act 1 (Frames 1-48) -->
+                    <div class="story-card story-card-act1 active" id="storyCardAct1">
+                        <div class="story-act-badge">
+                            <i class="fa-solid fa-eye"></i> Act 01 // The Obsidian Presence
+                        </div>
+                        <h2 class="story-title">BLACK LIZARD<br><span style="color:var(--color-red,#ff1438)">Crimson Edition</span></h2>
+                        <p class="story-desc">
+                            Engineered from heavyweight 280GSM dense ring-spun Japanese cotton. Deep obsidian predator silhouette poised upon luxury crimson drape.
+                        </p>
+                        <div class="story-tags">
+                            <span class="story-tag-pill">280 GSM</span>
+                            <span class="story-tag-pill">Drop Shoulder</span>
+                            <span class="story-tag-pill">Limited 500</span>
+                        </div>
+                    </div>
+
+                    <!-- Act 2 (Frames 50-108) -->
+                    <div class="story-card story-card-act2" id="storyCardAct2">
+                        <div class="story-act-badge">
+                            <i class="fa-solid fa-microchip"></i> Act 02 // Macro Weave Anatomy
+                        </div>
+                        <h2 class="story-title">Organic Texture<br>& Reptilian Form</h2>
+                        <p class="story-desc">
+                            Ultra-dense 16-gauge weave with pre-shrunk bio-wash finishing. The obsidian gecko traverses across the high-tension knit with zero pilling or deformation.
+                        </p>
+                        <div class="story-tags">
+                            <span class="story-tag-pill">Bio-Washed</span>
+                            <span class="story-tag-pill">Zero Pilling</span>
+                            <span class="story-tag-pill">Twin-Needle Seams</span>
+                        </div>
+                    </div>
+
+                    <!-- Act 3 (Frames 110-162) -->
+                    <div class="story-card story-card-act3" id="storyCardAct3">
+                        <div class="story-act-badge">
+                            <i class="fa-solid fa-dna"></i> Act 03 // Symbiotic Fusion
+                        </div>
+                        <h2 class="story-title">Living Predator<br>Meets Garment Art</h2>
+                        <p class="story-desc">
+                            Organic predator contours seamlessly morph into high-density silicone relief embroidery. Cold-blooded elegance stamped onto streetwear heritage.
+                        </p>
+                        <div class="story-tags">
+                            <span class="story-tag-pill">Silicone 3D Relief</span>
+                            <span class="story-tag-pill">Micro-Embossed</span>
+                            <span class="story-tag-pill">Fade-Proof</span>
+                        </div>
+                    </div>
+
+                    <!-- Act 4 (Frames 165-210) -->
+                    <div class="story-card story-card-act4" id="storyCardAct4">
+                        <div class="story-act-badge">
+                            <i class="fa-solid fa-crown"></i> Act 04 // Flagship Release
+                        </div>
+                        <h2 class="story-title">BLACK LIZARD<br><span style="color:var(--color-red,#ff1438)">Tee Drop Live</span></h2>
+                        <p class="story-desc">
+                            Drop 01 is now open for allocation. Every piece is hand-inspected with an encrypted scratch code label granting access to the Mystery Box.
+                        </p>
+                        
+                        <div class="story-buy-box">
+                            <div class="story-price-row">
+                                <span class="story-price">$58.00</span>
+                                <span class="story-orig-price">$75.00</span>
+                                <span class="story-drop-status"><i class="fa-solid fa-shield-check"></i> In Stock (42 Left)</span>
+                            </div>
+
+                            <div style="font-size:0.75rem; color:rgba(255,255,255,0.6); margin-bottom:6px; letter-spacing:1px; text-transform:uppercase;">
+                                Select Fit:
+                            </div>
+                            <div class="story-sizes-row">
+                                <button class="size-pill-btn" data-size="S">S</button>
+                                <button class="size-pill-btn" data-size="M">M</button>
+                                <button class="size-pill-btn active" data-size="L">L</button>
+                                <button class="size-pill-btn" data-size="XL">XL</button>
+                                <button class="size-pill-btn" data-size="XXL">XXL</button>
+                            </div>
+
+                            <button class="story-buy-btn action-add-lizard-bag">
+                                <i class="fa-solid fa-bag-shopping"></i> Add to Bag — $58.00
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- "Scroll to Explore" indicator -->
+                <div class="scroll-indicator-hint" id="scrollIndicatorHint">
+                    <div class="scroll-mouse">
+                        <div class="scroll-wheel"></div>
+                    </div>
+                    <span class="scroll-text">Scroll to animate</span>
+                </div>
+
+                <!-- Bottom Glassmorphic Control HUD -->
+                <div class="scroll-hud-bottom">
+                    <div class="hud-top-row">
+                        <div class="hud-playback-controls">
+                            <button class="hud-btn" id="hudPlayBtn" title="Play / Pause Auto-Scroll">
+                                <i class="fa-solid fa-play"></i>
+                            </button>
+                            <button class="hud-btn" id="hudSpeedBtn" title="Playback Speed">1x</button>
+                            <button class="hud-btn" id="hudSoundBtn" title="Toggle Sound FX">
+                                <i class="fa-solid fa-volume-high"></i>
+                            </button>
+                        </div>
+
+                        <!-- Chapter Jump Pills -->
+                        <div class="hud-chapters">
+                            <button class="chapter-pill active" data-frame="1" data-range="35">01 Reveal</button>
+                            <button class="chapter-pill" data-frame="65" data-range="35">02 Macro Crawl</button>
+                            <button class="chapter-pill" data-frame="130" data-range="35">03 Fusion</button>
+                            <button class="chapter-pill" data-frame="195" data-range="35">04 The Drop</button>
+                        </div>
+
+                        <!-- Tools & Viewport -->
+                        <div class="hud-tools">
+                            <button class="hud-btn" id="hudFitBtn" title="Toggle Cover / Contain View">
+                                <i class="fa-solid fa-expand"></i>
+                            </button>
+                            <button class="hud-btn" id="hudFullscreenBtn" title="Full Screen View">
+                                <i class="fa-solid fa-maximize"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Scrubber Timeline -->
+                    <div class="hud-scrubber-row">
+                        <div class="scrubber-track" id="hudScrubberTrack" title="Drag to scrub frames">
+                            <div class="scrubber-fill" id="scrubberFill"></div>
+                            <div class="scrubber-markers">
+                                <div class="scrubber-marker" style="left: 0%;"></div>
+                                <div class="scrubber-marker" style="left: 31%;"></div>
+                                <div class="scrubber-marker" style="left: 62%;"></div>
+                                <div class="scrubber-marker" style="left: 95%;"></div>
+                            </div>
+                        </div>
+                        <div class="scrubber-time" id="scrubberTime">00:00.0s</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- ==========================================================================
+         PRODUCT BLUEPRINT & TECHNICAL SPECIFICATIONS
+         ========================================================================== -->
+    <section class="lizard-product-section">
+        <div class="container">
+            <div class="lizard-grid">
+                
+                <!-- Left: Media Frame -->
+                <div>
+                    <div class="lizard-media-frame">
+                        <img id="turntableImg" src="frames/ezgif-frame-210.jpg" alt="Black Lizard Final Graphic">
+                        <div class="frame-badge-floating">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <span id="turntableLabel">FRAME 210 // BLACK LIZARD DROP</span>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Turntable Scrubber -->
+                    <div class="turntable-card">
+                        <div class="turntable-header">
+                            <h4><i class="fa-solid fa-sliders"></i> Manual Frame Inspector (1 - 210)</h4>
+                            <span style="font-size:0.8rem; color:var(--color-red,#ff1438); font-weight:700;">Drag to Inspect</span>
+                        </div>
+                        <input type="range" class="turntable-slider" id="turntableSlider" min="1" max="210" value="210" step="1">
+                        <div class="turntable-labels">
+                            <span>001: Model Reveal</span>
+                            <span>100: Texture Weave</span>
+                            <span>210: Drop Logo</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Garment Specifications -->
+                <div>
+                    <div class="badge-premium"><i class="fa-solid fa-gem"></i> Obsidian Masterpiece</div>
+                    <h2 style="font-family:var(--font-heading); font-size:2.4rem; font-weight:700; margin: 12px 0; line-height:1.2;">
+                        The Black Lizard<br><span class="red-text glow-red">Crimson 280GSM</span> Tee
+                    </h2>
+                    <p style="color:rgba(255,255,255,0.75); line-height:1.7; margin-bottom:24px;">
+                        Forged in limited quantities for the Black Stone Autumn Drop. Utilizing ultra-dense 280GSM Japanese ring-spun cotton that provides a sculptural boxy fit with dropped shoulders. The 3D high-density silicone lizard chest emblem provides an unforgettable tactile experience.
+                    </p>
+
+                    <!-- Technical Specs Grid -->
+                    <div class="specs-grid-3col">
+                        <div class="spec-tile">
+                            <span class="spec-val">280</span>
+                            <span class="spec-lbl">GSM Heavyweight</span>
+                        </div>
+                        <div class="spec-tile">
+                            <span class="spec-val">100%</span>
+                            <span class="spec-lbl">Combed Organic</span>
+                        </div>
+                        <div class="spec-tile">
+                            <span class="spec-val">500</span>
+                            <span class="spec-lbl">Worldwide Limit</span>
+                        </div>
+                    </div>
+
+                    <!-- Feature Bullet Points -->
+                    <ul style="list-style:none; padding:0; margin: 24px 0; display:flex; flex-direction:column; gap:12px;">
+                        <li style="display:flex; align-items:center; gap:12px; color:rgba(255,255,255,0.85); font-size:0.95rem;">
+                            <i class="fa-solid fa-circle-check" style="color:var(--color-red,#ff1438)"></i>
+                            <span><strong>Encrypted Neck Label:</strong> Scratch-off code redeemable in the Mystery Box</span>
+                        </li>
+                        <li style="display:flex; align-items:center; gap:12px; color:rgba(255,255,255,0.85); font-size:0.95rem;">
+                            <i class="fa-solid fa-circle-check" style="color:var(--color-red,#ff1438)"></i>
+                            <span><strong>Tailored Ribbing:</strong> 1.25" thick 1x1 ribbed collar that never sags</span>
+                        </li>
+                        <li style="display:flex; align-items:center; gap:12px; color:rgba(255,255,255,0.85); font-size:0.95rem;">
+                            <i class="fa-solid fa-circle-check" style="color:var(--color-red,#ff1438)"></i>
+                            <span><strong>Pre-Shrunk Bio-Wash:</strong> Zero post-wash shrinkage and anti-lint retention</span>
+                        </li>
+                    </ul>
+
+                    <!-- Order Action Box -->
+                    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:22px; margin-top:28px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+                            <div>
+                                <span style="font-size:0.8rem; color:rgba(255,255,255,0.5); text-transform:uppercase;">Price</span>
+                                <div style="font-family:var(--font-heading); font-size:1.8rem; font-weight:700; color:#fff;">$58.00 USD</div>
+                            </div>
+                            <div style="text-align:right;">
+                                <span style="font-size:0.75rem; color:#00ff88; background:rgba(0,255,136,0.1); padding:4px 8px; border-radius:4px; border:1px solid rgba(0,255,136,0.25);">
+                                    <i class="fa-solid fa-truck-fast"></i> Free Priority Shipping
+                                </span>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-gold btn-lg w-100 action-add-lizard-bag" style="font-size:1.05rem;">
+                            <i class="fa-solid fa-bag-shopping"></i> Add Black Lizard Tee to Bag
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background:#030305; padding:60px 0 30px; border-top:1px solid rgba(255,255,255,0.08);">
+        <div class="container text-center">
+            <div style="font-family:var(--font-heading); font-size:1.4rem; font-weight:700; letter-spacing:2px; margin-bottom:14px;">
+                BLACK <span style="color:var(--color-red,#ff1438)">STONE</span>
+            </div>
+            <p style="color:rgba(255,255,255,0.5); font-size:0.9rem; max-width:500px; margin:0 auto 24px;">
+                Luxury obsidian & crimson streetwear. Unbox exclusive apparel rewards with genuine label scratch codes.
+            </p>
+            <div style="display:flex; justify-content:center; gap:20px; font-size:0.85rem; color:rgba(255,255,255,0.6); margin-bottom:28px;">
+                <a href="index.html" style="color:inherit; text-decoration:none;">Home</a>
+                <a href="index.html#shop" style="color:inherit; text-decoration:none;">Collection</a>
+                <a href="code-zone.html" style="color:inherit; text-decoration:none;">Code Zone</a>
+                <a href="mystery-box.html" style="color:inherit; text-decoration:none;">Mystery Box</a>
+                <a href="about.html" style="color:inherit; text-decoration:none;">About</a>
+            </div>
+            <p style="font-size:0.75rem; color:rgba(255,255,255,0.3);">
+                &copy; 2026 Black Stone Apparel Inc. All rights reserved. Cinematic frame sequence rendered at 60FPS.
+            </p>
+        </div>
+    </footer>
+
+    <!-- App Engine & Scroll Animation Scripts -->
+    <script src="app.js"></script>
+    <script src="scroll-animation.js"></script>
+</body>
+</html>

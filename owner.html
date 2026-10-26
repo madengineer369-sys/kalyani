@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Hub — Product Manager & Size Chart — Black Stone</title>
+    <meta name="description" content="Black Stone owner portal: list new streetwear apparel, set prices, quality, sizes, colours, size charts, upload images, and write descriptions.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .owner-dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.25fr 1fr;
+            gap: 36px;
+            margin-top: 32px;
+        }
+        @media(max-width: 991px) {
+            .owner-dashboard-grid { grid-template-columns: 1fr; }
+        }
+        .stat-card-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .owner-stat-card {
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-md);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: var(--transition-smooth);
+        }
+        .owner-stat-card:hover {
+            border-color: var(--color-red);
+            transform: translateY(-2px);
+        }
+        .owner-stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--border-radius-sm);
+            background: rgba(255, 20, 56, 0.15);
+            color: var(--color-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+        .inventory-table-card {
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-md);
+            padding: 28px;
+            margin-top: 48px;
+        }
+        .inventory-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            font-size: 0.9rem;
+        }
+        .inventory-table th {
+            text-align: left;
+            padding: 12px 14px;
+            background: rgba(255, 20, 56, 0.1);
+            color: var(--color-red);
+            font-family: var(--font-heading);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255, 20, 56, 0.25);
+        }
+        .inventory-table td {
+            padding: 14px;
+            border-bottom: 1px solid var(--color-border);
+            vertical-align: middle;
+        }
+        .inventory-thumb {
+            width: 50px;
+            height: 50px;
+            border-radius: 6px;
+            object-fit: cover;
+            border: 1px solid var(--color-border);
+        }
+        .live-preview-box {
+            position: sticky;
+            top: 100px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Smoky Header -->
+    <header class="main-header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon"><i class="fa-solid fa-gem"></i></span>
+                <span class="logo-text">BLACK <span class="red-text gold-text">STONE</span></span>
+            </a>
+            
+            <nav class="main-nav" id="mainNav">
+                <ul>
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="index.html#experience" class="nav-link">Black Lizard</a></li>
+                    <li><a href="index.html#shop" class="nav-link">Collection</a></li>
+                    <li><a href="code-zone.html" class="nav-link">Code Zone</a></li>
+                    <li><a href="mystery-box.html" class="nav-link">Mystery Box</a></li>
+                    <li><a href="owner.html" class="nav-link active">Owner Hub</a></li>
+                    <li><a href="about.html" class="nav-link">About</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <button class="owner-btn-header" onclick="document.getElementById('ownerFormCard').scrollIntoView({behavior:'smooth'})">
+                    <i class="fa-solid fa-plus-circle"></i> <span>List Product</span>
+                </button>
+                <button class="account-btn-header" id="accountActionBtn" onclick="window.location.href='auth.html'">
+                    <i class="fa-solid fa-user"></i> <span id="accountActionText">Login</span>
+                </button>
+                <div class="cart-trigger" id="cartTrigger" onclick="toggleCart(true)">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </div>
+                <button class="mobile-menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Cart Drawer -->
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-drawer-overlay" onclick="toggleCart(false)"></div>
+        <div class="cart-drawer-content">
+            <div class="cart-drawer-header">
+                <h3>Shopping Bag (<span id="cartDrawerCount">0</span>)</h3>
+                <button class="close-btn" onclick="toggleCart(false)"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="cart-drawer-items" id="cartItemsList"></div>
+            <div class="cart-drawer-footer" id="cartFooter" style="display: none;">
+                <div class="cart-total-row">
+                    <span>Subtotal</span>
+                    <span class="cart-total-price" id="cartTotalVal">$0.00</span>
+                </div>
+                <p class="cart-disclaimer">Free premium shipping included. T-shirt labels contain codes for unlocking the Mystery Box.</p>
+                <button class="btn btn-gold w-100" id="checkoutBtn" onclick="checkoutCart()">Secure Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div class="modal-backdrop" id="productModal">
+        <div class="modal-content product-modal-content">
+            <button class="close-btn modal-close" onclick="closeProductModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="product-modal-grid" id="productModalGrid"></div>
+        </div>
+    </div>
+
+    <!-- Page Content -->
+    <section class="page-hero-section" style="padding: 140px 0 30px;">
+        <div class="container text-center">
+            <span class="section-tag"><i class="fa-solid fa-shield-halved me-1"></i> Owner Command Portal</span>
+            <h1 class="hero-title" style="font-size: 3.2rem; margin-bottom: 12px;">
+                Apparel Listing & Catalog Hub
+            </h1>
+            <p class="hero-subtitle" style="margin: 0 auto; max-width: 680px;">
+                Directly publish new luxury streetwear tees, configure custom prices, GSM quality, sizes, colours, interactive size charts, image uploads, and tailoring descriptions.
+            </p>
+        </div>
+    </section>
+
+    <div class="container" style="padding-bottom: 100px;">
+        
+        <!-- Live Statistics Row -->
+        <div class="stat-card-row">
+            <div class="owner-stat-card">
+                <div class="owner-stat-icon"><i class="fa-solid fa-shirt"></i></div>
+                <div>
+                    <div style="font-size: 0.75rem; color: var(--color-muted); text-transform: uppercase;">Total Active Products</div>
+                    <div id="statTotalCount" style="font-size: 1.6rem; font-weight: 700; font-family: var(--font-heading); color: #fff;">8</div>
+                </div>
+            </div>
+            <div class="owner-stat-card">
+                <div class="owner-stat-icon"><i class="fa-solid fa-fire"></i></div>
+                <div>
+                    <div style="font-size: 0.75rem; color: var(--color-muted); text-transform: uppercase;">Custom Owner Drops</div>
+                    <div id="statCustomCount" style="font-size: 1.6rem; font-weight: 700; font-family: var(--font-heading); color: var(--color-red);">0</div>
+                </div>
+            </div>
+            <div class="owner-stat-card">
+                <div class="owner-stat-icon"><i class="fa-solid fa-ruler-combined"></i></div>
+                <div>
+                    <div style="font-size: 0.75rem; color: var(--color-muted); text-transform: uppercase;">Size Chart Coverage</div>
+                    <div style="font-size: 1.6rem; font-weight: 700; font-family: var(--font-heading); color: #4ade80;">100%</div>
+                </div>
+            </div>
+            <div class="owner-stat-card">
+                <div class="owner-stat-icon"><i class="fa-solid fa-box-open"></i></div>
+                <div>
+                    <div style="font-size: 0.75rem; color: var(--color-muted); text-transform: uppercase;">Reward Codes Ready</div>
+                    <div style="font-size: 1.6rem; font-weight: 700; font-family: var(--font-heading); color: #ff3366;">Active</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Workspace Grid: Form + Live Preview Card -->
+        <div class="owner-dashboard-grid">
+            
+            <!-- Product Creation Form -->
+            <div class="glass-panel" id="ownerFormCard" style="padding: 36px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px; border-bottom: 1px solid var(--color-border); padding-bottom: 16px;">
+                    <div>
+                        <h2 style="font-family: var(--font-heading); font-size: 1.6rem;">List New Streetwear Tee</h2>
+                        <p style="color: var(--color-muted); font-size: 0.88rem;">All fields immediately render into the live public shop.</p>
+                    </div>
+                    <button class="btn btn-outline btn-sm" onclick="openSizeChartModal()" style="border-color:var(--color-red); color:var(--color-red);">
+                        <i class="fa-solid fa-ruler-combined me-1"></i> Size Chart Guide
+                    </button>
+                </div>
+
+                <form id="ownerListingPageForm" onsubmit="handleOwnerPageFormSubmit(event)">
+                    
+                    <!-- 1. Title -->
+                    <div class="form-group">
+                        <label class="form-label">Product Name / Title *</label>
+                        <input type="text" id="pTitle" class="form-control-custom" placeholder="e.g. Blood Moon Oversized Heavyweight Tee" required oninput="updateLivePreview()">
+                    </div>
+
+                    <!-- 2. Category & Drop Badge -->
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label">Collection Category</label>
+                            <select id="pCategory" class="form-control-custom" onchange="updateLivePreview()">
+                                <option value="signature">Signature</option>
+                                <option value="graphic">Graphic</option>
+                                <option value="minimalist">Minimalist</option>
+                                <option value="hoodies">Heavy Hoodies</option>
+                                <option value="limited">Limited Release</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Badge Tag</label>
+                            <input type="text" id="pBadge" class="form-control-custom" value="HOT DROP" placeholder="HOT DROP, LIMITED, CORE" oninput="updateLivePreview()">
+                        </div>
+                    </div>
+
+                    <!-- 3. Price & Compare Price -->
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label">Selling Price ($) *</label>
+                            <input type="number" id="pPrice" class="form-control-custom" step="0.01" min="1" value="49.00" required oninput="updateLivePreview()">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Original / Compare Price ($)</label>
+                            <input type="number" id="pOrigPrice" class="form-control-custom" step="0.01" value="65.00" oninput="updateLivePreview()">
+                        </div>
+                    </div>
+
+                    <!-- 4. Quality & GSM Fabric Grade -->
+                    <div class="form-group">
+                        <label class="form-label">Fabric Quality & GSM Rating *</label>
+                        <div class="chips-selector" style="margin-bottom: 8px;">
+                            <button type="button" class="chip-select-btn active" onclick="selectPageQuality(this, '260 GSM Heavyweight Organic Cotton')">260 GSM</button>
+                            <button type="button" class="chip-select-btn" onclick="selectPageQuality(this, '280 GSM Mineral-Washed Dense Cotton')">280 GSM</button>
+                            <button type="button" class="chip-select-btn" onclick="selectPageQuality(this, '290 GSM Ultra-Heavy French Terry')">290 GSM</button>
+                            <button type="button" class="chip-select-btn" onclick="selectPageQuality(this, '240 GSM Compact Ringspun Cotton')">240 GSM</button>
+                        </div>
+                        <input type="text" id="pQuality" class="form-control-custom" value="260 GSM Heavyweight Organic Cotton" required oninput="updateLivePreview()">
+                    </div>
+
+                    <!-- 5. Sizes Available -->
+                    <div class="form-group">
+                        <label class="form-label">Available Sizes (Click to toggle)</label>
+                        <div class="chips-selector" id="pageSizesRow">
+                            <button type="button" class="chip-select-btn" onclick="togglePageSize(this, 'XS')">XS</button>
+                            <button type="button" class="chip-select-btn active" onclick="togglePageSize(this, 'S')">S</button>
+                            <button type="button" class="chip-select-btn active" onclick="togglePageSize(this, 'M')">M</button>
+                            <button type="button" class="chip-select-btn active" onclick="togglePageSize(this, 'L')">L</button>
+                            <button type="button" class="chip-select-btn active" onclick="togglePageSize(this, 'XL')">XL</button>
+                            <button type="button" class="chip-select-btn" onclick="togglePageSize(this, 'XXL')">XXL</button>
+                            <button type="button" class="chip-select-btn" onclick="togglePageSize(this, '3XL')">3XL</button>
+                        </div>
+                    </div>
+
+                    <!-- 6. Colours Available -->
+                    <div class="form-group">
+                        <label class="form-label">Colours Available (Click to toggle)</label>
+                        <div class="swatch-picker-row" id="pageColorsRow">
+                            <div class="color-swatch-item active" onclick="togglePageColor(this, 'black')">
+                                <span class="swatch-circle" style="background:#000;"></span> Obsidian Black
+                            </div>
+                            <div class="color-swatch-item active" onclick="togglePageColor(this, 'red')">
+                                <span class="swatch-circle" style="background:#ff1438;"></span> Crimson Red
+                            </div>
+                            <div class="color-swatch-item" onclick="togglePageColor(this, 'grey')">
+                                <span class="swatch-circle" style="background:#4a4a55;"></span> Charcoal Grey
+                            </div>
+                            <div class="color-swatch-item" onclick="togglePageColor(this, 'white')">
+                                <span class="swatch-circle" style="background:#fff;"></span> Bone White
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 7. Option of Size Chart Toggle -->
+                    <div class="form-group" style="background: rgba(255,20,56,0.06); padding: 16px; border: 1px solid rgba(255,20,56,0.3); border-radius: var(--border-radius-sm);">
+                        <label style="display:flex; align-items:center; gap: 10px; cursor: pointer; font-size: 0.95rem; font-weight: 600;">
+                            <input type="checkbox" id="pHasSizeChart" checked style="width: 18px; height: 18px; accent-color: var(--color-red);" onchange="updateLivePreview()">
+                            <span>Provide Interactive Size Chart for this product</span>
+                        </label>
+                        <p style="color: var(--color-muted); font-size: 0.8rem; margin-top: 6px; margin-bottom: 0;">
+                            Shoppers will be able to click "Size Chart" on this t-shirt card to view measurements in Inches and Centimeters.
+                        </p>
+                    </div>
+
+                    <!-- 8. Upload Images -->
+                    <div class="form-group">
+                        <label class="form-label">Upload Product Image *</label>
+                        <div class="upload-dropzone" id="pageDropzone" onclick="document.getElementById('pageImgFile').click()">
+                            <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2.2rem; color: var(--color-red); margin-bottom: 8px;"></i>
+                            <div style="font-weight: 700; font-size: 0.95rem;">Select or Drag Product Image</div>
+                            <span style="font-size: 0.78rem; color: var(--color-muted);">PNG, JPG, or WEBP (Instantly converted & stored locally)</span>
+                            <input type="file" id="pageImgFile" accept="image/*" style="display:none;" onchange="handlePageImageUpload(this)">
+                        </div>
+
+                        <!-- Quick Image Preset Buttons -->
+                        <div style="margin-top: 10px; display:flex; gap: 8px; flex-wrap:wrap; align-items:center;">
+                            <span style="font-size:0.75rem; color:var(--color-muted); text-transform:uppercase;">Or select studio preset:</span>
+                            <button type="button" class="btn btn-outline btn-sm" onclick="setPresetImg('assets/sig_tee.png')" style="padding: 2px 10px; font-size: 0.75rem;">Signature Crest Tee</button>
+                            <button type="button" class="btn btn-outline btn-sm" onclick="setPresetImg('assets/tee_obsidian.png')" style="padding: 2px 10px; font-size: 0.75rem;">Obsidian Boxy Tee</button>
+                        </div>
+                    </div>
+
+                    <!-- 9. Write Description -->
+                    <div class="form-group">
+                        <label class="form-label">Write Product Description & Fit Notes *</label>
+                        <textarea id="pDesc" class="form-control-custom" rows="4" placeholder="Detail the cut, boxy drape, 260GSM Japanese cotton, neckline ribbing, and streetwear energy..." oninput="updateLivePreview()">Heavyweight luxury streetwear tee engineered from dense combed cotton. Features dropped shoulders, pre-shrunk anti-twist construction, and hidden Mystery Box claim code printed on collar label.</textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-red w-100 py-3" style="font-size: 1.1rem; font-weight: 700; letter-spacing: 1px;">
+                        <i class="fa-solid fa-rocket me-2"></i> Publish Product To Store
+                    </button>
+                </form>
+            </div>
+
+            <!-- Live Store Preview Card -->
+            <div class="live-preview-box">
+                <div class="glass-panel" style="padding: 24px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+                        <span class="section-tag" style="margin-bottom:0;">Live Store Preview</span>
+                        <span class="reward-badge" style="position:static;">Real-Time Render</span>
+                    </div>
+
+                    <!-- Product Card Mockup -->
+                    <div class="product-card" style="box-shadow: 0 10px 30px rgba(0,0,0,0.8); border-color: rgba(255,20,56,0.35);">
+                        <div class="product-img-box">
+                            <img src="assets/sig_tee.png" id="prevCardImg" alt="Preview">
+                            <span class="product-badge-overlay" id="prevCardBadge">HOT DROP</span>
+                            <div class="product-quick-view">Quick View Preview</div>
+                        </div>
+                        <div class="product-card-body">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span class="product-tag" id="prevCardTag">SIGNATURE &bull; 260 GSM</span>
+                                <span id="prevCardChartIcon" title="Interactive Size Chart Enabled" style="font-size:0.75rem; color:var(--color-red);">
+                                    <i class="fa-solid fa-ruler-combined"></i>
+                                </span>
+                            </div>
+                            <h3 class="product-title" id="prevCardTitle">Blood Moon Oversized Heavyweight Tee</h3>
+                            <div style="font-size:0.75rem; color:var(--color-muted); margin-bottom: 6px;" id="prevCardSizes">Sizes: S · M · L · XL</div>
+                            <div class="product-bottom-row">
+                                <div class="product-price" id="prevCardPrice">$49.00</div>
+                                <button class="add-cart-btn-icon" title="Add to Bag">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 16px; font-size: 0.8rem; color: var(--color-muted); text-align: center;">
+                        <i class="fa-solid fa-check-circle text-success me-1"></i> Once published, this product is immediately available in the bag & checkout.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Inventory Table Section -->
+        <div class="inventory-table-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                <div>
+                    <h3 style="font-family: var(--font-heading); font-size: 1.4rem;">Catalog Inventory Manager</h3>
+                    <p style="color: var(--color-muted); font-size: 0.88rem;">Manage live apparel items and owner listings.</p>
+                </div>
+                <a href="index.html#shop" class="btn btn-secondary btn-sm">
+                    <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> View Live Storefront
+                </a>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table class="inventory-table" id="inventoryTable">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Title & Details</th>
+                            <th>Category</th>
+                            <th>Quality / GSM</th>
+                            <th>Sizes</th>
+                            <th>Price</th>
+                            <th>Type</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTableBody">
+                        <!-- Populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-bottom text-center">
+            <p>&copy; 2026 Black Stone Inc. Owner Management Suite. <a href="index.html#shop" class="red-text gold-text">Return to Shop</a></p>
+        </div>
+    </footer>
+
+    <!-- Confetti Canvas -->
+    <canvas id="confettiCanvas"></canvas>
+
+    <script src="app.js"></script>
+    <script>
+        let pageSelectedSizes = new Set(['S', 'M', 'L', 'XL']);
+        let pageSelectedColors = new Set(['black', 'red']);
+        let pageUploadedImage = 'assets/sig_tee.png';
+
+        function togglePageSize(btn, sz) {
+            if (pageSelectedSizes.has(sz)) {
+                if (pageSelectedSizes.size > 1) {
+                    pageSelectedSizes.delete(sz);
+                    btn.classList.remove('active');
+                }
+            } else {
+                pageSelectedSizes.add(sz);
+                btn.classList.add('active');
+            }
+            updateLivePreview();
+            if (window.bsAudio) bsAudio.playClick();
+        }
+
+        function togglePageColor(item, col) {
+            if (pageSelectedColors.has(col)) {
+                if (pageSelectedColors.size > 1) {
+                    pageSelectedColors.delete(col);
+                    item.classList.remove('active');
+                }
+            } else {
+                pageSelectedColors.add(col);
+                item.classList.add('active');
+            }
+            updateLivePreview();
+            if (window.bsAudio) bsAudio.playClick();
+        }
+
+        function selectPageQuality(chip, qualityText) {
+            const chips = chip.parentElement.querySelectorAll('.chip-select-btn');
+            chips.forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            document.getElementById('pQuality').value = qualityText;
+            updateLivePreview();
+            if (window.bsAudio) bsAudio.playClick();
+        }
+
+        function handlePageImageUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                pageUploadedImage = e.target.result;
+                updateLivePreview();
+                if (window.bsAudio) bsAudio.playSuccess();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function setPresetImg(src) {
+            pageUploadedImage = src;
+            updateLivePreview();
+            if (window.bsAudio) bsAudio.playClick();
+        }
+
+        function updateLivePreview() {
+            const title = document.getElementById('pTitle').value || 'Product Title';
+            const category = document.getElementById('pCategory').value;
+            const badge = document.getElementById('pBadge').value || 'DROP';
+            const price = parseFloat(document.getElementById('pPrice').value) || 49.00;
+            const quality = document.getElementById('pQuality').value;
+            const hasChart = document.getElementById('pHasSizeChart').checked;
+
+            const gsmMatch = quality.match(/\d+\s*GSM/i);
+            const gsm = gsmMatch ? gsmMatch[0].toUpperCase() : '260 GSM';
+
+            document.getElementById('prevCardTitle').textContent = title;
+            document.getElementById('prevCardPrice').textContent = `$${price.toFixed(2)}`;
+            document.getElementById('prevCardBadge').textContent = badge;
+            document.getElementById('prevCardTag').textContent = `${category.toUpperCase()} • ${gsm}`;
+            document.getElementById('prevCardSizes').textContent = `Sizes: ${Array.from(pageSelectedSizes).join(' · ')}`;
+            document.getElementById('prevCardImg').src = pageUploadedImage;
+            document.getElementById('prevCardChartIcon').style.display = hasChart ? 'inline-block' : 'none';
+        }
+
+        function handleOwnerPageFormSubmit(e) {
+            e.preventDefault();
+
+            const title = document.getElementById('pTitle').value.trim();
+            const category = document.getElementById('pCategory').value;
+            const badge = document.getElementById('pBadge').value.trim() || 'NEW DROP';
+            const price = parseFloat(document.getElementById('pPrice').value) || 49.00;
+            const origPriceVal = document.getElementById('pOrigPrice').value;
+            const origPrice = origPriceVal ? parseFloat(origPriceVal) : Math.round(price * 1.3);
+            const quality = document.getElementById('pQuality').value.trim();
+            const hasSizeChart = document.getElementById('pHasSizeChart').checked;
+            const description = document.getElementById('pDesc').value.trim();
+
+            const gsmMatch = quality.match(/\d+\s*GSM/i);
+            const gsm = gsmMatch ? gsmMatch[0].toUpperCase() : '260 GSM';
+
+            const newProduct = {
+                id: 'owner-drop-' + Date.now(),
+                name: title,
+                category: category,
+                price: price,
+                originalPrice: origPrice,
+                badge: badge,
+                rating: 5.0,
+                reviews: 1,
+                gsm: gsm,
+                quality: quality,
+                fabric: quality,
+                hasSizeChart: hasSizeChart,
+                image: pageUploadedImage,
+                description: description,
+                colors: Array.from(pageSelectedColors),
+                sizes: Array.from(pageSelectedSizes),
+                isCustom: true,
+                createdAt: new Date().toLocaleDateString()
+            };
+
+            saveCustomProduct(newProduct);
+            renderInventoryTable();
+
+            if (window.bsAudio) bsAudio.playSuccess();
+            if (window.confettiEngine) confettiEngine.burst(80);
+
+            alert(`🎉 Success! "${title}" is now published on the store with custom price, quality, sizes, colours, and size chart!`);
+        }
+
+        function renderInventoryTable() {
+            const tbody = document.getElementById('inventoryTableBody');
+            if (!tbody) return;
+
+            const allProducts = BLACKSTONE_PRODUCTS;
+            const customProducts = getCustomProducts();
+
+            document.getElementById('statTotalCount').textContent = allProducts.length;
+            document.getElementById('statCustomCount').textContent = customProducts.length;
+
+            tbody.innerHTML = allProducts.map((p, idx) => `
+                <tr>
+                    <td>
+                        <img src="${p.image}" class="inventory-thumb" alt="${p.name}">
+                    </td>
+                    <td>
+                        <strong style="color: #fff;">${p.name}</strong>
+                        <div style="font-size:0.75rem; color:var(--color-muted);">${p.badge} &bull; ${p.fabric || p.gsm}</div>
+                    </td>
+                    <td><span class="product-tag">${p.category}</span></td>
+                    <td><strong>${p.gsm || '260 GSM'}</strong></td>
+                    <td><small>${(p.sizes || []).join(', ')}</small></td>
+                    <td><strong class="red-text">$${p.price.toFixed(2)}</strong></td>
+                    <td>
+                        ${p.isCustom 
+                            ? '<span class="reward-badge" style="position:static; font-size:0.7rem; background:rgba(255,20,56,0.2); color:var(--color-red);">Owner Drop</span>' 
+                            : '<span style="font-size:0.75rem; color:var(--color-muted);">Base Drop</span>'}
+                    </td>
+                    <td>
+                        <div style="display:flex; gap:6px;">
+                            <button class="btn btn-outline btn-sm" onclick="openProductModal('${p.id}')" style="padding:4px 8px;" title="View in Store">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                            ${p.isCustom ? `
+                                <button class="btn btn-secondary btn-sm" onclick="deleteOwnerItem('${p.id}')" style="padding:4px 8px; color:#f87171;" title="Delete Product">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function deleteOwnerItem(productId) {
+            if (!confirm('Are you sure you want to delete this product listing from the store?')) return;
+            const list = getCustomProducts().filter(p => p.id !== productId);
+            localStorage.setItem(BS_CUSTOM_PRODUCTS_KEY, JSON.stringify(list));
+            loadCustomProducts();
+            renderInventoryTable();
+            if (window.bsAudio) bsAudio.playClick();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderInventoryTable();
+            updateLivePreview();
+        });
+    </script>
+</body>
+</html>

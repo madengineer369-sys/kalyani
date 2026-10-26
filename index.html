@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black Stone - Premium T-Shirt Collection</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="scroll-animation.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon"><i class="fa-solid fa-gem"></i></span>
+                <span class="logo-text">BLACK <span class="gold-text">STONE</span></span>
+            </a>
+            
+            <nav class="main-nav" id="mainNav">
+                <ul>
+                    <li><a href="index.html" class="nav-link active">Home</a></li>
+                    <li><a href="#experience" class="nav-link special-glow">Black Lizard</a></li>
+                    <li><a href="#shop" class="nav-link">Collection</a></li>
+                    <li><a href="code-zone.html" class="nav-link">Code Zone</a></li>
+                    <li><a href="mystery-box.html" class="nav-link">Mystery Box</a></li>
+                    <li><a href="owner.html" class="nav-link">Owner Hub</a></li>
+                    <li><a href="about.html" class="nav-link">About</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <button class="owner-btn-header" id="ownerActionBtn" onclick="openOwnerModal()" title="Owner Product Listing Portal">
+                    <i class="fa-solid fa-plus-circle"></i> <span>List Product</span>
+                </button>
+                <button class="account-btn-header" id="accountActionBtn" onclick="window.location.href='auth.html'">
+                    <i class="fa-solid fa-user"></i> <span id="accountActionText">Login</span>
+                </button>
+                <button class="app-btn-header" onclick="window.location.href='app.html'">
+                    <i class="fa-solid fa-mobile-screen-button"></i> <span>Get App</span>
+                </button>
+                <div class="cart-trigger" id="cartTrigger" onclick="toggleCart(true)">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </div>
+                <button class="mobile-menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-drawer-overlay" onclick="toggleCart(false)"></div>
+        <div class="cart-drawer-content">
+            <div class="cart-drawer-header">
+                <h3>Shopping Bag (<span id="cartDrawerCount">0</span>)</h3>
+                <button class="close-btn" onclick="toggleCart(false)"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="cart-drawer-items" id="cartItemsList"></div>
+            <div class="cart-drawer-footer" id="cartFooter" style="display: none;">
+                <div class="cart-total-row">
+                    <span>Subtotal</span>
+                    <span class="cart-total-price" id="cartTotalVal">$0.00</span>
+                </div>
+                <p class="cart-disclaimer">Free premium shipping included. T-shirt labels contain codes for unlocking the Mystery Box.</p>
+                <button class="btn btn-gold w-100" id="checkoutBtn" onclick="checkoutCart()">Secure Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="productModal">
+        <div class="modal-content product-modal-content">
+            <button class="close-btn modal-close" onclick="closeProductModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="product-modal-grid" id="productModalGrid"></div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="checkoutModal">
+        <div class="modal-content checkout-modal-content">
+            <div class="checkout-success-header">
+                <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+                <h2>Order Confirmed!</h2>
+                <p>Your Black Stone package is preparing for shipping.</p>
+            </div>
+            <div class="checkout-order-details">
+                <p>Order ID: <span id="checkoutOrderId" class="gold-text">#BS-90210</span></p>
+                <div class="code-reveal-box">
+                    <h3><i class="fa-solid fa-ticket-simple"></i> Your Mystery Box Codes</h3>
+                    <p>Use these generated demo codes on the Code Zone page to unlock the Mystery Box experience.</p>
+                    <div class="generated-codes-list" id="generatedCodesList"></div>
+                    <button class="btn btn-secondary btn-sm mt-3" onclick="copyAllGeneratedCodes()">
+                        <i class="fa-solid fa-copy"></i> Copy All Codes
+                    </button>
+                </div>
+            </div>
+            <div class="checkout-modal-actions">
+                <button class="btn btn-gold" onclick="closeCheckoutModalAndGoToCodes()">Go to Code Zone</button>
+            </div>
+        </div>
+    </div>
+
+    <section id="home" class="hero-section">
+        <div class="hero-bg-glow"></div>
+        <div class="container hero-container">
+            <div class="hero-text-content">
+                <div class="badge-premium"><i class="fa-solid fa-crown"></i> Black & Crimson Luxury Streetwear</div>
+                <h1 class="hero-title">BLACK STONE<br><span class="red-text glow-red">Crimson</span> Edition.</h1>
+                <p class="hero-subtitle">Heavyweight 260GSM-290GSM streetwear tees engineered in deep obsidian black and bold crimson accents, with encrypted garment tags and Mystery Box rewards.</p>
+                <div class="hero-proof-row">
+                    <span><i class="fa-solid fa-circle-check"></i> 260GSM-290GSM cotton</span>
+                    <span><i class="fa-solid fa-circle-check"></i> Hidden collar codes</span>
+                    <span><i class="fa-solid fa-circle-check"></i> Interactive Size Chart</span>
+                </div>
+                <div class="hero-ctas">
+                    <button class="btn btn-gold btn-lg" onclick="document.getElementById('experience').scrollIntoView({behavior:'smooth'})">
+                        <i class="fa-solid fa-arrow-down"></i> Explore Drop
+                    </button>
+                    <button class="btn btn-outline btn-lg" onclick="scrollToSection('shop')">
+                        <i class="fa-solid fa-bag-shopping"></i> Shop Collection
+                    </button>
+                    <button class="btn btn-secondary btn-lg" onclick="openSizeChartModal()">
+                        <i class="fa-solid fa-ruler-combined"></i> Size Chart
+                    </button>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="hero-drop-card" onclick="document.getElementById('experience').scrollIntoView({behavior:'smooth'})" style="cursor: pointer;">
+                    <span>Exclusive Drop</span>
+                    <strong style="color:var(--color-red,#ff1438);">Black Lizard 280GSM</strong>
+                    <small>Scroll down to reveal <i class="fa-solid fa-arrow-down"></i></small>
+                </div>
+                <div class="hero-floating-card main-card">
+                    <img src="assets/sig_tee.png" alt="Black Stone Signature T-shirt" class="hero-img">
+                    <div class="hero-img-overlay"></div>
+                    <div class="hero-product-label">
+                        <span>Signature Crimson Crest Tee</span>
+                        <strong>$49</strong>
+                    </div>
+                </div>
+                <div class="hero-floating-card floating-box">
+                    <img src="assets/mystery_box.png" alt="Black Stone Mystery Box" class="floating-box-img">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================================================
+         SEAMLESS SCROLL-ANIMATION RUNWAY (BLACK LIZARD DROP)
+         Plays smoothly as user scrolls down, leading into the Collection below
+         ========================================================================== -->
+    <section class="scroll-experience-section" id="experience">
+        <div class="scroll-track" id="scrollTrack" style="height: 380vh;">
+            <div class="sticky-canvas-container" id="stickyContainer">
+                
+                <!-- Background Ambient Effects -->
+                <div class="canvas-crimson-glow"></div>
+                <div class="canvas-vignette"></div>
+
+                <!-- Main Render Canvas -->
+                <canvas id="scrollCanvas" class="scroll-canvas"></canvas>
+
+                <!-- Top Floating HUD -->
+                <div class="scroll-hud-top">
+                    <div class="scroll-brand-badge">
+                        <span class="live-dot"></span>
+                        <span>Black Lizard // Crimson Drop</span>
+                    </div>
+                    <div class="scroll-frame-counter" id="scrollFrameCounter">
+                        FRAME <span class="highlight">001</span> / 210
+                    </div>
+                </div>
+
+                <!-- Floating Story Narrative Overlays -->
+                <div class="story-overlays-container">
+                    
+                    <!-- Act 1 (Frames 1-48) -->
+                    <div class="story-card story-card-act1 active" id="storyCardAct1">
+                        <div class="story-act-badge">
+                            <i class="fa-solid fa-gem"></i> Obsidian Streetwear
+                        </div>
+                        <h2 class="story-title">BLACK LIZARD<br><span style="color:var(--color-red,#ff1438)">Crimson Edition</span></h2>
+                        <p class="story-desc">
+                            Heavyweight 280GSM dense ring-spun Japanese cotton. Deep obsidian silhouette poised upon luxury crimson drape.
+                        </p>
+                        <div class="story-tags">
+                            <span class="story-tag-pill">280 GSM</span>
+                            <span class="story-tag-pill">Drop Shoulder</span>
+                            <span class="story-tag-pill">Limited 500</span>
+                        </div>
+                    </div>
+
+                    <!-- Act 2 (Frames 50-108) -->
+                    <div class="story-card story-card-act2" id="storyCardAct2">
+                        <div class="story-act-badge">
+                            <i class="fa-solid fa-microscope"></i> Macro Weave Anatomy
+                        </div>
+                        <h2 class="story-title">Living Reptilian<br>Form & Texture</h2>
+                        <p class="story-desc">
+                            Ultra-dense 16-gauge weave with pre-shrunk bio-wash finishing. High-tension knit with zero pilling or deformation.
+                        </p>
+                        <div class="story-tags">
+                            <span class="story-tag-pill">Bio-Washed</span>
+                            <span class="story-tag-pill">Zero Pilling</span>
+                            <span class="story-tag-pill">Twin-Needle Seams</span>
+                        </div>
+                    </div>
+
+                    <!-- Act 3 (Frames 110-162) -->
+                    <div class="story-card story-card-act3" id="storyCardAct3">
+                        <div class="story-act-badge">
+                            <i class="fa-solid fa-dna"></i> Symbiotic Fusion
+                        </div>
+                        <h2 class="story-title">Organic Predator<br>Meets Garment Art</h2>
+                        <p class="story-desc">
+                            Contours morph into high-density 3D silicone relief embroidery. Cold-blooded elegance stamped onto streetwear heritage.
+                        </p>
+                        <div class="story-tags">
+                            <span class="story-tag-pill">Silicone 3D Relief</span>
+                            <span class="story-tag-pill">Micro-Embossed</span>
+                            <span class="story-tag-pill">Fade-Proof</span>
+                        </div>
+                    </div>
+
+                    <!-- Act 4 (Frames 165-210) -->
+                    <div class="story-card story-card-act4" id="storyCardAct4">
+                        <div class="story-act-badge">
+                            <i class="fa-solid fa-crown"></i> The Signature Drop
+                        </div>
+                        <h2 class="story-title">BLACK LIZARD<br><span style="color:var(--color-red,#ff1438)">Tee Released</span></h2>
+                        <p class="story-desc">
+                            Drop 01 is now live in the collection below. Includes encrypted scratch code label granting access to the Mystery Box.
+                        </p>
+                        
+                        <div class="story-buy-box">
+                            <div class="story-price-row">
+                                <span class="story-price">$58.00</span>
+                                <span class="story-orig-price">$75.00</span>
+                                <span class="story-drop-status"><i class="fa-solid fa-circle-check"></i> In Stock</span>
+                            </div>
+
+                            <div style="font-size:0.75rem; color:rgba(255,255,255,0.6); margin-bottom:6px; letter-spacing:1px; text-transform:uppercase;">
+                                Select Fit:
+                            </div>
+                            <div class="story-sizes-row">
+                                <button class="size-pill-btn" data-size="S">S</button>
+                                <button class="size-pill-btn" data-size="M">M</button>
+                                <button class="size-pill-btn active" data-size="L">L</button>
+                                <button class="size-pill-btn" data-size="XL">XL</button>
+                                <button class="size-pill-btn" data-size="XXL">XXL</button>
+                            </div>
+
+                            <button class="story-buy-btn action-add-lizard-bag" style="margin-bottom:10px;">
+                                <i class="fa-solid fa-bag-shopping"></i> Quick Add to Bag — $58.00
+                            </button>
+                            
+                            <button class="btn btn-outline btn-sm w-100" onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})" style="font-size:0.8rem; padding:8px; border-color:rgba(255,255,255,0.2);">
+                                Explore Collection Below <i class="fa-solid fa-arrow-down ms-1"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Bottom Glassmorphic Progress & Scroll Indicator -->
+                <div class="scroll-hud-bottom" style="max-width: 640px; padding: 10px 18px;">
+                    <div class="hud-scrubber-row" style="margin: 0;">
+                        <span style="font-size: 0.72rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1px; white-space: nowrap;">
+                            <i class="fa-solid fa-arrow-down" style="color: var(--color-red, #ff1438); margin-right: 4px;"></i> Scroll Down to Animate
+                        </span>
+                        <div class="scrubber-track" id="hudScrubberTrack" style="height: 6px;">
+                            <div class="scrubber-fill" id="scrubberFill"></div>
+                        </div>
+                        <div class="scrubber-time" id="scrubberTime" style="font-size: 0.75rem;">00:00.0s</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="brand-strip-section" aria-label="Brand highlights">
+        <div class="brand-strip-track">
+            <span>Heavy Cotton</span><i class="fa-solid fa-gem"></i>
+            <span>Stone Detail</span><i class="fa-solid fa-gem"></i>
+            <span>Scratch Codes</span><i class="fa-solid fa-gem"></i>
+            <span>Mystery Rewards</span><i class="fa-solid fa-gem"></i>
+            <span>Limited Street Drops</span><i class="fa-solid fa-gem"></i>
+            <span>Heavy Cotton</span><i class="fa-solid fa-gem"></i>
+            <span>Stone Detail</span><i class="fa-solid fa-gem"></i>
+            <span>Scratch Codes</span><i class="fa-solid fa-gem"></i>
+            <span>Mystery Rewards</span>
+        </div>
+    </section>
+
+    <section id="shop" class="shop-section">
+        <div class="container">
+            <div class="section-header" style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:20px;">
+                <div>
+                    <span class="section-tag">First Page Collection</span>
+                    <h2>T-Shirt Collection</h2>
+                    <p class="page-home-collection-note">Heavyweight luxury tees in obsidian & crimson. Select your fit or view our tailoring size chart.</p>
+                </div>
+                <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+                    <button class="owner-btn-header" onclick="openOwnerModal()" style="padding: 8px 16px;">
+                        <i class="fa-solid fa-plus-circle me-1"></i> List New Product
+                    </button>
+                    <button class="btn btn-outline btn-sm" onclick="openSizeChartModal()" style="border-color:var(--color-red); color:var(--color-red);">
+                        <i class="fa-solid fa-ruler-combined me-1"></i> Size Chart
+                    </button>
+                </div>
+            </div>
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px; flex-wrap:wrap; gap:12px;">
+                <div class="shop-filters" id="shopFilters">
+                    <button class="filter-btn active" data-filter="all">All Styles</button>
+                    <button class="filter-btn" data-filter="signature">Signature</button>
+                    <button class="filter-btn" data-filter="graphic">Graphic</button>
+                    <button class="filter-btn" data-filter="minimalist">Minimalist</button>
+                </div>
+            </div>
+            <div class="products-grid" id="productsGrid"></div>
+            <div class="shop-promise-grid">
+                <div class="shop-promise-item">
+                    <i class="fa-solid fa-box-open"></i>
+                    <span>Every order includes hidden claim codes</span>
+                </div>
+                <div class="shop-promise-item">
+                    <i class="fa-solid fa-shield-heart"></i>
+                    <span>Premium stitching, pre-shrunk fabric, clean collar shape</span>
+                </div>
+                <div class="shop-promise-item">
+                    <i class="fa-solid fa-truck-fast"></i>
+                    <span>Free shipping on Mystery Box rewards</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="how-it-works-section">
+        <div class="container">
+            <div class="section-header text-center">
+                <span class="section-tag">Reward Loop</span>
+                <h2>How Black Stone Works</h2>
+                <p>Buy tees, collect codes, and unlock the Mystery Box.</p>
+            </div>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-num">01</div>
+                    <div class="step-icon"><i class="fa-solid fa-store"></i></div>
+                    <h3>Buy Tees</h3>
+                    <p>Order your favorite premium Black Stone T-shirts.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">02</div>
+                    <div class="step-icon"><i class="fa-solid fa-ticket-simple"></i></div>
+                    <h3>Find Codes</h3>
+                    <p>Each label includes a hidden code for verification.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">03</div>
+                    <div class="step-icon"><i class="fa-solid fa-keyboard"></i></div>
+                    <h3>Enter Codes</h3>
+                    <p>Submit 5 codes in the Code Zone page.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">04</div>
+                    <div class="step-icon"><i class="fa-solid fa-gift"></i></div>
+                    <h3>Unlock Box</h3>
+                    <p>Open a digital Mystery Box reward reveal.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="drop-banner-section">
+        <div class="container drop-banner">
+            <div>
+                <span class="section-tag">Limited Drop System</span>
+                <h2>Buy the fit. Build the streak. Unlock the box.</h2>
+            </div>
+            <p>Black Stone turns every tee into a collectible. Codes live inside the labels, your streak stays in the Code Zone, and the Mystery Box becomes the reward for real buyers.</p>
+            <button class="btn btn-outline" onclick="window.location.href='code-zone.html'">
+                <i class="fa-solid fa-lock-open"></i> Try Code Zone
+            </button>
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="logo">
+                    <span class="logo-icon"><i class="fa-solid fa-gem"></i></span>
+                    <span class="logo-text">BLACK <span class="gold-text">STONE</span></span>
+                </a>
+                <p class="footer-about-text">Premium T-shirts with hidden codes, limited drops, and Mystery Box rewards.</p>
+                <div class="footer-socials">
+                    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h4>Collections</h4>
+                <ul>
+                    <li><a href="index.html#shop">Signature Tees</a></li>
+                    <li><a href="index.html#shop">Graphic Releases</a></li>
+                    <li><a href="index.html#shop">Minimalist Collection</a></li>
+                    <li><a href="index.html#shop">Limited Drops</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Explore</h4>
+                <ul>
+                    <li><a href="code-zone.html">Code Zone</a></li>
+                    <li><a href="mystery-box.html">Mystery Box</a></li>
+                    <li><a href="about.html">Brand Story</a></li>
+                    <li><a href="app.html">Download App</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="contact.html">Contact Care</a></li>
+                    <li><a href="contact.html">FAQs</a></li>
+                    <li><a href="#">Shipping Policy</a></li>
+                    <li><a href="#">Terms of Reward</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom text-center">
+            <p>&copy; 2026 Black Stone Inc. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+    <script src="scroll-animation.js"></script>
+</body>
+</html>

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Concierge & FAQs — Black Stone</title>
+    <meta name="description" content="Get in touch with Black Stone concierge, track orders, verify label codes, and view FAQs.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 40px;
+            margin-top: 40px;
+        }
+        @media(max-width: 900px) {
+            .contact-grid { grid-template-columns: 1fr; }
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-white);
+            margin-bottom: 8px;
+        }
+        .form-control-custom {
+            width: 100%;
+            background: rgba(14, 14, 20, 0.8);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-sm);
+            padding: 14px 18px;
+            color: var(--color-white);
+            font-size: 0.95rem;
+            transition: var(--transition-smooth);
+        }
+        .form-control-custom:focus {
+            border-color: var(--color-gold);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+            background: rgba(20, 20, 28, 0.95);
+        }
+        .faq-item {
+            background: var(--color-bg-card-solid);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 14px;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+        }
+        .faq-item:hover {
+            border-color: rgba(212, 175, 55, 0.4);
+        }
+        .faq-question {
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+        .faq-question i {
+            color: var(--color-gold);
+            transition: transform 0.3s ease;
+        }
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0, 1, 0, 1), padding 0.3s ease;
+            padding: 0 24px;
+            color: var(--color-muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            padding: 0 24px 20px;
+            transition: max-height 0.4s ease-in-out, padding 0.3s ease;
+        }
+        .contact-info-card {
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-md);
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon"><i class="fa-solid fa-gem"></i></span>
+                <span class="logo-text">BLACK <span class="red-text gold-text">STONE</span></span>
+            </a>
+            
+            <nav class="main-nav" id="mainNav">
+                <ul>
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="index.html#experience" class="nav-link">Black Lizard</a></li>
+                    <li><a href="index.html#shop" class="nav-link">Collection</a></li>
+                    <li><a href="code-zone.html" class="nav-link">Code Zone</a></li>
+                    <li><a href="mystery-box.html" class="nav-link">Mystery Box</a></li>
+                    <li><a href="owner.html" class="nav-link">Owner Hub</a></li>
+                    <li><a href="about.html" class="nav-link">About</a></li>
+                    <li><a href="contact.html" class="nav-link active">Contact</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <button class="owner-btn-header" id="ownerActionBtn" onclick="openOwnerModal()" title="Owner Product Listing Portal">
+                    <i class="fa-solid fa-plus-circle"></i> <span>List Product</span>
+                </button>
+                <button class="account-btn-header" id="accountActionBtn" onclick="window.location.href='auth.html'">
+                    <i class="fa-solid fa-user"></i> <span id="accountActionText">Login</span>
+                </button>
+                <button class="app-btn-header" onclick="window.location.href='app.html'">
+                    <i class="fa-solid fa-mobile-screen-button"></i> <span>Get App</span>
+                </button>
+                <div class="cart-trigger" id="cartTrigger" onclick="toggleCart(true)">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </div>
+                <button class="mobile-menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Cart Drawer -->
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-drawer-overlay" onclick="toggleCart(false)"></div>
+        <div class="cart-drawer-content">
+            <div class="cart-drawer-header">
+                <h3>Shopping Bag (<span id="cartDrawerCount">0</span>)</h3>
+                <button class="close-btn" onclick="toggleCart(false)"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="cart-drawer-items" id="cartItemsList"></div>
+            <div class="cart-drawer-footer" id="cartFooter" style="display: none;">
+                <div class="cart-total-row">
+                    <span>Subtotal</span>
+                    <span class="cart-total-price" id="cartTotalVal">$0.00</span>
+                </div>
+                <p class="cart-disclaimer">Free premium shipping included. T-shirt labels contain codes for unlocking the Mystery Box.</p>
+                <button class="btn btn-gold w-100" id="checkoutBtn" onclick="checkoutCart()">Secure Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div class="modal-backdrop" id="productModal">
+        <div class="modal-content product-modal-content">
+            <button class="close-btn modal-close" onclick="closeProductModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="product-modal-grid" id="productModalGrid"></div>
+        </div>
+    </div>
+
+    <!-- Checkout Success Modal -->
+    <div class="modal-backdrop" id="checkoutModal">
+        <div class="modal-content checkout-modal-content">
+            <div class="checkout-success-header">
+                <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+                <h2>Order Confirmed!</h2>
+                <p>Your Black Stone package is preparing for shipping.</p>
+            </div>
+            <div class="checkout-order-details">
+                <p>Order ID: <span id="checkoutOrderId" class="gold-text">#BS-90210</span></p>
+                <div class="code-reveal-box">
+                    <h3><i class="fa-solid fa-ticket-simple"></i> Your Mystery Box Codes</h3>
+                    <p>Use these generated demo codes on the Code Zone page to unlock the Mystery Box experience.</p>
+                    <div class="generated-codes-list" id="generatedCodesList"></div>
+                    <button class="btn btn-secondary btn-sm mt-3" onclick="copyAllGeneratedCodes()">
+                        <i class="fa-solid fa-copy"></i> Copy All Codes
+                    </button>
+                </div>
+            </div>
+            <div class="checkout-modal-actions">
+                <button class="btn btn-gold" onclick="closeCheckoutModalAndGoToCodes()">Go to Code Zone</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Hero Banner -->
+    <section class="page-hero-section" style="padding: 160px 0 60px;">
+        <div class="container text-center">
+            <span class="section-tag">Direct Assistance</span>
+            <h1 class="hero-title" style="font-size: 3.2rem; margin-bottom: 16px;">
+                Client Concierge & Support
+            </h1>
+            <p class="hero-subtitle" style="margin: 0 auto; max-width: 650px;">
+                Have an inquiry regarding an order, label verification code, or sizing consultation? Our concierge team is at your service.
+            </p>
+        </div>
+    </section>
+
+    <!-- Main Content Grid -->
+    <section style="padding: 40px 0 100px;">
+        <div class="container">
+            <div class="contact-grid">
+                
+                <!-- Contact Message Form -->
+                <div class="glass-panel" style="padding: 40px;">
+                    <h2 style="font-family: var(--font-heading); font-size: 1.8rem; margin-bottom: 8px;">
+                        Send a Direct Message
+                    </h2>
+                    <p style="color: var(--color-muted); font-size: 0.95rem; margin-bottom: 28px;">
+                        Replies dispatched within 12 hours. Priority given to verified code holders.
+                    </p>
+
+                    <div id="contactFormAlert" class="auth-message" style="display: none; margin-bottom: 20px;"></div>
+
+                    <form id="contactForm" onsubmit="handleContactSubmit(event)">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div class="form-group">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" id="contactName" class="form-control-custom" placeholder="e.g. Alex Hunter" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" id="contactEmail" class="form-control-custom" placeholder="alex@domain.com" required>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div class="form-group">
+                                <label class="form-label">Inquiry Subject</label>
+                                <select id="contactSubject" class="form-control-custom" style="cursor: pointer;">
+                                    <option value="code_help">Mystery Box Label Code Issue</option>
+                                    <option value="order_status">Order Status & Tracking</option>
+                                    <option value="sizing_fabric">Fabric / GSM / Sizing Advice</option>
+                                    <option value="press_collab">Press & Collaboration</option>
+                                    <option value="other">General Concierge</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Order # (Optional)</label>
+                                <input type="text" id="contactOrderNum" class="form-control-custom" placeholder="#BS-90210">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Message</label>
+                            <textarea id="contactMessage" class="form-control-custom" rows="5" placeholder="Detail your question or label serial number..." required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-gold w-100 py-3" style="font-size: 1.05rem;">
+                            <i class="fa-solid fa-paper-plane me-2"></i> Transmit Message
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Info Cards & Live Order Lookup -->
+                <div>
+                    <!-- Order Status Quick Checker -->
+                    <div class="contact-info-card">
+                        <h3 style="font-family: var(--font-heading); font-size: 1.25rem; margin-bottom: 8px;">
+                            <i class="fa-solid fa-truck-fast gold-text me-2"></i> Fast Order Tracker
+                        </h3>
+                        <p style="color: var(--color-muted); font-size: 0.9rem; margin-bottom: 16px;">
+                            Enter your Black Stone order reference to check fulfillment & label code allocation:
+                        </p>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="orderTrackInput" class="form-control-custom" placeholder="#BS-90210" style="padding: 10px 14px;">
+                            <button class="btn btn-secondary" onclick="checkOrderStatus()" style="white-space: nowrap; padding: 10px 18px;">
+                                Track
+                            </button>
+                        </div>
+                        <div id="orderTrackResult" style="display:none; margin-top: 14px; padding: 14px; background: rgba(212, 175, 55, 0.08); border: 1px solid var(--color-gold); border-radius: 6px; font-size: 0.88rem;"></div>
+                    </div>
+
+                    <!-- Direct Concierge Details -->
+                    <div class="contact-info-card">
+                        <h3 style="font-family: var(--font-heading); font-size: 1.25rem; margin-bottom: 16px;">
+                            <i class="fa-solid fa-headset gold-text me-2"></i> VIP Concierge Channels
+                        </h3>
+                        <div style="display: flex; flex-direction: column; gap: 14px;">
+                            <div style="display: flex; align-items: center; gap: 14px;">
+                                <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; color: var(--color-gold);">
+                                    <i class="fa-solid fa-envelope"></i>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.75rem; color: var(--color-muted); text-transform: uppercase;">Direct Dispatch</div>
+                                    <div style="font-weight: 600; font-size: 0.95rem;">concierge@blackstone-streetwear.com</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 14px;">
+                                <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; color: var(--color-gold);">
+                                    <i class="fa-brands fa-telegram"></i>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.75rem; color: var(--color-muted); text-transform: uppercase;">VIP Drops Channel</div>
+                                    <div style="font-weight: 600; font-size: 0.95rem;">@BlackStoneVIPDropDesk</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 14px;">
+                                <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; color: var(--color-gold);">
+                                    <i class="fa-solid fa-clock"></i>
+                                </div>
+                                <div>
+                                    <div style="font-size: 0.75rem; color: var(--color-muted); text-transform: uppercase;">Concierge Hours</div>
+                                    <div style="font-weight: 600; font-size: 0.95rem;">Mon — Sat, 10:00 AM – 8:00 PM IST</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- FAQ Section -->
+            <div style="margin-top: 80px;" id="faqs">
+                <div class="section-header text-center">
+                    <span class="section-tag">Common Answers</span>
+                    <h2>Frequently Asked Questions</h2>
+                    <p>Everything you need to know about garment codes, shipping, and Mystery Box rewards.</p>
+                </div>
+
+                <div style="max-width: 860px; margin: 0 auto;">
+                    <div class="faq-item active">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>Where do I locate the Mystery Box claim code on my t-shirt?</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Every authentic Black Stone piece includes an embroidered collar satin tag. Turn the tag over or scratch the metallic security silver panel on the lower care label to reveal your 8-character unique alphanumeric redemption code (formatted as <code>BLACKSTONE-XXXXX</code>).
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>How does the 5-T-Shirt Milestone Grand Vault work?</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Whenever you redeem 5 verified garment label codes in the <a href="code-zone.html" class="gold-text">Code Zone</a>, you automatically trigger the <strong>Grand Vault Master Chest</strong>. This legendary drop awards heavyweight limited-run hoodies, sterling silver crest rings, and voucher credits.
+                        </div>
+                    </div>
+
+                    <div class="faq-item" id="shipping">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>What are your domestic and international shipping times?</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            All collection orders and Mystery Box physical rewards are shipped via express insured air courier. Domestic deliveries arrive within 2–4 business days. International dispatches take 5–8 business days with tracking provided upon dispatch.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>What is your exchange and return policy?</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            We offer complimentary 14-day exchanges for sizing adjustments, provided garments are unworn with original woven tags and unscratched code labels intact. If a label code has already been claimed on the website, only store credit exchanges apply.
+                        </div>
+                    </div>
+
+                    <div class="faq-item" id="rewards">
+                        <div class="faq-question" onclick="toggleFaq(this)">
+                            <span>Do Mystery Box reward coupon codes expire?</span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Digital store credits and discount vouchers redeemed through the Mystery Box Lounge are valid for 180 days from the date of unboxing and apply across all upcoming drop collections.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="logo">
+                    <span class="logo-icon"><i class="fa-solid fa-gem"></i></span>
+                    <span class="logo-text">BLACK <span class="gold-text">STONE</span></span>
+                </a>
+                <p class="footer-about-text">Premium heavyweight streetwear with hidden codes, limited drops, and Mystery Box rewards.</p>
+                <div class="footer-socials">
+                    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h4>Collections</h4>
+                <ul>
+                    <li><a href="index.html#shop">Signature Tees</a></li>
+                    <li><a href="index.html#shop">Graphic Releases</a></li>
+                    <li><a href="index.html#shop">Minimalist Collection</a></li>
+                    <li><a href="index.html#shop">Limited Drops</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Explore</h4>
+                <ul>
+                    <li><a href="code-zone.html">Code Zone</a></li>
+                    <li><a href="mystery-box.html">Mystery Box</a></li>
+                    <li><a href="about.html">Brand Story</a></li>
+                    <li><a href="app.html">Download App</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="contact.html">Contact Care</a></li>
+                    <li><a href="contact.html#faqs">FAQs</a></li>
+                    <li><a href="contact.html#shipping">Shipping Policy</a></li>
+                    <li><a href="contact.html#rewards">Terms of Reward</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom text-center">
+            <p>&copy; 2026 Black Stone Inc. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+    <script>
+        function toggleFaq(el) {
+            const item = el.parentElement;
+            item.classList.toggle('active');
+            if (window.bsAudio) bsAudio.playClick();
+        }
+
+        function handleContactSubmit(e) {
+            e.preventDefault();
+            const alertBox = document.getElementById('contactFormAlert');
+            const name = document.getElementById('contactName').value;
+            alertBox.style.display = 'block';
+            alertBox.className = 'auth-message show success';
+            alertBox.style.color = '#ffd700';
+            alertBox.style.borderColor = 'rgba(212, 175, 55, 0.4)';
+            alertBox.innerHTML = `<strong>Inquiry Received!</strong> Thank you ${name}. Your ticket has been assigned to a VIP concierge specialist. Response dispatching shortly.`;
+            document.getElementById('contactForm').reset();
+            if (window.bsAudio) bsAudio.playSuccess();
+            if (window.confettiEngine) confettiEngine.burst(40);
+        }
+
+        function checkOrderStatus() {
+            const val = document.getElementById('orderTrackInput').value.trim();
+            const res = document.getElementById('orderTrackResult');
+            if (!val) {
+                alert('Please enter an order ID (e.g. #BS-90210)');
+                return;
+            }
+            res.style.display = 'block';
+            res.innerHTML = `
+                <div style="font-weight: 700; color: var(--color-gold); margin-bottom: 4px;">
+                    <i class="fa-solid fa-circle-check me-1"></i> Order ${val.toUpperCase()} Found
+                </div>
+                <div style="color: var(--color-white); margin-bottom: 2px;">Status: <strong>Dispatched & In Flight</strong></div>
+                <div style="color: var(--color-muted);">Package includes: <strong>2x 260GSM Tees + 2 Hidden Reward Codes</strong></div>
+            `;
+            if (window.bsAudio) bsAudio.playClick();
+        }
+    </script>
+</body>
+</html>

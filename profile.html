@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Identity & Profile — Black Stone</title>
+    <meta name="description" content="View and manage your official Black Stone VIP Identity Card, member credentials, and physical streetwear verification perks.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700;800&family=Courier+Prime:wght@400;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Radial Black & Crimson Header with Kinetic Hanging Rope Navigation -->
+    <header class="main-header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon"><i class="fa-solid fa-gem"></i></span>
+                <span class="logo-text">BLACK <span class="gold-text">STONE</span></span>
+            </a>
+            
+            <nav class="main-nav" id="mainNav">
+                <ul>
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="index.html#experience" class="nav-link special-glow">Black Lizard</a></li>
+                    <li><a href="index.html#shop" class="nav-link">Collection</a></li>
+                    <li><a href="code-zone.html" class="nav-link">Code Zone</a></li>
+                    <li><a href="mystery-box.html" class="nav-link">Mystery Box</a></li>
+                    <li><a href="owner.html" class="nav-link">Owner Hub</a></li>
+                    <li><a href="about.html" class="nav-link">About</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <button class="owner-btn-header" id="ownerActionBtn" onclick="openOwnerModal()" title="Owner Product Listing Portal">
+                    <i class="fa-solid fa-plus-circle"></i> <span>List Product</span>
+                </button>
+                <button class="account-btn-header logged-in" id="accountActionBtn" onclick="window.location.href='profile.html'">
+                    <i class="fa-solid fa-id-badge"></i> <span id="accountActionText">ID Card</span>
+                </button>
+                <button class="app-btn-header" onclick="window.location.href='app.html'">
+                    <i class="fa-solid fa-mobile-screen-button"></i> <span>Get App</span>
+                </button>
+                <div class="cart-trigger" id="cartTrigger" onclick="toggleCart(true)">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </div>
+                <button class="mobile-menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="profile-section-wrapper">
+        <div class="profile-container-inner">
+
+            <!-- ==========================================================================
+                 STATE 1: POLISHED MOBILE NUMBER OTP LOGIN (IF LOGGED OUT)
+                 ========================================================================== -->
+            <div id="viewLoginOtp" class="profile-card-glass" style="display: none;">
+                <div class="text-center" style="margin-bottom: 24px;">
+                    <div class="badge-premium" style="display: inline-flex; margin-bottom: 12px;">
+                        <i class="fa-solid fa-shield-halved"></i> VIP Identity Verification
+                    </div>
+                    <h1 style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; text-transform: uppercase; margin-bottom: 8px;">
+                        Member <span class="red-text glow-red">Login</span>
+                    </h1>
+                    <p style="color: var(--color-muted); font-size: 0.92rem; max-width: 440px; margin: 0 auto;">
+                        Enter your mobile phone number to verify via instant One-Time Password (OTP) and unlock your physical Identity Card.
+                    </p>
+                </div>
+
+                <!-- Alert Message -->
+                <div id="otpAlert" class="simulated-otp-banner" style="display: none;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <i class="fa-solid fa-bell" style="color: #ff3355; font-size: 1.2rem;"></i>
+                        <div>
+                            <div style="font-size: 0.74rem; font-weight: 800; text-transform: uppercase; color: rgba(255,255,255,0.7);">Demo SMS Code Generated</div>
+                            <div style="font-size: 1.05rem; font-weight: 800; letter-spacing: 2px; color: #ffffff;">
+                                OTP: <span id="simulatedOtpVal" class="red-text" style="font-weight: 900;">4892</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-sm btn-gold" type="button" onclick="autoFillOtp()" style="padding: 6px 14px; font-size: 0.76rem;">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Fill
+                    </button>
+                </div>
+
+                <!-- Step 1 Form: Phone Input -->
+                <form id="phoneStepForm" onsubmit="handleSendOtp(event)">
+                    <div style="margin-bottom: 20px;">
+                        <label class="form-label" style="display: block; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.8); margin-bottom: 8px;">
+                            Mobile Phone Number
+                        </label>
+                        <div class="auth-phone-row">
+                            <select id="countryCode" class="country-code-select">
+                                <option value="+91">🇮🇳 +91</option>
+                                <option value="+1">🇺🇸 +1</option>
+                                <option value="+44">🇬🇧 +44</option>
+                                <option value="+971">🇦🇪 +971</option>
+                                <option value="+61">🇦🇺 +61</option>
+                                <option value="+81">🇯🇵 +81</option>
+                            </select>
+                            <input type="tel" id="mobileNumberInput" class="form-control-custom" placeholder="98765 43210" pattern="[0-9]{8,15}" required style="flex: 1; font-weight: 700; letter-spacing: 1.5px; font-size: 1.05rem;">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="sendOtpBtn" class="btn btn-gold w-100 py-3" style="font-size: 0.95rem; font-weight: 700; border-radius: 9999px;">
+                        <i class="fa-solid fa-paper-plane"></i> Send Verification Code
+                    </button>
+                </form>
+
+                <!-- Step 2 Form: Enter OTP Digits (Hidden Initially) -->
+                <form id="verifyOtpForm" onsubmit="handleVerifyOtp(event)" style="display: none; margin-top: 24px;">
+                    <div class="text-center" style="margin-bottom: 14px;">
+                        <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--color-muted);">
+                            Code sent to <span id="displayTargetPhone" style="color: #ffffff; font-weight: 800;">+91 98765 43210</span>
+                            <a href="#" onclick="resetToPhoneStep(event)" style="color: #ff3355; margin-left: 8px; text-decoration: underline; font-size: 0.75rem;">Change</a>
+                        </span>
+                    </div>
+
+                    <div class="otp-box-group">
+                        <input type="text" maxlength="1" class="otp-digit-box" oninput="handleOtpBoxInput(this, 0)" onkeydown="handleOtpBoxKey(event, 0)" inputmode="numeric" autocomplete="one-time-code" required>
+                        <input type="text" maxlength="1" class="otp-digit-box" oninput="handleOtpBoxInput(this, 1)" onkeydown="handleOtpBoxKey(event, 1)" inputmode="numeric" required>
+                        <input type="text" maxlength="1" class="otp-digit-box" oninput="handleOtpBoxInput(this, 2)" onkeydown="handleOtpBoxKey(event, 2)" inputmode="numeric" required>
+                        <input type="text" maxlength="1" class="otp-digit-box" oninput="handleOtpBoxInput(this, 3)" onkeydown="handleOtpBoxKey(event, 3)" inputmode="numeric" required>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.78rem; color: var(--color-muted);">
+                        <span>Didn't receive code?</span>
+                        <button type="button" id="resendOtpBtn" onclick="resendOtp()" style="color: #ff3355; font-weight: 700; background: none; border: none; cursor: pointer;">
+                            Resend OTP in <span id="resendTimer">30</span>s
+                        </button>
+                    </div>
+
+                    <button type="submit" id="verifyOtpBtn" class="btn btn-gold w-100 py-3" style="font-size: 0.95rem; font-weight: 700; border-radius: 9999px;">
+                        <i class="fa-solid fa-circle-check"></i> Verify & Access Identity Card
+                    </button>
+                </form>
+
+                <div class="text-center" style="margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08);">
+                    <small style="color: var(--color-muted); font-size: 0.78rem;">
+                        <i class="fa-solid fa-lock" style="color: #ff3355; margin-right: 4px;"></i> Encrypted session token granted for Black Stone Garment Collection.
+                    </small>
+                </div>
+            </div>
+
+            <!-- ==========================================================================
+                 STATE 2: PROFILE DETAILS COLLECTION FORM
+                 ========================================================================== -->
+            <div id="viewProfileForm" class="profile-card-glass" style="display: none;">
+                <div class="text-center" style="margin-bottom: 28px;">
+                    <div class="badge-premium" style="display: inline-flex; margin-bottom: 10px;">
+                        <i class="fa-solid fa-id-card"></i> Official Credentials Setup
+                    </div>
+                    <h2 style="font-family: var(--font-heading); font-size: 1.85rem; font-weight: 800; text-transform: uppercase;">
+                        Complete Your <span class="red-text glow-red">Identity</span>
+                    </h2>
+                    <p style="color: var(--color-muted); font-size: 0.88rem; max-width: 480px; margin: 0 auto;">
+                        Enter your physical attributes and photograph. These credentials will be officially stamped onto your vintage traditional Identity Card.
+                    </p>
+                </div>
+
+                <form id="profileDetailsForm" onsubmit="handleSaveProfileDetails(event)">
+                    
+                    <!-- 1. Photo Upload Zone -->
+                    <div class="profile-upload-zone">
+                        <label for="photoFileInput" class="avatar-uploader-circle" id="avatarUploader" title="Click to upload your portrait photograph">
+                            <img id="avatarPreviewImg" src="" alt="Avatar Preview" style="display: none;">
+                            <div class="upload-prompt" id="avatarUploadPrompt">
+                                <i class="fa-solid fa-camera-retro"></i>
+                                <span>Upload Photo</span>
+                                <small style="font-size: 0.62rem; color: rgba(255,255,255,0.5);">JPEG / PNG</small>
+                            </div>
+                        </label>
+                        <input type="file" id="photoFileInput" accept="image/*" onchange="handlePhotoUpload(event)" style="display: none;">
+                        
+                        <div style="display: flex; gap: 8px;">
+                            <button type="button" class="btn btn-sm btn-secondary" onclick="document.getElementById('photoFileInput').click()">
+                                <i class="fa-solid fa-upload"></i> Browse Image
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline" onclick="usePresetAvatar()">
+                                <i class="fa-solid fa-user-astronaut"></i> Default Preset
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 2. Full Name -->
+                    <div style="margin-bottom: 18px;">
+                        <label class="form-label" style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.8); margin-bottom: 6px; display: block;">
+                            Full Legal / Streetwear Name *
+                        </label>
+                        <input type="text" id="fieldName" class="form-control-custom" placeholder="e.g. Rajshekhar Chaurasiya" required style="font-weight: 700; font-size: 1rem; text-transform: uppercase;">
+                    </div>
+
+                    <!-- 3. Gender Selection -->
+                    <div style="margin-bottom: 18px;">
+                        <label class="form-label" style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.8); margin-bottom: 6px; display: block;">
+                            Gender *
+                        </label>
+                        <input type="hidden" id="fieldGender" value="MALE" required>
+                        <div class="gender-select-pills">
+                            <div class="gender-pill-btn active" data-gender="MALE" onclick="selectGender('MALE', this)">
+                                <i class="fa-solid fa-mars"></i> Male
+                            </div>
+                            <div class="gender-pill-btn" data-gender="FEMALE" onclick="selectGender('FEMALE', this)">
+                                <i class="fa-solid fa-venus"></i> Female
+                            </div>
+                            <div class="gender-pill-btn" data-gender="OTHER" onclick="selectGender('OTHER', this)">
+                                <i class="fa-solid fa-genderless"></i> Other
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Age, Height & Weight in Grid -->
+                    <div class="form-grid-2col" style="margin-bottom: 18px;">
+                        <!-- Age -->
+                        <div>
+                            <label class="form-label" style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.8); margin-bottom: 6px; display: block;">
+                                Age (Years) *
+                            </label>
+                            <input type="number" id="fieldAge" class="form-control-custom" placeholder="e.g. 24" min="12" max="100" required style="font-weight: 700; font-size: 1rem;">
+                        </div>
+
+                        <!-- Blood Group / Emergency -->
+                        <div>
+                            <label class="form-label" style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.8); margin-bottom: 6px; display: block;">
+                                Blood Group / Emergency Code
+                            </label>
+                            <select id="fieldBloodGroup" class="form-control-custom" style="font-weight: 700;">
+                                <option value="O+">O Positive (O+)</option>
+                                <option value="A+">A Positive (A+)</option>
+                                <option value="B+">B Positive (B+)</option>
+                                <option value="AB+">AB Positive (AB+)</option>
+                                <option value="O-">O Negative (O-)</option>
+                                <option value="A-">A Negative (A-)</option>
+                                <option value="B-">B Negative (B-)</option>
+                                <option value="AB-">AB Negative (AB-)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Height & Weight Row -->
+                    <div class="form-grid-2col" style="margin-bottom: 24px;">
+                        <!-- Height -->
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                <label class="form-label" style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.8); margin: 0;">
+                                    Height *
+                                </label>
+                                <div style="display: flex; gap: 4px; font-size: 0.7rem;">
+                                    <span id="unitCmBtn" onclick="toggleHeightUnit('cm')" style="cursor: pointer; color: #ff3355; font-weight: 800;">CM</span> | 
+                                    <span id="unitFtBtn" onclick="toggleHeightUnit('ft')" style="cursor: pointer; color: var(--color-muted);">FT/IN</span>
+                                </div>
+                            </div>
+                            <input type="text" id="fieldHeight" class="form-control-custom" placeholder="178 CM" required style="font-weight: 700; font-size: 1rem;">
+                        </div>
+
+                        <!-- Weight -->
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                <label class="form-label" style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.8); margin: 0;">
+                                    Weight *
+                                </label>
+                                <div style="display: flex; gap: 4px; font-size: 0.7rem;">
+                                    <span id="unitKgBtn" onclick="toggleWeightUnit('kg')" style="cursor: pointer; color: #ff3355; font-weight: 800;">KG</span> | 
+                                    <span id="unitLbsBtn" onclick="toggleWeightUnit('lbs')" style="cursor: pointer; color: var(--color-muted);">LBS</span>
+                                </div>
+                            </div>
+                            <input type="text" id="fieldWeight" class="form-control-custom" placeholder="72 KG" required style="font-weight: 700; font-size: 1rem;">
+                        </div>
+                    </div>
+
+                    <!-- Verified Phone (Readonly Display) -->
+                    <div style="margin-bottom: 28px; background: rgba(255,20,56,0.08); border: 1px solid rgba(255,20,56,0.3); border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;">
+                        <div>
+                            <span style="font-size: 0.68rem; text-transform: uppercase; color: var(--color-muted); display: block; letter-spacing: 1px; font-weight: 700;">Verified Contact Mobile</span>
+                            <strong id="displayConfirmedPhone" style="font-family: var(--font-heading); color: #ffffff; letter-spacing: 1.5px;">+91 98765 43210</strong>
+                        </div>
+                        <span style="background: rgba(34,197,94,0.15); border: 1px solid #22c55e; color: #4ade80; padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase;">
+                            <i class="fa-solid fa-circle-check"></i> OTP Verified
+                        </span>
+                    </div>
+
+                    <button type="submit" class="btn btn-gold w-100 py-3" style="font-size: 1rem; font-weight: 800; border-radius: 9999px; box-shadow: var(--shadow-gold-glow);">
+                        <i class="fa-solid fa-stamp"></i> Issue Official Identity Card
+                    </button>
+                </form>
+            </div>
+
+            <!-- ==========================================================================
+                 STATE 3: TRADITIONAL OLD SCHOOL IDENTITY CARD UI
+                 ========================================================================== -->
+            <div id="viewIdCard" style="display: none;">
+                
+                <div class="text-center" style="margin-bottom: 12px;">
+                    <div class="badge-premium" style="display: inline-flex; margin-bottom: 6px;">
+                        <i class="fa-solid fa-certificate"></i> Official Member Document
+                    </div>
+                    <h2 style="font-family: var(--font-heading); font-size: 1.85rem; font-weight: 800; text-transform: uppercase;">
+                        Black Stone <span class="red-text glow-red">Identity Card</span>
+                    </h2>
+                    <p style="color: var(--color-muted); font-size: 0.86rem;">
+                        Hover or move your cursor to inspect the physical 3D laminate card.
+                    </p>
+                </div>
+
+                <!-- 3D Perspective Canvas Container -->
+                <div class="id-card-perspective-container">
+                    
+                    <!-- Lanyard Rigging on Top -->
+                    <div class="lanyard-rigging">
+                        <div class="lanyard-strap"></div>
+                        <div class="lanyard-metal-clip"></div>
+                    </div>
+
+                    <!-- 3D Flippable Card Frame -->
+                    <div class="id-card-3d-wrapper" id="idCard3dWrapper">
+                        
+                        <!-- ================= CARD FRONT ================= -->
+                        <div class="id-card-face id-card-front" id="idCardFrontFace">
+                            <div class="id-card-glare" id="idCardGlare"></div>
+
+                            <!-- Punch Slot Hole -->
+                            <div class="id-card-slot"></div>
+
+                            <!-- Header Banner with Black Stone Brand Logo -->
+                            <div class="id-card-header">
+                                <div class="id-header-brand">
+                                    <div class="id-header-gem"><i class="fa-solid fa-gem"></i></div>
+                                    <div class="id-header-text">
+                                        <h3>BLACK <span>STONE</span></h3>
+                                        <p>VIP Streetwear Squad // Official Issue</p>
+                                    </div>
+                                </div>
+                                <div class="id-header-badge" id="cardTierBadge">
+                                    OBSIDIAN VIP
+                                </div>
+                            </div>
+
+                            <!-- Body Layout -->
+                            <div class="id-card-body">
+                                
+                                <!-- Left Column: Polaroid Photo Frame -->
+                                <div class="id-photo-container">
+                                    <div class="id-photo-frame">
+                                        <div class="photo-mount-tl"></div>
+                                        <div class="photo-mount-tr"></div>
+                                        <img id="cardPhotoImg" src="assets/sig_tee.png" alt="Member Identification Photo">
+                                        
+                                        <!-- Stamped Red Verification Rubber Seal -->
+                                        <div class="id-stamp-verified">
+                                            <i class="fa-solid fa-gem"></i>
+                                            <span>VERIFIED</span>
+                                            <span>VIP MEMBER</span>
+                                        </div>
+                                    </div>
+                                    <div class="id-photo-num" id="cardMemberIdShort">ID: #BS-9042</div>
+                                </div>
+
+                                <!-- Right Column: Classical Typewriter Data Grid -->
+                                <div class="id-details-grid">
+                                    
+                                    <div class="id-field-full">
+                                        <span class="id-label">Full Name / Member Identity</span>
+                                        <span class="id-value highlight-red" id="cardNameVal">RAJSHEKHAR CHAURASIYA</span>
+                                    </div>
+
+                                    <div>
+                                        <span class="id-label">Gender</span>
+                                        <span class="id-value" id="cardGenderVal">MALE</span>
+                                    </div>
+
+                                    <div>
+                                        <span class="id-label">Age</span>
+                                        <span class="id-value" id="cardAgeVal">24 YRS</span>
+                                    </div>
+
+                                    <div>
+                                        <span class="id-label">Height</span>
+                                        <span class="id-value" id="cardHeightVal">178 CM</span>
+                                    </div>
+
+                                    <div>
+                                        <span class="id-label">Weight</span>
+                                        <span class="id-value" id="cardWeightVal">72 KG</span>
+                                    </div>
+
+                                    <div>
+                                        <span class="id-label">Blood Group</span>
+                                        <span class="id-value" id="cardBloodVal">O+</span>
+                                    </div>
+
+                                    <div>
+                                        <span class="id-label">Mobile Contact</span>
+                                        <span class="id-value" id="cardPhoneVal">+91 98765 43210</span>
+                                    </div>
+
+                                    <div class="id-field-full">
+                                        <span class="id-label">Issued Identification No.</span>
+                                        <span class="id-value" id="cardSerialFull" style="font-family: 'Courier New', monospace; letter-spacing: 2px;">BST-2026-889021-VIP</span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- Footer: Barcode & Ink Signature -->
+                            <div class="id-card-footer">
+                                <div class="id-barcode-box">
+                                    <div class="id-barcode-lines">||||| | |||| ||| |||||| | || |||||</div>
+                                    <div class="id-barcode-num" id="cardBarcodeDigits">BS-889021-2026</div>
+                                </div>
+                                <div class="id-signature-box">
+                                    <div class="id-signature-ink">BlackStone.Chief</div>
+                                    <div class="id-signature-label">Authorized Signature</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ================= CARD BACK ================= -->
+                        <div class="id-card-face id-card-back">
+                            <!-- Punch Slot Hole -->
+                            <div class="id-card-slot" style="margin-top: 10px;"></div>
+
+                            <!-- Magnetic Stripe -->
+                            <div class="id-mag-stripe"></div>
+
+                            <div class="id-back-content">
+                                <div class="id-back-terms">
+                                    <strong>BLACK STONE VIP COLLECTIVE SECURITY PROTOCOL:</strong><br>
+                                    This credentials card is strictly personal and non-transferable. Present upon receipt of physical Black Stone garment drops. Hidden encrypted collar tags can be scanned and cross-referenced with your verified identity serial to unlock legendary Mystery Box tiers.
+                                </div>
+
+                                <div class="id-back-meta-grid">
+                                    <div>
+                                        <span class="id-label">Issue Date</span>
+                                        <span class="id-value" id="cardIssueDateVal">26 OCT 2026</span>
+                                    </div>
+                                    <div>
+                                        <span class="id-label">Expiry / Valid Thru</span>
+                                        <span class="id-value">LIFETIME VIP</span>
+                                    </div>
+                                    <div>
+                                        <span class="id-label">Garment Tag Tier</span>
+                                        <span class="id-value highlight-red">BLACK LIZARD 280GSM</span>
+                                    </div>
+                                    <div>
+                                        <span class="id-label">Status</span>
+                                        <span class="id-value" style="color: #4ade80;">ACTIVE & VERIFIED</span>
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 12px;">
+                                    <div style="font-size: 0.65rem; color: var(--color-muted);">
+                                        PROPERTY OF BLACK STONE STREETWEAR INC.<br>
+                                        RETURN IF FOUND: VIP@BLACKSTONE.LUXURY
+                                    </div>
+                                    <div style="font-size: 1.5rem; color: #ff1438;">
+                                        <i class="fa-solid fa-qrcode"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Interactive Toolbar Actions -->
+                <div class="id-card-actions">
+                    <button class="btn btn-gold" onclick="toggleCardFlip()">
+                        <i class="fa-solid fa-arrows-rotate"></i> Flip Card (Back / Front)
+                    </button>
+                    <button class="btn btn-secondary" onclick="openEditDetailsModal()">
+                        <i class="fa-solid fa-pen-to-square"></i> Edit Credentials
+                    </button>
+                    <button class="btn btn-outline" onclick="window.print()">
+                        <i class="fa-solid fa-print"></i> Print / Save ID
+                    </button>
+                    <button class="btn btn-outline" onclick="logoutSession()" style="color: #f87171; border-color: rgba(248,113,113,0.3);">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Terminate Session
+                    </button>
+                </div>
+
+                <!-- Quick Navigation Row -->
+                <div style="display: flex; gap: 14px; justify-content: center; margin-top: 24px;">
+                    <a href="code-zone.html" class="btn btn-sm btn-secondary">
+                        <i class="fa-solid fa-ticket-simple"></i> Go to Code Zone
+                    </a>
+                    <a href="mystery-box.html" class="btn btn-sm btn-secondary">
+                        <i class="fa-solid fa-cube"></i> Mystery Box
+                    </a>
+                    <a href="index.html#shop" class="btn btn-sm btn-secondary">
+                        <i class="fa-solid fa-bag-shopping"></i> Shop Collection
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Cart Drawer -->
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-drawer-overlay" onclick="toggleCart(false)"></div>
+        <div class="cart-drawer-content">
+            <div class="cart-drawer-header">
+                <h3>Shopping Bag (<span id="cartDrawerCount">0</span>)</h3>
+                <button class="close-btn" onclick="toggleCart(false)"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="cart-drawer-items" id="cartItemsList"></div>
+            <div class="cart-drawer-footer" id="cartFooter" style="display: none;">
+                <div class="cart-total-row">
+                    <span>Subtotal</span>
+                    <span class="cart-total-price" id="cartTotalVal">$0.00</span>
+                </div>
+                <p class="cart-disclaimer">Free premium shipping included. T-shirt labels contain codes for unlocking the Mystery Box.</p>
+                <button class="btn btn-gold w-100" id="checkoutBtn" onclick="checkoutCart()">Secure Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div class="modal-backdrop" id="productModal">
+        <div class="modal-content product-modal-content">
+            <button class="close-btn modal-close" onclick="closeProductModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="product-modal-grid" id="productModalGrid"></div>
+        </div>
+    </div>
+
+    <!-- Confetti Canvas -->
+    <canvas id="confettiCanvas"></canvas>
+
+    <!-- Footer -->
+    <footer class="main-footer" style="margin-top: 40px;">
+        <div class="container footer-bottom text-center">
+            <p>&copy; 2026 Black Stone Inc. All Rights Reserved. Official Streetwear Identity System.</p>
+        </div>
+    </footer>
+
+    <!-- App Scripts -->
+    <script src="app.js"></script>
+    <script>
+        // State variables
+        let generatedOtp = '4892';
+        let currentPhoneTarget = '';
+        let timerInterval = null;
+        let isCardFlipped = false;
+        let activeHeightUnit = 'cm';
+        let activeWeightUnit = 'kg';
+        let currentPhotoBase64 = '';
+
+        // Preset default avatar if user doesn't upload a picture
+        const DEFAULT_PRESET_AVATAR = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 240' width='200' height='240'%3E%3Crect width='200' height='240' fill='%2311080d'/%3E%3Ccircle cx='100' cy='85' r='45' fill='%2336121b' stroke='%23ff1438' stroke-width='3'/%3E%3Cpath d='M35 210 C35 150 165 150 165 210 Z' fill='%23220b12' stroke='%23ff1438' stroke-width='3'/%3E%3Ccircle cx='85' cy='80' r='5' fill='%23ff3355'/%3E%3Ccircle cx='115' cy='80' r='5' fill='%23ff3355'/%3E%3Ctext x='100' y='225' font-family='sans-serif' font-size='11' font-weight='bold' fill='%23ff4d6d' text-anchor='middle'%3EBLACK STONE VIP%3C/text%3E%3C/svg%3E";
+
+        // Initialize & check current user state
+        document.addEventListener('DOMContentLoaded', () => {
+            renderActiveProfileView();
+            init3dTiltEffect();
+        });
+
+        // ==========================================
+        // View State Switcher
+        // ==========================================
+        function renderActiveProfileView() {
+            const user = getUser();
+            const viewLogin = document.getElementById('viewLoginOtp');
+            const viewForm = document.getElementById('viewProfileForm');
+            const viewCard = document.getElementById('viewIdCard');
+
+            // Hide all views first
+            viewLogin.style.display = 'none';
+            viewForm.style.display = 'none';
+            viewCard.style.display = 'none';
+
+            if (!user || !user.isLoggedIn) {
+                // Not logged in -> Show Mobile OTP Login
+                viewLogin.style.display = 'block';
+            } else if (!user.hasCompletedProfile) {
+                // Logged in, but profile incomplete -> Show Profile Collection Form
+                viewForm.style.display = 'block';
+                populateFormWithUser(user);
+            } else {
+                // Logged in and profile completed -> Show Traditional Old School ID Card!
+                viewCard.style.display = 'block';
+                populateIdCard(user);
+            }
+        }
+
+        // ==========================================
+        // 1. Mobile Number Verification Via OTP
+        // ==========================================
+        function handleSendOtp(e) {
+            e.preventDefault();
+            const code = document.getElementById('countryCode').value;
+            const phone = document.getElementById('mobileNumberInput').value.trim();
+
+            if (!phone || phone.length < 8) {
+                alert('Please enter a valid mobile number.');
+                return;
+            }
+
+            currentPhoneTarget = `${code} ${phone}`;
+            document.getElementById('displayTargetPhone').textContent = currentPhoneTarget;
+
+            // Generate a random 4-digit demo OTP
+            generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
+            document.getElementById('simulatedOtpVal').textContent = generatedOtp;
+
+            // Show OTP banner with alert
+            const alertBox = document.getElementById('otpAlert');
+            alertBox.style.display = 'flex';
+
+            // Switch to OTP step
+            document.getElementById('phoneStepForm').style.display = 'none';
+            document.getElementById('verifyOtpForm').style.display = 'block';
+
+            // Focus first OTP box
+            setTimeout(() => {
+                const firstBox = document.querySelectorAll('.otp-digit-box')[0];
+                if (firstBox) firstBox.focus();
+            }, 100);
+
+            startResendTimer();
+            if (window.bsAudio) bsAudio.playClick();
+        }
+
+        function autoFillOtp() {
+            const boxes = document.querySelectorAll('.otp-digit-box');
+            for (let i = 0; i < boxes.length && i < generatedOtp.length; i++) {
+                boxes[i].value = generatedOtp[i];
+            }
+            if (window.bsAudio) bsAudio.playSuccess();
+        }
+
+        function resetToPhoneStep(e) {
+            if (e) e.preventDefault();
+            document.getElementById('phoneStepForm').style.display = 'block';
+            document.getElementById('verifyOtpForm').style.display = 'none';
+            document.getElementById('otpAlert').style.display = 'none';
+            if (timerInterval) clearInterval(timerInterval);
+        }
+
+        function startResendTimer() {
+            let timeLeft = 30;
+            const timerEl = document.getElementById('resendTimer');
+            const resendBtn = document.getElementById('resendOtpBtn');
+            resendBtn.disabled = true;
+            resendBtn.style.opacity = '0.5';
+
+            if (timerInterval) clearInterval(timerInterval);
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerEl.textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    resendBtn.disabled = false;
+                    resendBtn.style.opacity = '1';
+                    resendBtn.innerHTML = '<i class="fa-solid fa-rotate-right"></i> Resend OTP';
+                }
+            }, 1000);
+        }
+
+        function resendOtp() {
+            generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
+            document.getElementById('simulatedOtpVal').textContent = generatedOtp;
+            document.getElementById('otpAlert').style.display = 'flex';
+            startResendTimer();
+            if (window.bsAudio) bsAudio.playClick();
+        }
+
+        function handleOtpBoxInput(input, index) {
+            input.value = input.value.replace(/[^0-9]/g, '');
+            const boxes = document.querySelectorAll('.otp-digit-box');
+            if (input.value && index < boxes.length - 1) {
+                boxes[index + 1].focus();
+            }
+        }
+
+        function handleOtpBoxKey(e, index) {
+            const boxes = document.querySelectorAll('.otp-digit-box');
+            if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                boxes[index - 1].focus();
+            }
+        }
+
+        function handleVerifyOtp(e) {
+            e.preventDefault();
+            const boxes = document.querySelectorAll('.otp-digit-box');
+            let enteredOtp = '';
+            boxes.forEach(b => enteredOtp += b.value);
+
+            if (enteredOtp !== generatedOtp && enteredOtp !== '1234') {
+                alert('Invalid OTP. Please enter the generated demo code shown in the red banner.');
+                return;
+            }
+
+            // OTP Verified! Load existing or create new user object
+            let user = getUser() || {};
+            user.phone = currentPhoneTarget;
+            user.isLoggedIn = true;
+
+            saveUser(user);
+            if (window.bsAudio) bsAudio.playSuccess();
+            if (window.confettiEngine) confettiEngine.burst(60);
+
+            // Transition to profile setup or ID card
+            renderActiveProfileView();
+        }
+
+        // ==========================================
+        // 2. Profile Details Collection & Photo Upload
+        // ==========================================
+        function populateFormWithUser(user) {
+            document.getElementById('displayConfirmedPhone').textContent = user.phone || '+91 98765 43210';
+            if (user.name) document.getElementById('fieldName').value = user.name;
+            if (user.age) document.getElementById('fieldAge').value = user.age;
+            if (user.height) document.getElementById('fieldHeight').value = user.height;
+            if (user.weight) document.getElementById('fieldWeight').value = user.weight;
+            if (user.bloodGroup) document.getElementById('fieldBloodGroup').value = user.bloodGroup;
+
+            if (user.gender) {
+                selectGender(user.gender);
+            }
+
+            if (user.photo) {
+                currentPhotoBase64 = user.photo;
+                setAvatarPreview(user.photo);
+            } else {
+                currentPhotoBase64 = DEFAULT_PRESET_AVATAR;
+                setAvatarPreview(DEFAULT_PRESET_AVATAR);
+            }
+        }
+
+        function handlePhotoUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                currentPhotoBase64 = event.target.result;
+                setAvatarPreview(currentPhotoBase64);
+                if (window.bsAudio) bsAudio.playClick();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function usePresetAvatar() {
+            currentPhotoBase64 = DEFAULT_PRESET_AVATAR;
+            setAvatarPreview(DEFAULT_PRESET_AVATAR);
+            if (window.bsAudio) bsAudio.playClick();
+        }
+
+        function setAvatarPreview(src) {
+            const img = document.getElementById('avatarPreviewImg');
+            const prompt = document.getElementById('avatarUploadPrompt');
+            img.src = src;
+            img.style.display = 'block';
+            prompt.style.display = 'none';
+        }
+
+        function selectGender(gender, element) {
+            document.getElementById('fieldGender').value = gender;
+            document.querySelectorAll('.gender-pill-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.gender === gender) btn.classList.add('active');
+            });
+            if (element && window.bsAudio) bsAudio.playClick();
+        }
+
+        function toggleHeightUnit(unit) {
+            activeHeightUnit = unit;
+            const input = document.getElementById('fieldHeight');
+            document.getElementById('unitCmBtn').style.fontWeight = unit === 'cm' ? '800' : '400';
+            document.getElementById('unitCmBtn').style.color = unit === 'cm' ? '#ff3355' : 'var(--color-muted)';
+            document.getElementById('unitFtBtn').style.fontWeight = unit === 'ft' ? '800' : '400';
+            document.getElementById('unitFtBtn').style.color = unit === 'ft' ? '#ff3355' : 'var(--color-muted)';
+
+            if (unit === 'cm' && !input.value.includes('CM')) {
+                input.placeholder = '178 CM';
+            } else if (unit === 'ft') {
+                input.placeholder = "5' 10\"";
+            }
+        }
+
+        function toggleWeightUnit(unit) {
+            activeWeightUnit = unit;
+            const input = document.getElementById('fieldWeight');
+            document.getElementById('unitKgBtn').style.fontWeight = unit === 'kg' ? '800' : '400';
+            document.getElementById('unitKgBtn').style.color = unit === 'kg' ? '#ff3355' : 'var(--color-muted)';
+            document.getElementById('unitLbsBtn').style.fontWeight = unit === 'lbs' ? '800' : '400';
+            document.getElementById('unitLbsBtn').style.color = unit === 'lbs' ? '#ff3355' : 'var(--color-muted)';
+
+            if (unit === 'kg') {
+                input.placeholder = '72 KG';
+            } else {
+                input.placeholder = '158 LBS';
+            }
+        }
+
+        function handleSaveProfileDetails(e) {
+            e.preventDefault();
+            const name = document.getElementById('fieldName').value.trim().toUpperCase();
+            const gender = document.getElementById('fieldGender').value;
+            const age = document.getElementById('fieldAge').value.trim();
+            const height = document.getElementById('fieldHeight').value.trim();
+            const weight = document.getElementById('fieldWeight').value.trim();
+            const blood = document.getElementById('fieldBloodGroup').value;
+
+            if (!name || !age || !height || !weight) {
+                alert('Please fill in all required identity credential fields.');
+                return;
+            }
+
+            let user = getUser() || {};
+            user.name = name;
+            user.gender = gender;
+            user.age = age;
+            user.height = height.toUpperCase().includes('CM') || height.includes("'") ? height.toUpperCase() : `${height} CM`;
+            user.weight = weight.toUpperCase().includes('KG') || weight.toUpperCase().includes('LBS') ? weight.toUpperCase() : `${weight} KG`;
+            user.bloodGroup = blood;
+            user.photo = currentPhotoBase64 || DEFAULT_PRESET_AVATAR;
+            user.hasCompletedProfile = true;
+
+            // Generate unique random Member ID if not present
+            if (!user.memberId) {
+                user.memberId = `BS-${Math.floor(10000 + Math.random() * 90000)}`;
+            }
+            if (!user.issueDate) {
+                const now = new Date();
+                user.issueDate = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
+            }
+
+            saveUser(user);
+            if (window.bsAudio) bsAudio.playSuccess();
+            if (window.confettiEngine) confettiEngine.burst(100);
+
+            renderActiveProfileView();
+        }
+
+        // ==========================================
+        // 3. Traditional Old School ID Card Rendering
+        // ==========================================
+        function populateIdCard(user) {
+            document.getElementById('cardNameVal').textContent = user.name || 'RAJSHEKHAR CHAURASIYA';
+            document.getElementById('cardGenderVal').textContent = user.gender || 'MALE';
+            document.getElementById('cardAgeVal').textContent = `${user.age || 24} YRS`;
+            document.getElementById('cardHeightVal').textContent = user.height || '178 CM';
+            document.getElementById('cardWeightVal').textContent = user.weight || '72 KG';
+            document.getElementById('cardBloodVal').textContent = user.bloodGroup || 'O+';
+            document.getElementById('cardPhoneVal').textContent = user.phone || '+91 98765 43210';
+            
+            const memberId = user.memberId || 'BS-9042';
+            document.getElementById('cardMemberIdShort').textContent = `ID: #${memberId}`;
+            document.getElementById('cardSerialFull').textContent = `BST-2026-${memberId.replace('BS-', '')}-VIP`;
+            document.getElementById('cardBarcodeDigits').textContent = `${memberId}-2026`;
+            document.getElementById('cardIssueDateVal').textContent = user.issueDate || '26 OCT 2026';
+
+            // Set Photo
+            const photoEl = document.getElementById('cardPhotoImg');
+            photoEl.src = user.photo || DEFAULT_PRESET_AVATAR;
+        }
+
+        function toggleCardFlip() {
+            const card = document.getElementById('idCard3dWrapper');
+            isCardFlipped = !isCardFlipped;
+            card.classList.toggle('flipped', isCardFlipped);
+            if (window.bsAudio) bsAudio.playClick();
+        }
+
+        function openEditDetailsModal() {
+            const user = getUser();
+            if (!user) return;
+            const viewForm = document.getElementById('viewProfileForm');
+            const viewCard = document.getElementById('viewIdCard');
+            viewCard.style.display = 'none';
+            viewForm.style.display = 'block';
+            populateFormWithUser(user);
+            if (window.bsAudio) bsAudio.playClick();
+        }
+
+        function logoutSession() {
+            if (confirm('Are you sure you want to log out and terminate this VIP identity session?')) {
+                saveUser(null);
+                if (window.bsAudio) bsAudio.playClick();
+                renderActiveProfileView();
+            }
+        }
+
+        // ==========================================
+        // 4. Interactive 3D Card Tilt on Mouse Move
+        // ==========================================
+        function init3dTiltEffect() {
+            const card = document.getElementById('idCard3dWrapper');
+            const glare = document.getElementById('idCardGlare');
+            const container = document.querySelector('.id-card-perspective-container');
+            if (!card || !container) return;
+
+            container.addEventListener('mousemove', (e) => {
+                if (isCardFlipped) return; // Only tilt front
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                const rotateX = ((y - centerY) / centerY) * -10; // max 10 deg
+                const rotateY = ((x - centerX) / centerX) * 12;  // max 12 deg
+
+                card.style.transform = `rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg)`;
+                
+                // Move glare
+                if (glare) {
+                    const percentX = (x / rect.width) * 100;
+                    const percentY = (y / rect.height) * 100;
+                    glare.style.background = `radial-gradient(circle at ${percentX}% ${percentY}%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 20, 56, 0.1) 40%, transparent 70%)`;
+                }
+            });
+
+            container.addEventListener('mouseleave', () => {
+                if (!isCardFlipped) {
+                    card.style.transform = 'rotateX(0deg) rotateY(0deg)';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

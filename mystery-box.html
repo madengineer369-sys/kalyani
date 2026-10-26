@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black Stone - Mystery Box Lounge & Rewards</title>
+    <meta name="description" content="Discover what's inside the Black Stone Mystery Box. Legendary hoodies, silver signet rings, and exclusive collection vouchers.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon"><i class="fa-solid fa-gem"></i></span>
+                <span class="logo-text">BLACK <span class="red-text gold-text">STONE</span></span>
+            </a>
+            <nav class="main-nav" id="mainNav">
+                <ul>
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="index.html#experience" class="nav-link">Black Lizard</a></li>
+                    <li><a href="index.html#shop" class="nav-link">Collection</a></li>
+                    <li><a href="code-zone.html" class="nav-link">Code Zone</a></li>
+                    <li><a href="mystery-box.html" class="nav-link active">Mystery Box</a></li>
+                    <li><a href="owner.html" class="nav-link">Owner Hub</a></li>
+                    <li><a href="about.html" class="nav-link">About</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <button class="owner-btn-header" id="ownerActionBtn" onclick="openOwnerModal()" title="Owner Product Listing Portal">
+                    <i class="fa-solid fa-plus-circle"></i> <span>List Product</span>
+                </button>
+                <button class="account-btn-header" id="accountActionBtn" onclick="window.location.href='auth.html'">
+                    <i class="fa-solid fa-user"></i> <span id="accountActionText">Login</span>
+                </button>
+                <button class="app-btn-header" onclick="window.location.href='app.html'">
+                    <i class="fa-solid fa-mobile-screen-button"></i> <span>Get App</span>
+                </button>
+                <div class="cart-trigger" id="cartTrigger" onclick="toggleCart(true)">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </div>
+                <button class="mobile-menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Cart Drawer -->
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-drawer-overlay" onclick="toggleCart(false)"></div>
+        <div class="cart-drawer-content">
+            <div class="cart-drawer-header">
+                <h3>Shopping Bag (<span id="cartDrawerCount">0</span>)</h3>
+                <button class="close-btn" onclick="toggleCart(false)"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="cart-drawer-items" id="cartItemsList"></div>
+            <div class="cart-drawer-footer" id="cartFooter" style="display: none;">
+                <div class="cart-total-row">
+                    <span>Subtotal</span>
+                    <span class="cart-total-price" id="cartTotalVal">$0.00</span>
+                </div>
+                <p class="cart-disclaimer">Free premium shipping included. T-shirt labels contain codes for unlocking the Mystery Box.</p>
+                <button class="btn btn-gold w-100" id="checkoutBtn" onclick="checkoutCart()">Secure Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div class="modal-backdrop" id="productModal">
+        <div class="modal-content product-modal-content">
+            <button class="close-btn modal-close" onclick="closeProductModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="product-modal-grid" id="productModalGrid"></div>
+        </div>
+    </div>
+
+    <!-- Checkout Success Modal -->
+    <div class="modal-backdrop" id="checkoutModal">
+        <div class="modal-content checkout-modal-content">
+            <div class="checkout-success-header">
+                <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+                <h2>Order Confirmed!</h2>
+                <p>Your Black Stone package is preparing for shipping.</p>
+            </div>
+            <div class="checkout-order-details">
+                <p>Order ID: <span id="checkoutOrderId" class="gold-text">#BS-90210</span></p>
+                <div class="code-reveal-box">
+                    <h3><i class="fa-solid fa-ticket-simple"></i> Your Mystery Box Codes</h3>
+                    <p>Use these generated demo codes on the Code Zone page to unlock the Mystery Box experience.</p>
+                    <div class="generated-codes-list" id="generatedCodesList"></div>
+                    <button class="btn btn-secondary btn-sm mt-3" onclick="copyAllGeneratedCodes()">
+                        <i class="fa-solid fa-copy"></i> Copy All Codes
+                    </button>
+                </div>
+            </div>
+            <div class="checkout-modal-actions">
+                <button class="btn btn-gold" onclick="closeCheckoutModalAndGoToCodes()">Go to Code Zone</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Hero Banner -->
+    <section class="page-hero-section" style="padding: 160px 0 60px; position: relative;">
+        <div class="hero-bg-glow"></div>
+        <div class="container page-hero-content text-center">
+            <span class="section-tag">Rewards & Underground Vault</span>
+            <h1 class="hero-title" style="font-size: 3.5rem; margin-bottom: 16px;">
+                Inside The Mystery Box
+            </h1>
+            <p class="hero-subtitle" style="margin: 0 auto; max-width: 680px;">
+                Collect five verified garment label codes, unlock the vault, and reveal tangible luxury rewards shipped directly to your door.
+            </p>
+        </div>
+    </section>
+
+    <!-- Interactive Vault Stage Section -->
+    <section style="padding: 20px 0 80px;">
+        <div class="container">
+            <div class="glass-panel" style="padding: 48px 32px; text-align: center; max-width: 800px; margin: 0 auto;">
+                <div style="position: relative; display: inline-block; margin-bottom: 24px;">
+                    <img src="assets/mystery_box.png" alt="Black Stone 3D Mystery Chest" style="width: 220px; aspect-ratio: 1; object-fit: contain; filter: drop-shadow(0 0 25px rgba(212,175,55,0.4)); animation: float 3.5s ease-in-out infinite;">
+                </div>
+                <h2 style="font-family: var(--font-heading); font-size: 2rem; margin-bottom: 10px;">
+                    Interactive Mystery Vault Simulator
+                </h2>
+                <p style="color: var(--color-muted); max-width: 540px; margin: 0 auto 28px; font-size: 1rem;">
+                    Test the live unboxing experience right now. Experience the suspense animation, sonic fanfare, and reward drop algorithm.
+                </p>
+
+                <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn btn-gold btn-lg btn-pulse" onclick="triggerTestVaultUnbox()">
+                        <i class="fa-solid fa-unlock-keyhole me-2"></i> Test Unbox Chest
+                    </button>
+                    <button class="btn btn-outline btn-lg" onclick="window.location.href='code-zone.html'">
+                        <i class="fa-solid fa-ticket-simple me-2"></i> Enter My Codes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reward Tiers Breakdown -->
+    <section id="mystery-box" class="mystery-explainer-section" style="padding: 60px 0 100px;">
+        <div class="container">
+            <div class="section-header text-center">
+                <span class="section-tag">Loot Drop Table</span>
+                <h2>Three Tiers of Underground Luxury</h2>
+                <p>Every single code contains guaranteed value. No filler, no empty rolls.</p>
+            </div>
+
+            <div class="rewards-carousel">
+                <div class="reward-item-card" style="border-color: rgba(212, 175, 55, 0.4);">
+                    <div class="reward-badge" style="background: var(--color-gold); color: #000;">Legendary</div>
+                    <div class="reward-icon" style="color: var(--color-gold);"><i class="fa-solid fa-crown"></i></div>
+                    <h3>Heavyweight Hoodies & ₹2,000</h3>
+                    <p>Limited-run 450GSM French terry hoodies with metallic stone embroidery, custom engraved copper hardware, and ₹2,000 drop voucher.</p>
+                </div>
+                <div class="reward-item-card" style="border-color: rgba(168, 85, 247, 0.4);">
+                    <div class="reward-badge" style="background: #a855f7; color: #fff;">Epic</div>
+                    <div class="reward-icon" style="color: #a855f7;"><i class="fa-solid fa-ring"></i></div>
+                    <h3>Sterling Silver Signet Ring</h3>
+                    <p>Heavy sterling silver signet rings carved with the Black Stone crest, plus 30% discount store vouchers applied across upcoming releases.</p>
+                </div>
+                <div class="reward-item-card" style="border-color: rgba(6, 182, 212, 0.4);">
+                    <div class="reward-badge" style="background: #06b6d4; color: #fff;">Rare</div>
+                    <div class="reward-icon" style="color: #06b6d4;"><i class="fa-solid fa-ticket-simple"></i></div>
+                    <h3>25% OFF Booster Vouchers</h3>
+                    <p>Store credits and instant vouchers to reload your wardrobe with limited-run tees, plus exclusive holographic vinyl sticker packs.</p>
+                </div>
+            </div>
+
+            <div class="drop-banner mt-3" style="margin-top: 60px;">
+                <div>
+                    <span class="section-tag">How To Unlock</span>
+                    <h2>Five verified T-shirts open the Master Box.</h2>
+                </div>
+                <p>Order any Black Stone garments, find your unique serial tag on the inner collar label, and redeem them in the Code Zone to unlock the Master Box.</p>
+                <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+                    <button class="btn btn-gold" onclick="window.location.href='code-zone.html'"><i class="fa-solid fa-key me-1"></i> Open Code Zone</button>
+                    <button class="btn btn-secondary" onclick="window.location.href='index.html#shop'"><i class="fa-solid fa-shirt me-1"></i> Browse Collection</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Confetti Canvas -->
+    <canvas id="confettiCanvas"></canvas>
+
+    <footer class="main-footer">
+        <div class="container footer-bottom text-center">
+            <p>&copy; 2026 Black Stone Inc. <a href="index.html#shop" class="gold-text">Shop the collection</a></p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+    <script>
+        function triggerTestVaultUnbox() {
+            // Guarantee at least 1 box is ready in state for this simulation
+            const state = getMysteryState();
+            if (state.unopenedBoxes.length === 0) {
+                state.unopenedBoxes.push({
+                    id: 'vault-demo-' + Date.now(),
+                    title: 'LEGENDARY VAULT REWARD DROP',
+                    rarity: 'legendary',
+                    prize: 'Heavyweight Signature Hoodie + ₹2,000 Credit',
+                    desc: 'Unlocked via Black Stone interactive vault test sequence.'
+                });
+                saveMysteryState(state);
+            }
+            triggerUnboxAnimation(state.unopenedBoxes[0].id);
+        }
+    </script>
+</body>
+</html>

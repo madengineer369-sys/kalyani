@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black Stone - Code Zone Redemption</title>
+    <meta name="description" content="Redeem your Black Stone garment label codes to claim mystery reward chests and complete the Grand Vault milestone.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon"><i class="fa-solid fa-gem"></i></span>
+                <span class="logo-text">BLACK <span class="red-text gold-text">STONE</span></span>
+            </a>
+            <nav class="main-nav" id="mainNav">
+                <ul>
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="index.html#experience" class="nav-link">Black Lizard</a></li>
+                    <li><a href="index.html#shop" class="nav-link">Collection</a></li>
+                    <li><a href="code-zone.html" class="nav-link active">Code Zone</a></li>
+                    <li><a href="mystery-box.html" class="nav-link">Mystery Box</a></li>
+                    <li><a href="owner.html" class="nav-link">Owner Hub</a></li>
+                    <li><a href="about.html" class="nav-link">About</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <button class="owner-btn-header" id="ownerActionBtn" onclick="openOwnerModal()" title="Owner Product Listing Portal">
+                    <i class="fa-solid fa-plus-circle"></i> <span>List Product</span>
+                </button>
+                <button class="account-btn-header" id="accountActionBtn" onclick="window.location.href='auth.html'">
+                    <i class="fa-solid fa-user"></i> <span id="accountActionText">Login</span>
+                </button>
+                <button class="app-btn-header" onclick="window.location.href='app.html'">
+                    <i class="fa-solid fa-mobile-screen-button"></i> <span>Get App</span>
+                </button>
+                <div class="cart-trigger" id="cartTrigger" onclick="toggleCart(true)">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </div>
+                <button class="mobile-menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Cart Drawer -->
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-drawer-overlay" onclick="toggleCart(false)"></div>
+        <div class="cart-drawer-content">
+            <div class="cart-drawer-header">
+                <h3>Shopping Bag (<span id="cartDrawerCount">0</span>)</h3>
+                <button class="close-btn" onclick="toggleCart(false)"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="cart-drawer-items" id="cartItemsList"></div>
+            <div class="cart-drawer-footer" id="cartFooter" style="display: none;">
+                <div class="cart-total-row">
+                    <span>Subtotal</span>
+                    <span class="cart-total-price" id="cartTotalVal">$0.00</span>
+                </div>
+                <p class="cart-disclaimer">Free premium shipping included. T-shirt labels contain codes for unlocking the Mystery Box.</p>
+                <button class="btn btn-gold w-100" id="checkoutBtn" onclick="checkoutCart()">Secure Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div class="modal-backdrop" id="productModal">
+        <div class="modal-content product-modal-content">
+            <button class="close-btn modal-close" onclick="closeProductModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="product-modal-grid" id="productModalGrid"></div>
+        </div>
+    </div>
+
+    <!-- Checkout Success Modal -->
+    <div class="modal-backdrop" id="checkoutModal">
+        <div class="modal-content checkout-modal-content">
+            <div class="checkout-success-header">
+                <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+                <h2>Order Confirmed!</h2>
+                <p>Your Black Stone package is preparing for shipping.</p>
+            </div>
+            <div class="checkout-order-details">
+                <p>Order ID: <span id="checkoutOrderId" class="gold-text">#BS-90210</span></p>
+                <div class="code-reveal-box">
+                    <h3><i class="fa-solid fa-ticket-simple"></i> Your Mystery Box Codes</h3>
+                    <p>Use these generated demo codes on the Code Zone page to unlock the Mystery Box experience.</p>
+                    <div class="generated-codes-list" id="generatedCodesList"></div>
+                    <button class="btn btn-secondary btn-sm mt-3" onclick="copyAllGeneratedCodes()">
+                        <i class="fa-solid fa-copy"></i> Copy All Codes
+                    </button>
+                </div>
+            </div>
+            <div class="checkout-modal-actions">
+                <button class="btn btn-gold" onclick="closeCheckoutModalAndGoToCodes()">Go to Code Zone</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Hero Banner -->
+    <section class="page-hero-section" style="padding: 160px 0 60px;">
+        <div class="container page-hero-content text-center">
+            <span class="section-tag">VIP Gamified Verification</span>
+            <h1 class="hero-title" style="font-size: 3.2rem; margin-bottom: 14px;">Code Zone Redemption</h1>
+            <p class="hero-subtitle" style="margin: 0 auto; max-width: 650px;">
+                Enter the unique verification code printed on your garment label tag to claim reward chests and build your collector streak.
+            </p>
+        </div>
+    </section>
+
+    <!-- Code Redemption & Milestone Area -->
+    <section class="code-zone-section" style="padding: 20px 0 100px;">
+        <div class="container">
+            <!-- 5-T-Shirt Milestone Progress Tracker -->
+            <div class="milestone-tracker">
+                <div class="milestone-header">
+                    <h3><i class="fa-solid fa-gem gold-text"></i> Grand Vault Milestone Progress</h3>
+                    <div class="milestone-badge" id="milestoneCount">0 / 5 TAGS</div>
+                </div>
+                <p style="color: var(--color-muted); font-size: 0.95rem; margin-bottom: 12px;">
+                    Collect 5 verified Black Stone T-shirt label codes to automatically trigger the <strong>Legendary Grand Vault Master Chest</strong>.
+                </p>
+                <div class="milestone-slots" id="milestoneSlots">
+                    <!-- Injected via JavaScript -->
+                </div>
+            </div>
+
+            <!-- Code Entry Card -->
+            <div class="code-zone-card">
+                <span class="reward-badge" style="position: static; display: inline-block; margin-bottom: 14px;">
+                    <i class="fa-solid fa-shield-halved me-1"></i> Authentic Label Check
+                </span>
+                <h2 style="font-family: var(--font-heading); font-size: 1.8rem; margin-bottom: 8px;">Enter Label Code</h2>
+                <p style="color: var(--color-muted); font-size: 0.92rem;">
+                    Find your unique alphanumeric code inside the collar tag of any Black Stone garment.
+                </p>
+
+                <div id="codeAlertMsg" class="auth-message" style="display: none; margin-top: 16px;"></div>
+
+                <form id="codeRedeemForm">
+                    <div class="code-input-wrapper">
+                        <input type="text" id="mysteryCodeInput" class="code-input-lg" placeholder="BLACKSTONE-XXXX" maxlength="24" autocomplete="off" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-gold w-100 py-3" style="font-size: 1.1rem; letter-spacing: 1px;">
+                        <i class="fa-solid fa-unlock-keyhole me-2"></i> Redeem Code & Claim Chest
+                    </button>
+                </form>
+
+                <!-- Demo / Fast Test Chips -->
+                <div style="margin-top: 24px;">
+                    <p style="color: var(--color-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">
+                        Quick Demo Codes (Click to autofill):
+                    </p>
+                    <div class="demo-codes-row">
+                        <span class="demo-chip" onclick="prefillCode('BLACKSTONE-DEMO1')">
+                            <i class="fa-solid fa-bolt"></i> BLACKSTONE-DEMO1 (Legendary)
+                        </span>
+                        <span class="demo-chip" onclick="prefillCode('BLACKSTONE-DEMO2')">
+                            <i class="fa-solid fa-bolt"></i> BLACKSTONE-DEMO2 (Epic)
+                        </span>
+                        <span class="demo-chip" onclick="prefillCode('BLACKSTONE-CODE99')">
+                            <i class="fa-solid fa-bolt"></i> BLACKSTONE-CODE99 (Rare)
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ready to Unbox Inventory -->
+            <div class="mb-5" style="margin-top: 60px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 16px; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+                    <div>
+                        <h2 style="font-family: var(--font-heading); font-size: 1.5rem; display: flex; align-items: center; gap: 10px;">
+                            <i class="fa-solid fa-box-open gold-text"></i> Ready to Unbox 
+                            <span class="milestone-badge" id="unopenedCountBadge">0</span>
+                        </h2>
+                        <p style="color: var(--color-muted); font-size: 0.9rem; margin-top: 4px;">Click unbox on any chest to launch the suspense reveal.</p>
+                    </div>
+                    <a href="mystery-box.html" class="btn btn-secondary">
+                        <i class="fa-solid fa-circle-info me-1"></i> Rarity Tiers Guide
+                    </a>
+                </div>
+
+                <div class="chest-grid" id="unopenedChestsGrid">
+                    <!-- Populated dynamically via app.js -->
+                </div>
+            </div>
+
+            <!-- Unboxed Rewards History -->
+            <div style="margin-top: 60px;">
+                <h3 style="font-family: var(--font-heading); font-size: 1.35rem; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-clock-rotate-left gold-text"></i> Unboxed Loot History
+                </h3>
+                <div id="openedRewardsGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                    <!-- Populated dynamically via app.js -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Confetti Canvas -->
+    <canvas id="confettiCanvas"></canvas>
+
+    <footer class="main-footer">
+        <div class="container footer-bottom text-center">
+            <p>&copy; 2026 Black Stone Inc. <a href="index.html#shop" class="gold-text">Shop the collection</a></p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

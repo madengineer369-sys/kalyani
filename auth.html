@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIP Access & Authentication — Black Stone</title>
+    <meta name="description" content="Access your Black Stone VIP Collective account, manage label codes, and track mystery rewards.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .auth-container {
+            max-width: 520px;
+            margin: 140px auto 80px;
+            padding: 0 20px;
+        }
+        .auth-card {
+            background: linear-gradient(180deg, rgba(22, 22, 30, 0.95) 0%, rgba(12, 12, 16, 0.98) 100%);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-lg);
+            padding: 40px;
+            box-shadow: var(--shadow-premium);
+            position: relative;
+        }
+        .auth-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--color-border);
+            margin-bottom: 28px;
+        }
+        .auth-tab {
+            flex: 1;
+            padding: 14px;
+            text-align: center;
+            font-family: var(--font-heading);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--color-muted);
+            border-bottom: 2px solid transparent;
+            transition: var(--transition-smooth);
+        }
+        .auth-tab.active {
+            color: var(--color-gold);
+            border-color: var(--color-gold);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-white);
+            margin-bottom: 8px;
+        }
+        .form-control-custom {
+            width: 100%;
+            background: rgba(14, 14, 20, 0.8);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-sm);
+            padding: 14px 18px;
+            color: var(--color-white);
+            font-size: 0.95rem;
+            transition: var(--transition-smooth);
+        }
+        .form-control-custom:focus {
+            border-color: var(--color-gold);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+            background: rgba(20, 20, 28, 0.95);
+        }
+        .otp-inputs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 16px 0;
+        }
+        .otp-box {
+            width: 48px;
+            height: 54px;
+            font-size: 1.5rem;
+            text-align: center;
+            background: rgba(10, 10, 14, 0.9);
+            border: 1.5px solid var(--color-border);
+            border-radius: var(--border-radius-sm);
+            color: var(--color-gold);
+            font-family: var(--font-heading);
+            font-weight: 700;
+            transition: var(--transition-smooth);
+        }
+        .otp-box:focus {
+            border-color: var(--color-gold);
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+            background: rgba(18, 18, 24, 0.95);
+        }
+        .profile-stat-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-sm);
+            padding: 16px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon"><i class="fa-solid fa-gem"></i></span>
+                <span class="logo-text">BLACK <span class="red-text gold-text">STONE</span></span>
+            </a>
+            
+            <nav class="main-nav" id="mainNav">
+                <ul>
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="index.html#experience" class="nav-link">Black Lizard</a></li>
+                    <li><a href="index.html#shop" class="nav-link">Collection</a></li>
+                    <li><a href="code-zone.html" class="nav-link">Code Zone</a></li>
+                    <li><a href="mystery-box.html" class="nav-link">Mystery Box</a></li>
+                    <li><a href="owner.html" class="nav-link">Owner Hub</a></li>
+                    <li><a href="about.html" class="nav-link">About</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <button class="owner-btn-header" id="ownerActionBtn" onclick="openOwnerModal()" title="Owner Product Listing Portal">
+                    <i class="fa-solid fa-plus-circle"></i> <span>List Product</span>
+                </button>
+                <button class="account-btn-header logged-in" id="accountActionBtn" onclick="window.location.href='auth.html'">
+                    <i class="fa-solid fa-user"></i> <span id="accountActionText">Account</span>
+                </button>
+                <button class="app-btn-header" onclick="window.location.href='app.html'">
+                    <i class="fa-solid fa-mobile-screen-button"></i> <span>Get App</span>
+                </button>
+                <div class="cart-trigger" id="cartTrigger" onclick="toggleCart(true)">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </div>
+                <button class="mobile-menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Cart Drawer -->
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-drawer-overlay" onclick="toggleCart(false)"></div>
+        <div class="cart-drawer-content">
+            <div class="cart-drawer-header">
+                <h3>Shopping Bag (<span id="cartDrawerCount">0</span>)</h3>
+                <button class="close-btn" onclick="toggleCart(false)"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="cart-drawer-items" id="cartItemsList"></div>
+            <div class="cart-drawer-footer" id="cartFooter" style="display: none;">
+                <div class="cart-total-row">
+                    <span>Subtotal</span>
+                    <span class="cart-total-price" id="cartTotalVal">$0.00</span>
+                </div>
+                <p class="cart-disclaimer">Free premium shipping included. T-shirt labels contain codes for unlocking the Mystery Box.</p>
+                <button class="btn btn-gold w-100" id="checkoutBtn" onclick="checkoutCart()">Secure Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div class="modal-backdrop" id="productModal">
+        <div class="modal-content product-modal-content">
+            <button class="close-btn modal-close" onclick="closeProductModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="product-modal-grid" id="productModalGrid"></div>
+        </div>
+    </div>
+
+    <!-- Main Auth View -->
+    <div class="auth-container">
+        
+        <!-- State 1: User Profile View (If Logged In) -->
+        <div id="profileView" class="auth-card text-center" style="display: none;">
+            <div class="badge-premium mb-3"><i class="fa-solid fa-crown"></i> Black Stone VIP Collective</div>
+            <div style="width: 80px; height: 80px; margin: 0 auto 16px; border-radius: 50%; border: 2px solid var(--color-gold); background: rgba(212,175,55,0.15); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; color: var(--color-gold);">
+                <i class="fa-solid fa-user-astronaut"></i>
+            </div>
+            <h2 id="profileName" style="font-family: var(--font-heading); margin-bottom: 4px;">VIP Member</h2>
+            <p id="profileEmail" style="color: var(--color-muted); font-size: 0.9rem; margin-bottom: 24px;">member@blackstone.luxury</p>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 28px;">
+                <div class="profile-stat-box">
+                    <span style="font-size: 0.75rem; color: var(--color-muted); text-transform: uppercase;">Redeemed Tags</span>
+                    <div id="profileTagsCount" style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 700; color: var(--color-gold);">2 / 5</div>
+                </div>
+                <div class="profile-stat-box">
+                    <span style="font-size: 0.75rem; color: var(--color-muted); text-transform: uppercase;">Unopened Chests</span>
+                    <div id="profileBoxesCount" style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 700; color: #a855f7;">1</div>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button class="btn btn-gold w-100" onclick="window.location.href='code-zone.html'">
+                    <i class="fa-solid fa-ticket-simple me-2"></i> Go to Code Zone Lounge
+                </button>
+                <button class="btn btn-secondary w-100" onclick="window.location.href='index.html#shop'">
+                    <i class="fa-solid fa-bag-shopping me-2"></i> Browse New Drops
+                </button>
+                <button class="btn btn-outline w-100" onclick="logoutCurrentMember()" style="margin-top: 10px; color: #f87171; border-color: rgba(248,113,113,0.3);">
+                    <i class="fa-solid fa-right-from-bracket me-2"></i> Terminate VIP Session
+                </button>
+            </div>
+        </div>
+
+        <!-- State 2: Login / Register Form (If Logged Out) -->
+        <div id="authForms" class="auth-card">
+            
+            <div class="auth-tabs">
+                <div class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">VIP Login</div>
+                <div class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')">Join Collective</div>
+            </div>
+
+            <div id="authAlert" class="auth-message" style="display: none; margin-bottom: 20px;"></div>
+
+            <!-- Login Form (Phone OTP or Password) -->
+            <form id="loginForm" onsubmit="handleLoginSubmit(event)">
+                <div class="form-group">
+                    <label class="form-label">Phone or Email</label>
+                    <input type="text" id="loginIdentifier" class="form-control-custom" placeholder="+91 98765 43210 or email" required>
+                </div>
+
+                <div id="otpSection" style="display: none;">
+                    <label class="form-label text-center">Enter 6-Digit One-Time Code</label>
+                    <p style="text-align: center; color: var(--color-muted); font-size: 0.8rem; margin-bottom: 10px;">
+                        Demo Code: <strong>123456</strong>
+                    </p>
+                    <div class="otp-inputs">
+                        <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 0)" onkeydown="handleOtpKey(event, 0)">
+                        <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 1)" onkeydown="handleOtpKey(event, 1)">
+                        <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 2)" onkeydown="handleOtpKey(event, 2)">
+                        <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 3)" onkeydown="handleOtpKey(event, 3)">
+                        <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 4)" onkeydown="handleOtpKey(event, 4)">
+                        <input type="text" maxlength="1" class="otp-box" oninput="handleOtpInput(this, 5)" onkeydown="handleOtpKey(event, 5)">
+                    </div>
+                </div>
+
+                <div id="passwordSection">
+                    <div class="form-group">
+                        <div style="display:flex; justify-content:space-between;">
+                            <label class="form-label">Password</label>
+                            <a href="#" onclick="toggleOtpMode(true)" style="font-size:0.75rem; color:var(--color-gold);">Use OTP Login</a>
+                        </div>
+                        <input type="password" id="loginPassword" class="form-control-custom" placeholder="••••••••">
+                    </div>
+                </div>
+
+                <button type="submit" id="loginSubmitBtn" class="btn btn-gold w-100 py-3 mt-3">
+                    <i class="fa-solid fa-lock me-2"></i> Enter Member Lounge
+                </button>
+
+                <div style="text-align:center; margin-top: 18px;">
+                    <a href="code-zone.html" style="font-size: 0.82rem; color: var(--color-muted);">
+                        Have a garment code but no account? <span class="gold-text">Redeem as Guest</span>
+                    </a>
+                </div>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" onsubmit="handleRegisterSubmit(event)" style="display: none;">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" id="regName" class="form-control-custom" placeholder="Karan Sharma" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mobile Number</label>
+                    <input type="tel" id="regPhone" class="form-control-custom" placeholder="+91 98765 00000" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" id="regEmail" class="form-control-custom" placeholder="karan@domain.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Create Password</label>
+                    <input type="password" id="regPassword" class="form-control-custom" placeholder="Minimum 8 characters" required>
+                </div>
+
+                <button type="submit" class="btn btn-gold w-100 py-3 mt-3">
+                    <i class="fa-solid fa-crown me-2"></i> Create VIP Collective Membership
+                </button>
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-bottom text-center">
+            <p>&copy; 2026 Black Stone Inc. All Rights Reserved. <a href="index.html#shop" class="gold-text">Shop Collection</a></p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+    <script>
+        let isOtpMode = false;
+
+        function refreshAuthView() {
+            const user = getUser();
+            const profileView = document.getElementById('profileView');
+            const authForms = document.getElementById('authForms');
+
+            if (user && user.isLoggedIn) {
+                window.location.href = 'profile.html';
+                return;
+            } else {
+                profileView.style.display = 'none';
+                authForms.style.display = 'block';
+            }
+        }
+
+        function switchAuthTab(tab) {
+            const tabLogin = document.getElementById('tabLogin');
+            const tabReg = document.getElementById('tabRegister');
+            const loginForm = document.getElementById('loginForm');
+            const regForm = document.getElementById('registerForm');
+            const alertBox = document.getElementById('authAlert');
+            alertBox.style.display = 'none';
+
+            if (tab === 'login') {
+                tabLogin.classList.add('active');
+                tabReg.classList.remove('active');
+                loginForm.style.display = 'block';
+                regForm.style.display = 'none';
+            } else {
+                tabReg.classList.add('active');
+                tabLogin.classList.remove('active');
+                regForm.style.display = 'block';
+                loginForm.style.display = 'none';
+            }
+            if (window.bsAudio) bsAudio.playClick();
+        }
+
+        function toggleOtpMode(force) {
+            isOtpMode = force !== undefined ? force : !isOtpMode;
+            document.getElementById('otpSection').style.display = isOtpMode ? 'block' : 'none';
+            document.getElementById('passwordSection').style.display = isOtpMode ? 'none' : 'block';
+            document.getElementById('loginSubmitBtn').innerHTML = isOtpMode
+                ? '<i class="fa-solid fa-key me-2"></i> Verify OTP & Enter'
+                : '<i class="fa-solid fa-lock me-2"></i> Enter Member Lounge';
+            if (window.bsAudio) bsAudio.playClick();
+        }
+
+        function handleOtpInput(input, index) {
+            input.value = input.value.replace(/[^0-9]/g, '');
+            if (input.value && index < 5) {
+                const next = document.querySelectorAll('.otp-box')[index + 1];
+                if (next) next.focus();
+            }
+        }
+
+        function handleOtpKey(e, index) {
+            if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                const prev = document.querySelectorAll('.otp-box')[index - 1];
+                if (prev) prev.focus();
+            }
+        }
+
+        function handleLoginSubmit(e) {
+            e.preventDefault();
+            const identifier = document.getElementById('loginIdentifier').value.trim();
+            const alertBox = document.getElementById('authAlert');
+
+            if (!identifier) {
+                alertBox.style.display = 'block';
+                alertBox.className = 'auth-message show error';
+                alertBox.textContent = 'Please enter your phone or email.';
+                return;
+            }
+
+            const user = {
+                name: identifier.includes('@') ? identifier.split('@')[0].toUpperCase() : 'VIP ' + identifier.slice(-4),
+                email: identifier.includes('@') ? identifier : '',
+                phone: !identifier.includes('@') ? identifier : '',
+                isLoggedIn: true,
+                vipTier: 'Obsidian Gold'
+            };
+
+            saveUser(user);
+            if (window.bsAudio) bsAudio.playSuccess();
+            window.location.href = 'profile.html';
+        }
+
+        function handleRegisterSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+
+            const user = {
+                name: name,
+                email: email,
+                phone: phone,
+                isLoggedIn: true,
+                vipTier: 'Obsidian Gold'
+            };
+
+            saveUser(user);
+            if (window.bsAudio) bsAudio.playSuccess();
+            window.location.href = 'profile.html';
+        }
+
+        function logoutCurrentMember() {
+            saveUser(null);
+            if (window.bsAudio) bsAudio.playClick();
+            refreshAuthView();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            refreshAuthView();
+        });
+    </script>
+</body>
+</html>
