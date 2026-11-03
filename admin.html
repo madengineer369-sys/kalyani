@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Command Center & Drop Studio — Black Stone Admin</title>
+    <meta name="description" content="Black Stone Admin Command Center: Drop studio, 6-digit Mystery Box code generator & audit, real-time sales metrics, and order dispatch.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&family=Courier+Prime:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+
+    <!-- Admin Fixed Topbar -->
+    <header class="admin-topbar">
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <a href="index.html" class="admin-logo-lockup">
+                <div class="admin-logo-icon"><i class="fa-solid fa-gem"></i></div>
+                <div class="admin-logo-text">BLACK <span class="red-text gold-text">STONE</span> <span style="font-size: 0.72rem; color: var(--admin-muted); letter-spacing: 2px; margin-left: 6px;">// ADMIN</span></div>
+            </a>
+            <div class="admin-sys-status">
+                <span class="status-pulsing-dot"></span>
+                <span>STORE ACTIVE • PRODUCTION</span>
+            </div>
+        </div>
+
+        <div class="admin-topbar-actions">
+            <a href="https://www.instagram.com/blackstone2k26?dlrf=MTh5OWppcThoNW05Yw==" target="_blank" rel="noopener noreferrer" class="btn-admin-action" title="Official Instagram">
+                <i class="fa-brands fa-instagram"></i> <span>@blackstone2k26</span>
+            </a>
+            <a href="http://www.youtube.com/@BSfashionstudio-h7z" target="_blank" rel="noopener noreferrer" class="btn-admin-action" title="YouTube Channel">
+                <i class="fa-brands fa-youtube" style="color:#ff4d4d;"></i> <span>YouTube</span>
+            </a>
+            <a href="index.html#shop" class="btn-admin-action" target="_blank">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> <span>View Live Shop</span>
+            </a>
+            <a href="user.html" class="btn-admin-action">
+                <i class="fa-solid fa-user"></i> <span>VIP Lounge</span>
+            </a>
+            <div class="admin-profile-pill">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Master Admin</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Command Wrap -->
+    <main class="admin-main-wrap">
+
+        <!-- Top KPI Metric Cards -->
+        <section class="admin-kpi-grid">
+            <div class="admin-kpi-card">
+                <div>
+                    <div class="admin-kpi-label">Gross Revenue</div>
+                    <div class="admin-kpi-value" id="kpiRevenue">₹3,48,200</div>
+                    <div class="admin-kpi-delta"><i class="fa-solid fa-arrow-trend-up"></i> +18.4% from last drop</div>
+                </div>
+                <div class="admin-kpi-icon gold"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+            </div>
+
+            <div class="admin-kpi-card">
+                <div>
+                    <div class="admin-kpi-label">Garments Sold</div>
+                    <div class="admin-kpi-value" id="kpiSold">142</div>
+                    <div class="admin-kpi-delta"><i class="fa-solid fa-boxes-stacked"></i> 89.2% Sell-Through</div>
+                </div>
+                <div class="admin-kpi-icon red"><i class="fa-solid fa-shirt"></i></div>
+            </div>
+
+            <div class="admin-kpi-card">
+                <div>
+                    <div class="admin-kpi-label">6-Digit Codes Issued</div>
+                    <div class="admin-kpi-value" id="kpiCodes">210</div>
+                    <div class="admin-kpi-delta"><i class="fa-solid fa-mobile-screen"></i> SMS Dispatch Active</div>
+                </div>
+                <div class="admin-kpi-icon cyan"><i class="fa-solid fa-key"></i></div>
+            </div>
+
+            <div class="admin-kpi-card">
+                <div>
+                    <div class="admin-kpi-label">Mystery Boxes Unlocked</div>
+                    <div class="admin-kpi-value" id="kpiVault">68 <span style="font-size: 1.1rem; color: var(--admin-muted); font-weight: 500;">(32.4%)</span></div>
+                    <div class="admin-kpi-delta"><i class="fa-solid fa-gem"></i> 12 Grand Vaults</div>
+                </div>
+                <div class="admin-kpi-icon purple"><i class="fa-solid fa-box-open"></i></div>
+            </div>
+        </section>
+
+        <!-- Navigation Ribbon -->
+        <nav class="admin-nav-ribbon">
+            <button class="admin-tab-btn active" onclick="switchAdminTab('studio')">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Drop Studio & Live Preview
+            </button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('inventory')">
+                <i class="fa-solid fa-cubes"></i> Live Products Catalog (<span id="tabCountProducts">6</span>)
+            </button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('codes')">
+                <i class="fa-solid fa-key"></i> 6-Digit Mystery Code Control (<span id="tabCountCodes">0</span>)
+            </button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('orders')">
+                <i class="fa-solid fa-truck-ramp-box"></i> Orders & SMS Dispatch (<span id="tabCountOrders">0</span>)
+            </button>
+        </nav>
+
+        <!-- TAB 1: DROP STUDIO & REAL-TIME PREVIEW -->
+        <div class="admin-tab-panel active" id="admin-studio">
+            <div class="drop-studio-grid">
+                <!-- Form Column -->
+                <div class="admin-panel-card">
+                    <h2 class="admin-panel-title"><i class="fa-solid fa-plus-circle red-text"></i> Drop Studio — Create Apparel</h2>
+                    <p class="admin-panel-desc">Configure garment parameters, GSM density, sizes, and pricing. Watch the live card update on the right.</p>
+
+                    <form id="productDropForm" onsubmit="handlePublishProduct(event)">
+                        <div class="admin-form-group">
+                            <label>Garment Title *</label>
+                            <input type="text" id="dropTitle" class="admin-input" placeholder="e.g. Acid Obsidian Heavyweight Tee" value="Acid Obsidian Heavyweight Tee" required oninput="updateLivePreview()">
+                        </div>
+
+                        <div class="admin-form-row">
+                            <div class="admin-form-group">
+                                <label>Category *</label>
+                                <select id="dropCategory" class="admin-input" onchange="updateLivePreview()">
+                                    <option value="T-Shirts">Signature T-Shirts</option>
+                                    <option value="Hoodies">French Terry Hoodies</option>
+                                    <option value="Limited">Limited Drop Release</option>
+                                    <option value="Pants">Luxury Cargo / Trousers</option>
+                                </select>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Drop Price (₹) *</label>
+                                <input type="number" id="dropPrice" class="admin-input" placeholder="2499" value="2499" required oninput="updateLivePreview()">
+                            </div>
+                        </div>
+
+                        <div class="admin-form-row">
+                            <div class="admin-form-group">
+                                <label>Fabric Quality & GSM</label>
+                                <input type="text" id="dropFabric" class="admin-input" placeholder="e.g. 450 GSM French Terry" value="450 GSM Combed Cotton" oninput="updateLivePreview()">
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Garment Color Scheme</label>
+                                <select id="dropColor" class="admin-input" onchange="updateLivePreview()">
+                                    <option value="Obsidian Black">Obsidian Black & Crimson</option>
+                                    <option value="Washed Slate">Washed Slate Gray</option>
+                                    <option value="Blood Red">Deep Blood Red</option>
+                                    <option value="Gold Accent">Imperial Gold & Jet</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="admin-form-group">
+                            <label>Available Sizes</label>
+                            <div class="size-checkbox-group">
+                                <label class="size-chip-label selected" onclick="toggleSizeSelect(this)">
+                                    <input type="checkbox" checked value="S"> S
+                                </label>
+                                <label class="size-chip-label selected" onclick="toggleSizeSelect(this)">
+                                    <input type="checkbox" checked value="M"> M
+                                </label>
+                                <label class="size-chip-label selected" onclick="toggleSizeSelect(this)">
+                                    <input type="checkbox" checked value="L"> L
+                                </label>
+                                <label class="size-chip-label selected" onclick="toggleSizeSelect(this)">
+                                    <input type="checkbox" checked value="XL"> XL
+                                </label>
+                                <label class="size-chip-label" onclick="toggleSizeSelect(this)">
+                                    <input type="checkbox" value="XXL"> XXL
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="admin-form-group">
+                            <label>Product Image Source</label>
+                            <input type="text" id="dropImage" class="admin-input" placeholder="assets/sig_tee.jpg or image URL" value="assets/sig_tee.jpg" oninput="updateLivePreview()">
+                        </div>
+
+                        <div class="admin-form-group">
+                            <label>Description & Streetwear Story</label>
+                            <textarea id="dropDesc" class="admin-input" rows="3" placeholder="Crafted with custom metallic hardware and encrypted collar label tag for Mystery Box activation." oninput="updateLivePreview()">Crafted with custom metallic hardware and encrypted collar label tag for Mystery Box activation.</textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-gold w-100 py-3" style="font-size: 1.05rem;">
+                            <i class="fa-solid fa-cloud-arrow-up me-2"></i> Publish Garment to Live Collection
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Sticky Live Preview Column -->
+                <div class="live-preview-sticky">
+                    <div class="admin-panel-card" style="padding: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                            <span style="font-size: 0.78rem; text-transform: uppercase; font-family: var(--font-heading); letter-spacing: 1.5px; color: var(--admin-red); font-weight: 700;">
+                                <i class="fa-solid fa-eye me-1"></i> Interactive Live Preview
+                            </span>
+                            <span class="status-chip delivered" style="font-size: 0.7rem;">STOREFRONT FIDELITY</span>
+                        </div>
+
+                        <div class="preview-card-box">
+                            <div class="preview-card-image-wrap">
+                                <span class="preview-badge-live" id="previewBadgeText">NEW DROP</span>
+                                <img src="assets/sig_tee.jpg" id="previewImg" class="preview-card-img" alt="Product Preview" onerror="this.src='assets/mystery_box.png'">
+                            </div>
+                            <div class="preview-card-body">
+                                <div class="preview-card-cat" id="previewCategory">SIGNATURE T-SHIRTS</div>
+                                <h3 class="preview-card-title" id="previewTitle">Acid Obsidian Heavyweight Tee</h3>
+                                <div class="preview-card-price" id="previewPrice">₹2,499</div>
+                                <p style="color: var(--admin-muted); font-size: 0.86rem; margin: 0 0 16px 0; line-height: 1.5;" id="previewDesc">
+                                    Crafted with custom metallic hardware and encrypted collar label tag for Mystery Box activation.
+                                </p>
+                                <div style="display: flex; gap: 8px; margin-bottom: 18px;" id="previewSizesRow">
+                                    <span class="status-chip shipped">S</span>
+                                    <span class="status-chip shipped">M</span>
+                                    <span class="status-chip shipped">L</span>
+                                    <span class="status-chip shipped">XL</span>
+                                </div>
+                                <button class="btn btn-gold w-100 py-2" type="button" disabled style="opacity: 0.85;">
+                                    <i class="fa-solid fa-bag-shopping me-1"></i> Add to Bag (Customer View)
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: LIVE PRODUCTS CATALOG -->
+        <div class="admin-tab-panel" id="admin-inventory">
+            <div class="panel-section-header">
+                <div>
+                    <h2 class="admin-panel-title"><i class="fa-solid fa-boxes-stacked gold-text"></i> Live Product Inventory</h2>
+                    <p class="admin-panel-desc">Manage stock status, pricing, and remove archived drops.</p>
+                </div>
+                <button class="btn btn-gold btn-sm" onclick="switchAdminTab('studio')">
+                    <i class="fa-solid fa-plus-circle me-1"></i> Add New Drop
+                </button>
+            </div>
+
+            <div class="admin-table-container">
+                <table class="admin-data-table">
+                    <thead>
+                        <tr>
+                            <th>Thumbnail</th>
+                            <th>Garment Title</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Stock Status</th>
+                            <th>Mystery Code Support</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTableBody">
+                        <!-- Populated via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB 3: 6-DIGIT CODE COMMAND & INSPECTOR -->
+        <div class="admin-tab-panel" id="admin-codes">
+            <!-- Inspector Card -->
+            <div class="inspector-search-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <h2 style="font-family: var(--font-heading); margin: 0 0 4px 0; font-size: 1.4rem;">
+                            <i class="fa-solid fa-magnifying-glass red-text me-2"></i> Real-Time 6-Digit Code Inspector
+                        </h2>
+                        <p style="color: var(--admin-muted); margin: 0; font-size: 0.9rem;">
+                            Look up any customer's 6-digit code instantly to verify validity, redemption status, order assignment, and rarity tier.
+                        </p>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" onclick="generateBatchCodesModal()">
+                        <i class="fa-solid fa-wand-magic-sparkles me-1"></i> Generate Standalone Code
+                    </button>
+                </div>
+
+                <div class="inspector-input-row">
+                    <input type="text" id="inspectorCodeInput" class="inspector-input" placeholder="ENTER 6 DIGITS (e.g. 849201)" maxlength="6" inputmode="numeric">
+                    <button class="btn btn-gold px-4" onclick="inspectCodeAction()">
+                        <i class="fa-solid fa-fingerprint me-2"></i> Inspect Code
+                    </button>
+                </div>
+
+                <!-- Live Inspection Result -->
+                <div id="inspectorResultPanel" class="inspector-result-panel">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+
+            <!-- Codes Audit Table -->
+            <div class="panel-section-header">
+                <div>
+                    <h2 class="admin-panel-title"><i class="fa-solid fa-list-check"></i> Master 6-Digit Code Audit Table</h2>
+                    <p class="admin-panel-desc">All codes generated across customer checkout and direct VIP promotional issuances.</p>
+                </div>
+            </div>
+
+            <div class="admin-table-container">
+                <table class="admin-data-table">
+                    <thead>
+                        <tr>
+                            <th>6-Digit Code</th>
+                            <th>Order ID</th>
+                            <th>Garment / Campaign</th>
+                            <th>Rarity Drop</th>
+                            <th>Status</th>
+                            <th>Timestamp</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="codesTableBody">
+                        <!-- Populated via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB 4: ORDERS & SMS DISPATCH -->
+        <div class="admin-tab-panel" id="admin-orders">
+            <div class="panel-section-header">
+                <div>
+                    <h2 class="admin-panel-title"><i class="fa-solid fa-truck-fast red-text"></i> Order Fulfillment & SMS Center</h2>
+                    <p class="admin-panel-desc">Monitor garment deliveries, track customer mobile numbers, and dispatch 6-digit code notifications.</p>
+                </div>
+            </div>
+
+            <div class="admin-table-container">
+                <table class="admin-data-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer Mobile</th>
+                            <th>Purchased Garment</th>
+                            <th>Attached 6-Digit Code</th>
+                            <th>Order Total</th>
+                            <th>Fulfillment Status</th>
+                            <th>SMS Dispatch</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTableBody">
+                        <!-- Populated via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer" style="margin-top: 80px;">
+        <div class="container footer-bottom text-center">
+            <p style="margin-bottom: 8px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                <a href="https://www.instagram.com/blackstone2k26?dlrf=MTh5OWppcThoNW05Yw==" target="_blank" rel="noopener noreferrer" style="color: var(--admin-red); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                    <i class="fa-brands fa-instagram"></i> Instagram: @blackstone2k26
+                </a>
+                <a href="http://www.youtube.com/@BSfashionstudio-h7z" target="_blank" rel="noopener noreferrer" style="color: #ff4d4d; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                    <i class="fa-brands fa-youtube"></i> YouTube: @BSfashionstudio-h7z
+                </a>
+            </p>
+            <p>&copy; 2026 Black Stone Inc. Proprietary Apparel Logistics &amp; Command Architecture.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+    <script>
+        /* ==========================================================================
+           BLACK STONE ADMIN COMMAND CONTROLLER
+           ========================================================================== */
+
+        function switchAdminTab(tabId) {
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.admin-tab-panel').forEach(panel => panel.classList.remove('active'));
+
+            const target = document.getElementById('admin-' + tabId);
+            if (target) target.classList.add('active');
+
+            const buttons = document.querySelectorAll('.admin-tab-btn');
+            if (tabId === 'studio') buttons[0]?.classList.add('active');
+            if (tabId === 'inventory') buttons[1]?.classList.add('active');
+            if (tabId === 'codes') buttons[2]?.classList.add('active');
+            if (tabId === 'orders') buttons[3]?.classList.add('active');
+        }
+
+        // Interactive Live Preview
+        function updateLivePreview() {
+            const title = document.getElementById('dropTitle').value || 'Garment Title';
+            const category = document.getElementById('dropCategory').value.toUpperCase();
+            const price = document.getElementById('dropPrice').value || '0';
+            const fabric = document.getElementById('dropFabric').value || '';
+            const desc = document.getElementById('dropDesc').value || '';
+            const img = document.getElementById('dropImage').value || 'assets/sig_tee.jpg';
+
+            document.getElementById('previewTitle').textContent = title;
+            document.getElementById('previewCategory').textContent = category + (fabric ? ` • ${fabric}` : '');
+            document.getElementById('previewPrice').textContent = '₹' + Number(price).toLocaleString('en-IN');
+            document.getElementById('previewDesc').textContent = desc;
+            document.getElementById('previewImg').src = img;
+        }
+
+        function toggleSizeSelect(el) {
+            el.classList.toggle('selected');
+            const checkbox = el.querySelector('input');
+            if (checkbox) checkbox.checked = el.classList.contains('selected');
+        }
+
+        // Publish New Garment Product
+        function handlePublishProduct(e) {
+            e.preventDefault();
+            const title = document.getElementById('dropTitle').value.trim();
+            const category = document.getElementById('dropCategory').value;
+            const price = Number(document.getElementById('dropPrice').value);
+            const fabric = document.getElementById('dropFabric').value.trim();
+            const color = document.getElementById('dropColor').value;
+            const image = document.getElementById('dropImage').value.trim() || 'assets/sig_tee.jpg';
+            const desc = document.getElementById('dropDesc').value.trim();
+
+            const selectedSizes = Array.from(document.querySelectorAll('.size-chip-label.selected input')).map(i => i.value);
+
+            let catalog = [];
+            try {
+                catalog = JSON.parse(localStorage.getItem('blackstone_custom_products') || '[]');
+            } catch(err) { catalog = []; }
+
+            const newProduct = {
+                id: 'bs-drop-' + Date.now(),
+                title: title,
+                category: category,
+                price: price,
+                fabric: fabric,
+                color: color,
+                sizes: selectedSizes,
+                image: image,
+                desc: desc,
+                inStock: true,
+                date: new Date().toLocaleDateString()
+            };
+
+            catalog.unshift(newProduct);
+            localStorage.setItem('blackstone_custom_products', JSON.stringify(catalog));
+
+            if (window.bsAudio) bsAudio.playSuccess();
+            alert(`✅ "${title}" has been published to the Black Stone storefront!`);
+            loadAdminInventory();
+            switchAdminTab('inventory');
+        }
+
+        // Load Live Inventory
+        function loadAdminInventory() {
+            let catalog = [];
+            try {
+                catalog = JSON.parse(localStorage.getItem('blackstone_custom_products') || '[]');
+            } catch(e) { catalog = []; }
+
+            // Default fallback products if empty
+            if (catalog.length === 0) {
+                catalog = [
+                    { id: 'p1', title: 'Black Lizard 3D Heavyweight Tee', category: 'Signature T-Shirts', price: 2499, inStock: true, image: 'assets/sig_tee.jpg' },
+                    { id: 'p2', title: 'Obsidian Void 450GSM French Terry Hoodie', category: 'French Terry Hoodies', price: 4299, inStock: true, image: 'assets/mystery_box.png' },
+                    { id: 'p3', title: 'Minimalist Monogram Stone Boxy Fit', category: 'Signature T-Shirts', price: 2199, inStock: true, image: 'assets/tee_obsidian.jpg' },
+                    { id: 'p4', title: 'Acid Wash Underground Street Jogger', category: 'Luxury Cargo / Trousers', price: 3499, inStock: false, image: 'assets/sig_tee.jpg' }
+                ];
+                localStorage.setItem('blackstone_custom_products', JSON.stringify(catalog));
+            }
+
+            document.getElementById('tabCountProducts').textContent = catalog.length;
+
+            const tbody = document.getElementById('inventoryTableBody');
+            if (tbody) {
+                tbody.innerHTML = catalog.map((p, idx) => `
+                    <tr>
+                        <td>
+                            <img src="${p.image || 'assets/sig_tee.jpg'}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid var(--admin-card-border);" onerror="this.src='assets/mystery_box.png'">
+                        </td>
+                        <td>
+                            <strong>${p.title}</strong>
+                        </td>
+                        <td><span style="color: var(--admin-muted);">${p.category}</span></td>
+                        <td><strong>₹${Number(p.price).toLocaleString('en-IN')}</strong></td>
+                        <td>
+                            <button class="status-chip ${p.inStock ? 'delivered' : 'shipped'}" onclick="toggleProductStock(${idx})" style="cursor: pointer; border: none;">
+                                <i class="fa-solid ${p.inStock ? 'fa-check' : 'fa-xmark'}"></i>
+                                ${p.inStock ? 'IN STOCK' : 'SOLD OUT'}
+                            </button>
+                        </td>
+                        <td>
+                            <span class="status-chip delivered"><i class="fa-solid fa-key"></i> 6-DIGIT ENABLED</span>
+                        </td>
+                        <td>
+                            <button class="btn-table-action danger" onclick="deleteProduct(${idx})" title="Delete Garment">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function toggleProductStock(idx) {
+            let catalog = JSON.parse(localStorage.getItem('blackstone_custom_products') || '[]');
+            if (catalog[idx]) {
+                catalog[idx].inStock = !catalog[idx].inStock;
+                localStorage.setItem('blackstone_custom_products', JSON.stringify(catalog));
+                loadAdminInventory();
+            }
+        }
+
+        function deleteProduct(idx) {
+            if (!confirm('Are you sure you want to remove this garment drop?')) return;
+            let catalog = JSON.parse(localStorage.getItem('blackstone_custom_products') || '[]');
+            catalog.splice(idx, 1);
+            localStorage.setItem('blackstone_custom_products', JSON.stringify(catalog));
+            loadAdminInventory();
+        }
+
+        // 6-Digit Code Inspector Tool
+        function inspectCodeAction() {
+            const input = document.getElementById('inspectorCodeInput');
+            const code = input.value.trim();
+            const panel = document.getElementById('inspectorResultPanel');
+
+            if (!/^\d{6}$/.test(code)) {
+                alert('Please enter a valid 6-digit numeric code.');
+                return;
+            }
+
+            let storedCodes = [];
+            try {
+                storedCodes = JSON.parse(localStorage.getItem('blackstone_mystery_codes') || '[]');
+            } catch(e) { storedCodes = []; }
+
+            const match = storedCodes.find(c => c.code === code);
+
+            panel.style.display = 'block';
+            if (match) {
+                panel.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--admin-card-border); padding-bottom: 12px; margin-bottom: 14px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-family: var(--font-heading); font-size: 1.6rem; font-weight: 800; color: var(--admin-gold); letter-spacing: 2px;">
+                                ${match.code}
+                            </span>
+                            <span class="status-chip ${match.used ? 'shipped' : 'delivered'}">
+                                ${match.used ? 'REDEEMED IN VAULT' : 'ACTIVE / UNUSED'}
+                            </span>
+                        </div>
+                        <span class="vip-badge-pill gold">${(match.rarity || 'RARE').toUpperCase()} TIER</span>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; font-size: 0.88rem;">
+                        <div><strong style="color: var(--admin-muted);">Attached Order:</strong> ${match.orderId || '#BS-DIRECT'}</div>
+                        <div><strong style="color: var(--admin-muted);">Garment Title:</strong> ${match.garment || 'Black Stone Heavyweight'}</div>
+                        <div><strong style="color: var(--admin-muted);">Issued Timestamp:</strong> ${new Date(match.timestamp || Date.now()).toLocaleString()}</div>
+                    </div>
+
+                    <div style="margin-top: 16px; display: flex; gap: 10px;">
+                        <button class="btn btn-secondary btn-sm" onclick="sendSimulatedSms('${match.code}', '+91 98765 43210')">
+                            <i class="fa-solid fa-paper-plane me-1"></i> Resend Simulated SMS
+                        </button>
+                    </div>
+                `;
+            } else {
+                panel.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <span style="color: var(--admin-gold); font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800;">${code}</span>
+                            <p style="color: var(--admin-muted); margin: 4px 0 0; font-size: 0.88rem;">This 6-digit code has not been issued to any customer yet, but qualifies as a valid numeric format.</p>
+                        </div>
+                        <button class="btn btn-gold btn-sm" onclick="registerStandaloneCode('${code}')">
+                            <i class="fa-solid fa-plus-circle me-1"></i> Register This Code Now
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function registerStandaloneCode(code) {
+            let storedCodes = [];
+            try {
+                storedCodes = JSON.parse(localStorage.getItem('blackstone_mystery_codes') || '[]');
+            } catch(e) { storedCodes = []; }
+
+            storedCodes.unshift({
+                code: code,
+                orderId: '#BS-DIRECT-' + Math.floor(1000 + Math.random() * 9000),
+                garment: 'Promotional VIP Giveaway Chest',
+                rarity: 'legendary',
+                used: false,
+                timestamp: Date.now()
+            });
+
+            localStorage.setItem('blackstone_mystery_codes', JSON.stringify(storedCodes));
+            inspectCodeAction();
+            loadAdminCodesAndOrders();
+            alert(`Code ${code} registered successfully as a Legendary VIP Code!`);
+        }
+
+        // Generate Standalone Modal
+        function generateBatchCodesModal() {
+            const code = Math.floor(100000 + Math.random() * 900000).toString();
+            registerStandaloneCode(code);
+            document.getElementById('inspectorCodeInput').value = code;
+        }
+
+        // Load Codes & Orders
+        function loadAdminCodesAndOrders() {
+            let storedCodes = [];
+            try {
+                storedCodes = JSON.parse(localStorage.getItem('blackstone_mystery_codes') || '[]');
+            } catch(e) { storedCodes = []; }
+
+            if (storedCodes.length === 0) {
+                storedCodes = [
+                    { code: '849201', orderId: '#BS-90210', garment: 'Obsidian 450GSM Heavyweight Tee', rarity: 'legendary', used: false, timestamp: Date.now() - 3600000 },
+                    { code: '620194', orderId: '#BS-89412', garment: 'Black Lizard Graphic Acid Hoodie', rarity: 'epic', used: false, timestamp: Date.now() - 86400000 },
+                    { code: '315782', orderId: '#BS-78119', garment: 'Minimalist Signature Stone Tee', rarity: 'rare', used: true, timestamp: Date.now() - 259200000 }
+                ];
+                localStorage.setItem('blackstone_mystery_codes', JSON.stringify(storedCodes));
+            }
+
+            document.getElementById('tabCountCodes').textContent = storedCodes.length;
+            document.getElementById('tabCountOrders').textContent = storedCodes.length;
+            document.getElementById('kpiCodes').textContent = storedCodes.length;
+
+            // Audit Table
+            const tbodyCodes = document.getElementById('codesTableBody');
+            if (tbodyCodes) {
+                tbodyCodes.innerHTML = storedCodes.map(c => `
+                    <tr>
+                        <td>
+                            <strong style="font-family: var(--font-mono); font-size: 1.1rem; color: var(--admin-gold); letter-spacing: 2px;">
+                                ${c.code}
+                            </strong>
+                        </td>
+                        <td>${c.orderId}</td>
+                        <td>${c.garment || 'Black Stone Garment'}</td>
+                        <td><span class="status-chip ${c.rarity === 'legendary' ? 'delivered' : 'shipped'}">${(c.rarity || 'RARE').toUpperCase()}</span></td>
+                        <td>
+                            <span class="status-chip ${c.used ? 'shipped' : 'delivered'}">
+                                ${c.used ? 'REDEEMED' : 'ACTIVE'}
+                            </span>
+                        </td>
+                        <td style="color: var(--admin-muted); font-size: 0.82rem;">${new Date(c.timestamp || Date.now()).toLocaleDateString()}</td>
+                        <td>
+                            <button class="btn-table-action" onclick="sendSimulatedSms('${c.code}', '+91 98765 43210')" title="Resend SMS">
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            // Orders Table
+            const tbodyOrders = document.getElementById('ordersTableBody');
+            if (tbodyOrders) {
+                tbodyOrders.innerHTML = storedCodes.map(o => `
+                    <tr>
+                        <td><strong class="gold-text">${o.orderId}</strong></td>
+                        <td>+91 98765 43210</td>
+                        <td>${o.garment || 'Heavyweight Streetwear'}</td>
+                        <td><span style="font-family: var(--font-mono); font-weight: 700; color: var(--admin-gold);">${o.code}</span></td>
+                        <td>₹2,499</td>
+                        <td>
+                            <select class="admin-input" style="padding: 4px 8px; font-size: 0.78rem; width: auto;" onchange="alert('Order status updated!')">
+                                <option ${o.used ? 'selected' : ''}>Delivered</option>
+                                <option ${!o.used ? 'selected' : ''}>Dispatched</option>
+                                <option>Processing</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button class="btn-table-action" onclick="sendSimulatedSms('${o.code}', '+91 98765 43210')">
+                                <i class="fa-solid fa-mobile-screen"></i> Resend SMS
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function sendSimulatedSms(code, phone) {
+            if (window.bsAudio) bsAudio.playSuccess();
+            alert(`📱 [SMS DISPATCHED]\nTo: ${phone}\nMessage: "Your Black Stone Mystery Box 6-digit verification code is: ${code}. Enter it on our website Mystery Box lounge to unlock your reward."`);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadAdminInventory();
+            loadAdminCodesAndOrders();
+        });
+    </script>
+</body>
+</html>
+

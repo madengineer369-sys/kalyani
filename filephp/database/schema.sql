@@ -34,6 +34,7 @@ CREATE TABLE `users` (
     `avatar`                   VARCHAR(500)              DEFAULT NULL,
     `is_active`                TINYINT(1)       NOT NULL DEFAULT 1,
     `email_verified`           TINYINT(1)       NOT NULL DEFAULT 0,
+    `phone_verified`           TINYINT(1)       NOT NULL DEFAULT 0,
     `email_verify_token`       VARCHAR(128)              DEFAULT NULL,
     `must_change_password`     TINYINT(1)       NOT NULL DEFAULT 0,
     `failed_login_attempts`    SMALLINT         NOT NULL DEFAULT 0,
@@ -98,6 +99,22 @@ CREATE TABLE `password_reset_tokens` (
     INDEX `idx_user_id`   (`user_id`),
     INDEX `idx_expires_at`(`expires_at`),
     CONSTRAINT `fk_prt_user` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+CREATE TABLE `otps` (
+    `id`           INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `identifier`   VARCHAR(255) NOT NULL,  -- phone number or email
+    `type`         ENUM('register','login','reset') NOT NULL DEFAULT 'register',
+    `otp_code`     VARCHAR(10)  NOT NULL,
+    `temp_data`    JSON                  DEFAULT NULL,  -- pending user payload for register
+    `expires_at`   DATETIME     NOT NULL,
+    `is_used`      TINYINT(1)   NOT NULL DEFAULT 0,
+    `created_at`   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    INDEX `idx_identifier` (`identifier`),
+    INDEX `idx_expires_at` (`expires_at`),
+    INDEX `idx_is_used`    (`is_used`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
@@ -427,30 +444,24 @@ VALUES ('shopkeeper1', 'shop@secureshop.local', '$2y$12$K0v8r2Vu1LpWFdmThfDdAeyJ
 INSERT INTO `users` (`username`, `email`, `password_hash`, `role`, `first_name`, `last_name`, `is_active`, `email_verified`)
 VALUES ('customer1', 'user@secureshop.local', '$2y$12$xdSJw9v1hS8oKCK5gUXu/.y0BN0c14oOfrmgK4D.4Cl1oC4k1FZm.', 'user', 'Test', 'Customer', 1, 1);
 
--- Categories
-INSERT INTO `categories` (`name`, `slug`, `description`, `is_active`, `sort_order`) VALUES
-('Electronics', 'electronics', 'Gadgets, devices and tech accessories', 1, 1),
-('Clothing', 'clothing', 'Fashion for all ages and styles', 1, 2),
-('Books', 'books', 'Wide range of books and educational material', 1, 3),
-('Home & Garden', 'home-garden', 'Everything for your home and garden', 1, 4),
-('Sports', 'sports', 'Sports equipment and fitness gear', 1, 5);
+-- Categories (Black Stone Clothing Collections)
+INSERT INTO `categories` (`id`, `name`, `slug`, `description`, `is_active`, `sort_order`) VALUES
+(1, 'T-Shirts', 't-shirts', 'Heavyweight 240-280GSM luxury streetwear tees with custom neck ribbing and signature graphics.', 1, 1),
+(2, 'Hoodies', 'hoodies', 'Heavyweight 450GSM French terry hoodies with drop shoulders and custom metallic hardware.', 1, 2),
+(3, 'Trousers', 'trousers', 'Relaxed utilitarian cargo pants, wide-leg trousers, and tailored streetwear essentials.', 1, 3),
+(4, 'Shorts', 'shorts', 'Heavyweight fleece shorts and luxury double-layer breathable court mesh shorts.', 1, 4);
 
--- Subcategories
-INSERT INTO `categories` (`parent_id`, `name`, `slug`, `description`, `is_active`, `sort_order`) VALUES
-(1, 'Smartphones', 'smartphones', 'Mobile phones and accessories', 1, 1),
-(1, 'Laptops', 'laptops', 'Laptops and computer accessories', 1, 2),
-(2, 'Men', 'mens-clothing', "Men's fashion", 1, 1),
-(2, 'Women', 'womens-clothing', "Women's fashion", 1, 2),
-(3, 'Fiction', 'fiction-books', 'Fiction and literature', 1, 1),
-(3, 'Non-Fiction', 'non-fiction-books', 'Educational and reference books', 1, 2);
-
--- Sample products
-INSERT INTO `products` (`shopkeeper_id`, `category_id`, `name`, `slug`, `description`, `short_desc`, `sku`, `price`, `sale_price`, `stock_quantity`, `is_active`, `is_featured`) VALUES
-(2, 6, 'ProMax Phone X12', 'promax-phone-x12', 'High-performance smartphone with 6.7" AMOLED display, 256GB storage, 5G capability and 50MP triple camera system.', 'Premium 5G smartphone with 50MP camera', 'PHN-001', 49999.00, 44999.00, 50, 1, 1),
-(2, 7, 'UltraBook Pro 15', 'ultrabook-pro-15', '15.6" laptop with Intel i7 12th gen, 16GB RAM, 512GB NVMe SSD, dedicated GPU and 10-hour battery life.', 'Powerhouse laptop for professionals', 'LPT-001', 75999.00, NULL, 25, 1, 1),
-(2, 8, 'Classic White Tee', 'classic-white-tee', 'Premium 100% cotton round-neck t-shirt. Pre-shrunk, tag-less label, available in multiple sizes.', 'Premium cotton everyday t-shirt', 'CLT-001', 799.00, 599.00, 200, 1, 0),
-(2, 10, 'The Art of Learning', 'the-art-of-learning', 'Bestselling book by Josh Waitzkin on achieving mastery in any field through deliberate practice and mental models.', 'Bestselling personal development book', 'BKF-001', 499.00, NULL, 150, 1, 0),
-(2, 11, 'Running Shoes Pro', 'running-shoes-pro', 'Lightweight and breathable running shoes with advanced cushioning, anti-slip sole and arch support.', 'Professional running shoes', 'SHO-001', 2999.00, 2499.00, 80, 1, 1);
+-- Sample Streetwear Products
+INSERT INTO `products` (`id`, `shopkeeper_id`, `category_id`, `name`, `slug`, `description`, `short_desc`, `sku`, `price`, `sale_price`, `stock_quantity`, `is_active`, `is_featured`) VALUES
+(1, 2, 1, 'Signature Gold Crest Tee', 'signature-gold-crest-tee', 'Cut from heavyweight 260GSM combed cotton, this signature piece features our iconic Black Stone gold crest embroidery on the left chest and a boxy modern drop-shoulder silhouette.', 'Heavyweight 260GSM cotton with gold crest embroidery', 'BST-001', 1499.00, 1199.00, 75, 1, 1),
+(2, 2, 1, 'Cyber Void Oversized Graphic Tee', 'cyber-void-oversized-tee', 'Vintage mineral washed oversized tee featuring high-density puff print typography on the back and subtle chest micro-branding. Pre-shrunk with tight 1.25" neck collar.', 'Oversized drop-shoulder tee with high-density puff print', 'BST-002', 1699.00, 1399.00, 60, 1, 1),
+(3, 2, 1, 'Minimalist Raw Edge Tee', 'minimalist-raw-edge-tee', 'Ultra-clean everyday essential crafted in premium 240GSM single-jersey cotton with subtle distressed hems and tonal branding.', 'Clean 240GSM cotton everyday luxury tee', 'BST-003', 1299.00, 999.00, 120, 1, 0),
+(4, 2, 2, 'Obsidian Heavyweight 450GSM Hoodie', 'obsidian-heavyweight-hoodie', 'Constructed from impenetrable 450GSM French terry cotton. Features double-lined hood without drawstrings for an ultra-clean streetwear profile, deep kangaroo pocket, and ribbed side gussets.', 'Luxury 450GSM French terry with double-lined hood', 'BSH-001', 3999.00, 3299.00, 45, 1, 1),
+(5, 2, 2, 'Gold Monogram Drop-Shoulder Hoodie', 'gold-monogram-hoodie', 'Statement hoodie featuring metallic gold crest embroidery on the hood and sleeve cuff. Heavyweight brushed fleece interior for winter warmth.', 'Brushed fleece hoodie with gold metallic embroidery', 'BSH-002', 4299.00, 3599.00, 35, 1, 1),
+(6, 2, 3, 'Tactical Multi-Pocket Cargo Trousers', 'tactical-cargo-trousers', 'Crafted from high-tensile cotton ripstop with six ergonomic cargo pockets, reinforced knee darting, and adjustable cinch cords at the ankle cuffs for customizable styling.', 'High-tensile ripstop cargo pants with 6 pockets', 'BSP-001', 2899.00, 2399.00, 50, 1, 1),
+(7, 2, 3, 'Relaxed Pleated Wide Trousers', 'relaxed-pleated-trousers', 'Effortless wide-leg trousers featuring double front pleats, hidden elasticated waistband with internal drawstrings, and a generous modern puddle break over sneakers.', 'Wide-leg pleated trousers with tailored streetwear drape', 'BSP-002', 2699.00, 2199.00, 40, 1, 0),
+(8, 2, 4, 'Heavy Fleece Lounge Shorts', 'heavy-fleece-shorts', '380GSM French terry shorts designed for unmatched comfort. Deep zippered side pockets ensure your phone never slips out, finished with custom gold eyelets and thick drawstrings.', '380GSM French terry shorts with zippered pockets', 'BSS-001', 1799.00, 1399.00, 80, 1, 1),
+(9, 2, 4, 'Double Layer Basketball Mesh Shorts', 'double-layer-mesh-shorts', 'Heavyweight athletic mesh outer layer with buttery-soft micro-mesh inner lining. Subtle tonal Black Stone crest patch on left hem and rear zipper pocket.', 'Breathable double-layer heavyweight court shorts', 'BSS-002', 1899.00, 1499.00, 65, 1, 0);
 
 -- Tax rates
 INSERT INTO `tax_rates` (`name`, `country`, `state`, `tax_rate`, `is_active`) VALUES

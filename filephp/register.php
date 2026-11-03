@@ -36,10 +36,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $last_name       = sanitize_name($_POST['last_name']  ?? '');
     $username        = sanitize_username($_POST['username'] ?? '');
     $email           = sanitize_email($_POST['email']     ?? '');
+    $phone           = sanitize_phone($_POST['phone']     ?? '');
     $password        = $_POST['password']  ?? '';
     $password_confirm= $_POST['password2'] ?? '';
 
-    $old = compact('first_name', 'last_name', 'username', 'email');
+    $old = compact('first_name', 'last_name', 'username', 'email', 'phone');
 
     // ===== RATE LIMITING =====
     $ip = get_client_ip();
@@ -52,6 +53,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$last_name)   $errors['last_name'][]  = 'Last name is required and must contain only letters.';
         if (!$username)    $errors['username'][]    = 'Username must be 3–50 alphanumeric characters (- _ allowed).';
         if (!$email)       $errors['email'][]       = 'A valid email address is required.';
+        if (!$phone || strlen(preg_replace('/\D/', '', $phone)) < 10) {
+            $errors['phone'][] = 'A valid 10-digit phone number is required for OTP verification.';
+        }
 
         // Password strength
         $pwd_check = validate_password($password);
@@ -70,32 +74,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $exists = db_fetch_value("SELECT COUNT(*) FROM users WHERE email=?", 's', [$email]);
             if ($exists) $errors['email'][] = 'This email is already registered. Try logging in.';
         }
+        if ($phone && !isset($errors['phone'])) {
+            $exists_phone = db_fetch_value("SELECT COUNT(*) FROM users WHERE phone=?", 's', [$phone]);
+            if ($exists_phone) $errors['phone'][] = 'This phone number is already registered.';
+        }
         if ($username && !isset($errors['username'])) {
             $exists = db_fetch_value("SELECT COUNT(*) FROM users WHERE username=?", 's', [$username]);
             if ($exists) $errors['username'][] = 'This username is already taken.';
         }
 
         if (empty($errors)) {
-            // ===== CREATE USER =====
+            // ===== DISPATCH OTP & STORE PENDING DATA =====
             $hash = password_hash($password, PASSWORD_BCRYPT, ['cost' => BCRYPT_COST]);
+            $temp_data = [
+                'username'      => $username,
+                'email'         => $email,
+                'phone'         => $phone,
+                'password_hash' => $hash,
+                'first_name'    => $first_name,
+                'last_name'     => $last_name,
+            ];
 
-            $user_id = db_insert(
-                "INSERT INTO users (username, email, password_hash, role, first_name, last_name, is_active, email_verified, created_at)
-                 VALUES (?, ?, ?, 'user', ?, ?, 1, 1, NOW())",
-                'sssss',
-                [$username, $email, $hash, $first_name, $last_name]
-            );
+            // Generate OTP for this registration
+            $otp = otp_generate($email, 'register', $temp_data);
+            $_SESSION['pending_phone'] = $phone;
 
-            // Send welcome email
-            send_welcome_email($email, $first_name);
-
-            // Log in immediately
-            login_user($user_id, 'user', false, false);
-            log_audit('REGISTER', 'user', $user_id);
-            log_security('USER_REGISTERED', ['user_id' => $user_id, 'email' => $email]);
-
-            flash('success', 'Welcome to ' . APP_NAME . '! Your account has been created.');
-            safe_redirect('dashboard.php');
+            flash('info', "🔐 6-digit OTP sent to <strong>" . e($email) . "</strong> and <strong>" . e($phone) . "</strong>. Demo Code: <strong class='text-warning fs-5'>{$otp}</strong>");
+            header('Location: verify-otp.php?identifier=' . urlencode($email) . '&type=register');
+            exit;
         }
     }
 }
@@ -169,13 +175,25 @@ log_access();
 
             <!-- Email -->
             <div class="mb-3">
-                <label class="form-label" for="email"><i class="bi bi-envelope me-1"></i>Email Address</label>
-                <input type="email" class="form-control <?= field_class($errors,'email') ?>"
+                <label class="form-label" for="email"><i class="bi bi-envelope me-1 text-warning"></i>Email Address</label>
+                <input type="email" class="form-control bg-dark text-light border-secondary <?= field_class($errors,'email') ?>"
                        id="email" name="email"
                        value="<?= e($old['email'] ?? '') ?>"
                        placeholder="you@example.com" maxlength="255"
                        required autocomplete="email">
                 <?php render_field_error($errors, 'email'); ?>
+            </div>
+
+            <!-- Phone Number -->
+            <div class="mb-3">
+                <label class="form-label" for="phone"><i class="bi bi-telephone-fill me-1 text-warning"></i>Phone Number (For OTP Verification)</label>
+                <input type="tel" class="form-control bg-dark text-light border-secondary <?= field_class($errors,'phone') ?>"
+                       id="phone" name="phone"
+                       value="<?= e($old['phone'] ?? '') ?>"
+                       placeholder="e.g. +91 9876543210" maxlength="20"
+                       required autocomplete="tel">
+                <div class="form-text text-muted small">We'll send a 6-digit OTP code to verify your phone & email.</div>
+                <?php render_field_error($errors, 'phone'); ?>
             </div>
 
             <!-- Password -->

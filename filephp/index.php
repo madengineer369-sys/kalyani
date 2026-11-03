@@ -120,34 +120,65 @@ log_access();
 
     <!-- Hero Banner (when no search) -->
     <?php if (!$search && !$cat_id && !$featured && $page_num === 1): ?>
-    <div class="hero-banner mb-5 p-5 rounded-4 position-relative overflow-hidden"
-         style="background: linear-gradient(135deg, rgba(108,99,255,0.15), rgba(78,205,196,0.10)); border: 1px solid rgba(108,99,255,0.2);">
+    <div class="hero-banner mb-5 p-5 rounded-4 position-relative overflow-hidden shadow-lg">
         <div class="row align-items-center">
-            <div class="col-lg-7">
-                <span class="badge bg-accent mb-3"><i class="bi bi-lightning-fill me-1"></i>New Arrivals</span>
-                <h1 class="display-5 fw-bold mb-3">Discover Products<br><span class="text-accent">Built for You</span></h1>
-                <p class="text-muted mb-4">Shop with confidence. Every purchase is backed by our secure checkout, easy returns, and 24/7 support.</p>
-                <div class="d-flex gap-3 flex-wrap">
-                    <a href="?featured=1" class="btn btn-accent px-4">
-                        <i class="bi bi-star me-2"></i>Featured Products
+            <div class="col-lg-8">
+                <span class="badge bg-warning text-dark mb-3 px-3 py-2 fw-bold text-uppercase rounded-pill">
+                    <i class="bi bi-crown-fill me-1"></i> Heavyweight Unisex Streetwear
+                </span>
+                <h1 class="display-4 fw-bold mb-3 font-monospace">
+                    BLACK <span class="gold-text glow-text">STONE</span><br>
+                    <span class="fs-2 text-light">Luxury Apparel & Mystery Box Drops</span>
+                </h1>
+                <p class="hero-tagline mb-4">
+                    Heavyweight 260GSM combed cotton tees, 450GSM French terry hoodies, structured tactical cargo trousers, and luxury court shorts. Every piece contains secret claim codes for our interactive Mystery Box lounge.
+                </p>
+                <div class="d-flex gap-3 flex-wrap mb-4">
+                    <a href="t-shirts.php" class="btn btn-accent px-4 py-2 fw-bold shadow-gold">
+                        <i class="bi bi-gem me-2"></i>Shop T-Shirts
                     </a>
-                    <a href="search.php" class="btn btn-outline-accent px-4">
-                        <i class="bi bi-grid me-2"></i>Browse All
+                    <a href="hoodies.php" class="btn btn-outline-warning px-4 py-2 fw-bold">
+                        <i class="bi bi-fire me-2"></i>Explore Hoodies
+                    </a>
+                    <a href="mystery-box.php" class="btn btn-dark border-secondary px-4 py-2 fw-bold text-light">
+                        <i class="bi bi-gift-fill text-warning me-2"></i>Mystery Box Lounge
                     </a>
                 </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="proof-badge"><i class="bi bi-check-circle-fill text-warning"></i> 260–450 GSM Cotton</span>
+                    <span class="proof-badge"><i class="bi bi-check-circle-fill text-warning"></i> Hidden Tag Codes</span>
+                    <span class="proof-badge"><i class="bi bi-check-circle-fill text-warning"></i> Limited Street Drops</span>
+                </div>
             </div>
-            <div class="col-lg-5 d-none d-lg-block text-center">
-                <div class="d-flex justify-content-center gap-3">
-                    <?php foreach (array_slice($featured_products, 0, 2) as $fp): ?>
-                    <div class="featured-thumb">
-                        <img src="<?= e(product_image_url($fp['image_path'])) ?>"
-                             alt="<?= e($fp['name']) ?>"
-                             style="width:120px;height:120px;object-fit:cover;border-radius:12px;border:2px solid rgba(108,99,255,0.3)">
+            <div class="col-lg-4 d-none d-lg-block text-center">
+                <div class="position-relative">
+                    <div class="avatar-lg bg-warning text-dark mx-auto fs-1 fw-bold mb-3 shadow-gold" style="width:120px; height:120px; border-radius:50%; display:flex; align-items:center; justify-content:center;">
+                        <i class="bi bi-box-seam-fill"></i>
                     </div>
-                    <?php endforeach; ?>
+                    <h5 class="fw-bold text-light">Mystery Box Included</h5>
+                    <p class="text-muted small">Receive claim codes with every verified apparel order.</p>
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Category Quick Chips Strip -->
+    <div class="category-nav-strip mb-4">
+        <a href="t-shirts.php" class="category-nav-chip">
+            <i class="bi bi-gem text-warning"></i> T-Shirts Collection
+        </a>
+        <a href="hoodies.php" class="category-nav-chip">
+            <i class="bi bi-fire text-warning"></i> Hoodies Drop
+        </a>
+        <a href="trousers.php" class="category-nav-chip">
+            <i class="bi bi-layers text-warning"></i> Trousers & Pants
+        </a>
+        <a href="shorts.php" class="category-nav-chip">
+            <i class="bi bi-sun text-warning"></i> Shorts Collection
+        </a>
+        <a href="mystery-box.php" class="category-nav-chip border-warning text-warning">
+            <i class="bi bi-box-seam-fill"></i> Open Mystery Box
+        </a>
     </div>
     <?php endif; ?>
 

@@ -4,81 +4,867 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Black Stone - Mystery Box</title>
+    <meta name="description" content="Enter your 6-digit Black Stone code and unlock your Mystery Box reward.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* ==============================
+           OTP / 6-Digit Code Entry
+        ============================== */
+        .mystery-otp-section {
+            padding: 30px 0 60px;
+        }
+
+        .mystery-otp-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 52px 40px 44px;
+            max-width: 760px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+        }
+
+        .mystery-otp-card::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 360px;
+            height: 160px;
+            background: radial-gradient(ellipse, rgba(255,20,56,0.18) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .otp-icon-ring {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,20,56,0.2), rgba(255,20,56,0.05));
+            border: 1.5px solid rgba(255,20,56,0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--color-red);
+            margin: 0 auto 24px;
+        }
+
+        .otp-title {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .otp-subtitle {
+            color: var(--color-muted);
+            font-size: 0.97rem;
+            max-width: 460px;
+            margin: 0 auto 36px;
+            line-height: 1.65;
+        }
+
+        /* Six digit boxes */
+        .otp-input-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 32px;
+        }
+
+        .otp-digit {
+            width: 62px;
+            height: 72px;
+            border-radius: 12px;
+            border: 2px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.04);
+            color: #fff;
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-align: center;
+            caret-color: var(--color-red);
+            outline: none;
+            transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+            letter-spacing: 0;
+        }
+
+        .otp-digit:focus {
+            border-color: var(--color-red);
+            background: rgba(255,20,56,0.08);
+            box-shadow: 0 0 0 3px rgba(255,20,56,0.18);
+        }
+
+        .otp-digit.filled {
+            border-color: rgba(212,175,55,0.6);
+            color: var(--color-gold, #d4af37);
+        }
+
+        .otp-digit.shake {
+            animation: otpShake 0.4s ease;
+        }
+
+        @keyframes otpShake {
+            0%, 100% { transform: translateX(0); }
+            20%       { transform: translateX(-8px); border-color: #f87171; }
+            40%       { transform: translateX(8px);  border-color: #f87171; }
+            60%       { transform: translateX(-6px); border-color: #f87171; }
+            80%       { transform: translateX(6px);  border-color: #f87171; }
+        }
+
+        .otp-submit-btn {
+            min-width: 240px;
+            font-size: 1.05rem;
+            letter-spacing: 1px;
+        }
+
+        /* Alert strip */
+        .otp-alert {
+            display: none;
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-size: 0.93rem;
+            margin: 0 auto 24px;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .otp-alert.success {
+            background: rgba(74,222,128,0.08);
+            border: 1px solid rgba(74,222,128,0.35);
+            color: #4ade80;
+        }
+
+        .otp-alert.error {
+            background: rgba(248,113,113,0.08);
+            border: 1px solid rgba(248,113,113,0.35);
+            color: #f87171;
+        }
+
+        /* Checkpoint progress */
+        .checkpoint-strip {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            margin: 36px auto 0;
+            max-width: 600px;
+        }
+
+        .checkpoint-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+            position: relative;
+        }
+
+        .checkpoint-node:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 18px;
+            left: calc(50% + 18px);
+            width: calc(100% - 36px);
+            height: 2px;
+            background: rgba(255,255,255,0.1);
+            z-index: 0;
+        }
+
+        .checkpoint-node.done::after {
+            background: var(--color-red);
+        }
+
+        .checkpoint-bubble {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.04);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            color: var(--color-muted);
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s;
+        }
+
+        .checkpoint-node.done .checkpoint-bubble {
+            border-color: var(--color-red);
+            background: rgba(255,20,56,0.15);
+            color: var(--color-red);
+        }
+
+        .checkpoint-node.active .checkpoint-bubble {
+            border-color: var(--color-gold, #d4af37);
+            background: rgba(212,175,55,0.12);
+            color: var(--color-gold, #d4af37);
+            box-shadow: 0 0 10px rgba(212,175,55,0.3);
+        }
+
+        .checkpoint-label {
+            font-size: 0.72rem;
+            color: var(--color-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .checkpoint-node.done .checkpoint-label,
+        .checkpoint-node.active .checkpoint-label {
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Milestone tracker */
+        .milestone-tracker {
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px;
+            padding: 28px 28px 24px;
+            margin-bottom: 32px;
+        }
+
+        .milestone-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .milestone-slots {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .milestone-slot {
+            flex: 1;
+            min-width: 60px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 16px 8px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .milestone-slot.unlocked {
+            border-color: var(--color-gold, #d4af37);
+            background: rgba(212,175,55,0.07);
+        }
+
+        .slot-icon { font-size: 1.3rem; margin-bottom: 6px; color: var(--color-muted); }
+        .milestone-slot.unlocked .slot-icon { color: var(--color-gold, #d4af37); }
+        .slot-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--color-muted); }
+
+        /* Chest grid */
+        .chest-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .chest-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 28px 20px;
+            text-align: center;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .chest-card:hover { transform: translateY(-4px); }
+        .chest-card.legendary { border-color: rgba(212,175,55,0.4); }
+        .chest-card.epic      { border-color: rgba(168,85,247,0.4); }
+        .chest-card.rare      { border-color: rgba(6,182,212,0.4); }
+
+        .chest-icon-wrapper {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: rgba(255,20,56,0.1);
+            border: 1px solid rgba(255,20,56,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            color: var(--color-red);
+            margin: 0 auto 16px;
+        }
+
+        .chest-card.legendary .chest-icon-wrapper { background: rgba(212,175,55,0.1); border-color: rgba(212,175,55,0.3); color: var(--color-gold, #d4af37); }
+        .chest-card.epic      .chest-icon-wrapper { background: rgba(168,85,247,0.1); border-color: rgba(168,85,247,0.3); color: #a855f7; }
+        .chest-card.rare      .chest-icon-wrapper { background: rgba(6,182,212,0.1);  border-color: rgba(6,182,212,0.3);  color: #06b6d4; }
+
+        /* Responsive */
+        @media (max-width: 560px) {
+            .otp-digit {
+                width: 44px;
+                height: 56px;
+                font-size: 1.4rem;
+                border-radius: 9px;
+            }
+
+            .otp-input-group { gap: 8px; }
+
+            .mystery-otp-card { padding: 36px 20px 32px; }
+
+            .otp-title { font-size: 1.5rem; }
+
+            .checkpoint-label { display: none; }
+        }
+    </style>
 </head>
 <body>
     <header class="main-header">
         <div class="header-container">
-            <a href="index.html" class="logo"><span class="logo-icon"><i class="fa-solid fa-gem"></i></span><span class="logo-text">BLACK <span class="gold-text">STONE</span></span></a>
+            <a href="index.html" class="logo">
+                <span class="logo-icon"><i class="fa-solid fa-gem"></i></span>
+                <span class="logo-text">BLACK <span class="red-text gold-text">STONE</span></span>
+            </a>
             <nav class="main-nav" id="mainNav">
                 <ul>
                     <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="index.html#experience" class="nav-link">Black Lizard</a></li>
                     <li><a href="index.html#shop" class="nav-link">Collection</a></li>
-                    <li><a href="code-zone.html" class="nav-link">Code Zone</a></li>
                     <li><a href="mystery-box.html" class="nav-link active">Mystery Box</a></li>
+                    <li><a href="owner.html" class="nav-link">Owner Hub</a></li>
+                    <li><a href="drop-item.html" class="nav-link">Drop Item</a></li>
                     <li><a href="about.html" class="nav-link">About</a></li>
                     <li><a href="contact.html" class="nav-link">Contact</a></li>
                 </ul>
             </nav>
             <div class="header-actions">
-                <button class="account-btn-header" id="accountActionBtn" onclick="window.location.href='auth.html'"><i class="fa-solid fa-user"></i> <span id="accountActionText">Login</span></button>
-                <button class="app-btn-header" onclick="window.location.href='app.html'"><i class="fa-solid fa-mobile-screen-button"></i> <span>Get App</span></button>
-                <div class="cart-trigger" onclick="window.location.href='index.html#shop'"><i class="fa-solid fa-bag-shopping"></i><span class="cart-count" id="cartCount">0</span></div>
-                <button class="mobile-menu-toggle" id="menuToggle" aria-label="Toggle menu"><i class="fa-solid fa-bars"></i></button>
+                <button class="owner-btn-header" id="ownerActionBtn" onclick="openOwnerModal()" title="Owner Product Listing Portal">
+                    <i class="fa-solid fa-plus-circle"></i> <span>List Product</span>
+                </button>
+                <button class="account-btn-header" id="accountActionBtn" onclick="window.location.href='auth.html'">
+                    <i class="fa-solid fa-user"></i> <span id="accountActionText">Login</span>
+                </button>
+                <button class="app-btn-header" onclick="window.location.href='app.html'">
+                    <i class="fa-solid fa-mobile-screen-button"></i> <span>Get App</span>
+                </button>
+                <div class="cart-trigger" id="cartTrigger" onclick="toggleCart(true)">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </div>
+                <button class="mobile-menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
             </div>
         </div>
     </header>
 
-    <section class="page-hero-section">
-        <div class="container page-hero-content">
-            <span class="section-tag">Rewards & Surprises</span>
-            <h1>Inside the Mystery Box</h1>
-            <p>Collect five T-shirt label codes, unlock the box, and reveal a Black Stone reward.</p>
+    <!-- Cart Drawer -->
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-drawer-overlay" onclick="toggleCart(false)"></div>
+        <div class="cart-drawer-content">
+            <div class="cart-drawer-header">
+                <h3>Shopping Bag (<span id="cartDrawerCount">0</span>)</h3>
+                <button class="close-btn" onclick="toggleCart(false)"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="cart-drawer-items" id="cartItemsList"></div>
+            <div class="cart-drawer-footer" id="cartFooter" style="display: none;">
+                <div class="cart-total-row">
+                    <span>Subtotal</span>
+                    <span class="cart-total-price" id="cartTotalVal">₹0</span>
+                </div>
+                <p class="cart-disclaimer">Free premium shipping included. Each garment comes with a 6-digit Mystery Box code sent to your registered mobile number.</p>
+                <button class="btn btn-gold w-100" id="checkoutBtn" onclick="checkoutCart()">Secure Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div class="modal-backdrop" id="productModal">
+        <div class="modal-content product-modal-content">
+            <button class="close-btn modal-close" onclick="closeProductModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="product-modal-grid" id="productModalGrid"></div>
+        </div>
+    </div>
+
+    <!-- Checkout Success Modal -->
+    <div class="modal-backdrop" id="checkoutModal">
+        <div class="modal-content checkout-modal-content">
+            <div class="checkout-success-header">
+                <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+                <h2>Order Confirmed!</h2>
+                <p>Your Black Stone package is preparing for shipping.</p>
+            </div>
+            <div class="checkout-order-details">
+                <p>Order ID: <span id="checkoutOrderId" class="gold-text">#BS-90210</span></p>
+                <div class="code-reveal-box">
+                    <h3><i class="fa-solid fa-mobile-screen-button"></i> Your Mystery Box Code</h3>
+                    <p>A <strong>6-digit code</strong> has been generated for your order. In a live deployment this would be sent to your registered mobile number.</p>
+                    <div class="generated-codes-list" id="generatedCodesList"></div>
+                    <button class="btn btn-secondary btn-sm mt-3" onclick="copyAllGeneratedCodes()">
+                        <i class="fa-solid fa-copy"></i> Copy Code
+                    </button>
+                </div>
+            </div>
+            <div class="checkout-modal-actions">
+                <button class="btn btn-gold" onclick="closeCheckoutModalAndGoToMystery()">Enter Code Now &rarr;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE HERO -->
+    <section class="page-hero-section" style="padding: 160px 0 50px; position: relative;">
+        <div class="hero-bg-glow"></div>
+        <div class="container page-hero-content text-center">
+            <span class="section-tag">Rewards &amp; Underground Vault</span>
+            <h1 class="hero-title" style="font-size: 3.5rem; margin-bottom: 16px;">
+                Mystery Box
+            </h1>
+            <p class="hero-subtitle" style="margin: 0 auto; max-width: 620px;">
+                Receive a unique 6-digit code with every Black Stone garment purchase.
+                Enter it below to unlock your personalised reward chest.
+            </p>
         </div>
     </section>
 
-    <section id="mystery-box" class="mystery-explainer-section">
+    <!-- ============================
+         CHECKPOINT JOURNEY STRIP
+    ============================= -->
+    <section style="padding: 0 0 10px;">
         <div class="container">
-            <div class="rewards-carousel">
-                <div class="reward-item-card">
-                    <div class="reward-badge">Legendary</div>
-                    <div class="reward-icon"><i class="fa-solid fa-gem"></i></div>
-                    <h3>Premium Hoodies</h3>
-                    <p>Heavyweight 450GSM limited-run hoodies featuring pure embroidery and custom tags.</p>
+            <div class="checkpoint-strip" id="checkpointStrip">
+                <div class="checkpoint-node done" id="cp1">
+                    <div class="checkpoint-bubble"><i class="fa-solid fa-bag-shopping"></i></div>
+                    <span class="checkpoint-label">Purchase</span>
                 </div>
-                <div class="reward-item-card">
-                    <div class="reward-badge">Epic</div>
-                    <div class="reward-icon"><i class="fa-solid fa-ring"></i></div>
-                    <h3>Signature Silver Ring</h3>
-                    <p>Engraved sterling silver signet rings representing the Black Stone community.</p>
+                <div class="checkpoint-node done" id="cp2">
+                    <div class="checkpoint-bubble"><i class="fa-solid fa-mobile-screen-button"></i></div>
+                    <span class="checkpoint-label">Code Sent</span>
                 </div>
-                <div class="reward-item-card">
-                    <div class="reward-badge">Rare</div>
-                    <div class="reward-icon"><i class="fa-solid fa-ticket"></i></div>
-                    <h3>Gift Vouchers</h3>
-                    <p>Store credit vouchers to load your wardrobe with upcoming collection drops.</p>
+                <div class="checkpoint-node active" id="cp3">
+                    <div class="checkpoint-bubble"><i class="fa-solid fa-keyboard"></i></div>
+                    <span class="checkpoint-label">Enter Code</span>
                 </div>
-            </div>
-            <div class="drop-banner mt-3">
-                <div>
-                    <span class="section-tag">How to Unlock</span>
-                    <h2>Five verified T-shirts open the box.</h2>
+                <div class="checkpoint-node" id="cp4">
+                    <div class="checkpoint-bubble"><i class="fa-solid fa-unlock-keyhole"></i></div>
+                    <span class="checkpoint-label">Unlock</span>
                 </div>
-                <p>Shop the collection on the home page, checkout for demo codes, then enter them in Code Zone.</p>
-                <button class="btn btn-gold" onclick="window.location.href='code-zone.html'"><i class="fa-solid fa-key"></i> Open Code Zone</button>
+                <div class="checkpoint-node" id="cp5">
+                    <div class="checkpoint-bubble"><i class="fa-solid fa-crown"></i></div>
+                    <span class="checkpoint-label">Reward</span>
+                </div>
             </div>
         </div>
     </section>
+
+    <!-- ============================
+         6-DIGIT OTP CODE ENTRY
+    ============================= -->
+    <section class="mystery-otp-section">
+        <div class="container">
+            <div class="mystery-otp-card">
+                <div class="otp-icon-ring">
+                    <i class="fa-solid fa-lock-open"></i>
+                </div>
+                <h2 class="otp-title">Enter Your 6-Digit Code</h2>
+                <p class="otp-subtitle">
+                    Your unique code was sent to your registered mobile number when your order was confirmed.
+                    Type each digit into the boxes below.
+                </p>
+
+                <!-- Alert message -->
+                <div class="otp-alert" id="otpAlertMsg"></div>
+
+                <!-- OTP boxes -->
+                <div class="otp-input-group" id="otpInputGroup">
+                    <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]" data-index="0" autocomplete="off">
+                    <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]" data-index="1" autocomplete="off">
+                    <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]" data-index="2" autocomplete="off">
+                    <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]" data-index="3" autocomplete="off">
+                    <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]" data-index="4" autocomplete="off">
+                    <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]" data-index="5" autocomplete="off">
+                </div>
+
+                <button class="btn btn-gold btn-lg otp-submit-btn" id="otpSubmitBtn" onclick="submitOtpCode()">
+                    <i class="fa-solid fa-unlock-keyhole me-2"></i> Unlock Mystery Box
+                </button>
+
+                <p style="margin-top: 20px; font-size: 0.82rem; color: var(--color-muted);">
+                    Didn't get a code?
+                    <a href="index.html#shop" style="color: var(--color-red); text-decoration: none;">Shop a garment</a>
+                    and a code will be generated for you at checkout.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================
+         MILESTONE TRACKER + INVENTORY
+    ============================= -->
+    <section style="padding: 20px 0 80px;">
+        <div class="container">
+
+            <!-- Milestone progress -->
+            <div class="milestone-tracker">
+                <div class="milestone-header">
+                    <h3><i class="fa-solid fa-gem gold-text"></i> Grand Vault Milestone Progress</h3>
+                    <div class="milestone-badge" id="milestoneCount">0 / 5 CODES</div>
+                </div>
+                <p style="color: var(--color-muted); font-size: 0.95rem; margin-bottom: 4px;">
+                    Redeem 5 garment codes to automatically trigger the <strong>Legendary Grand Vault Master Chest</strong>.
+                </p>
+                <div class="milestone-slots" id="milestoneSlots">
+                    <!-- Injected via JS -->
+                </div>
+            </div>
+
+            <!-- Unopened chests -->
+            <div style="margin-top: 48px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 16px; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+                    <h2 style="font-family: var(--font-heading); font-size: 1.5rem; display: flex; align-items: center; gap: 10px;">
+                        <i class="fa-solid fa-box-open gold-text"></i> Ready to Unbox
+                        <span class="milestone-badge" id="unopenedCountBadge">0</span>
+                    </h2>
+                    <p style="color: var(--color-muted); font-size: 0.9rem; margin: 0;">Click unbox on any chest to launch the suspense reveal.</p>
+                </div>
+                <div class="chest-grid" id="unopenedChestsGrid"></div>
+            </div>
+
+            <!-- Opened rewards history -->
+            <div style="margin-top: 60px;">
+                <h3 style="font-family: var(--font-heading); font-size: 1.35rem; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-clock-rotate-left gold-text"></i> Claimed Rewards
+                </h3>
+                <div id="openedRewardsGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================
+         REWARD TIERS GUIDE
+    ============================= -->
+    <section id="mystery-box" class="mystery-explainer-section" style="padding: 40px 0 100px;">
+        <div class="container">
+            <div class="section-header text-center">
+                <span class="section-tag">Loot Drop Table</span>
+                <h2>Three Tiers of Underground Luxury</h2>
+                <p>Every single code contains guaranteed value. No filler, no empty rolls.</p>
+            </div>
+
+            <div class="rewards-carousel">
+                <div class="reward-item-card" style="border-color: rgba(212,175,55,0.4);">
+                    <div class="reward-badge" style="background: var(--color-gold); color: #000;">Legendary</div>
+                    <div class="reward-icon" style="color: var(--color-gold);"><i class="fa-solid fa-crown"></i></div>
+                    <h3>Heavyweight Hoodies &amp; ₹2,000</h3>
+                    <p>Limited-run 450GSM French terry hoodies with metallic stone embroidery, custom engraved copper hardware, and ₹2,000 drop voucher.</p>
+                </div>
+                <div class="reward-item-card" style="border-color: rgba(168,85,247,0.4);">
+                    <div class="reward-badge" style="background: #a855f7; color: #fff;">Epic</div>
+                    <div class="reward-icon" style="color: #a855f7;"><i class="fa-solid fa-ring"></i></div>
+                    <h3>Sterling Silver Signet Ring</h3>
+                    <p>Heavy sterling silver signet rings carved with the Black Stone crest, plus 30% discount store vouchers applied across upcoming releases.</p>
+                </div>
+                <div class="reward-item-card" style="border-color: rgba(6,182,212,0.4);">
+                    <div class="reward-badge" style="background: #06b6d4; color: #fff;">Rare</div>
+                    <div class="reward-icon" style="color: #06b6d4;"><i class="fa-solid fa-ticket-simple"></i></div>
+                    <h3>25% OFF Booster Vouchers</h3>
+                    <p>Store credits and instant vouchers to reload your wardrobe with limited-run tees, plus exclusive holographic vinyl sticker packs.</p>
+                </div>
+            </div>
+
+            <!-- Test unbox -->
+            <div class="glass-panel" style="padding: 40px 32px; text-align: center; max-width: 680px; margin: 60px auto 0;">
+                <img src="assets/mystery_box.png" alt="Black Stone 3D Mystery Chest" style="width: 160px; aspect-ratio: 1; object-fit: contain; filter: drop-shadow(0 0 22px rgba(212,175,55,0.4)); animation: float 3.5s ease-in-out infinite; margin-bottom: 20px;">
+                <h3 style="font-family: var(--font-heading); font-size: 1.5rem; margin-bottom: 8px;">Try the Vault Demo</h3>
+                <p style="color: var(--color-muted); font-size: 0.95rem; margin-bottom: 24px;">
+                    No code yet? Test the live unboxing experience with a demo chest right now.
+                </p>
+                <button class="btn btn-gold btn-pulse" onclick="triggerTestVaultUnbox()">
+                    <i class="fa-solid fa-unlock-keyhole me-2"></i> Test Unbox Demo Chest
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Confetti Canvas -->
+    <canvas id="confettiCanvas"></canvas>
 
     <footer class="main-footer">
         <div class="container footer-bottom text-center">
+            <p style="margin-bottom: 8px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                <a href="https://www.instagram.com/blackstone2k26?dlrf=MTh5OWppcThoNW05Yw==" target="_blank" rel="noopener noreferrer" style="color: var(--color-red); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                    <i class="fa-brands fa-instagram"></i> Follow @blackstone2k26 on Instagram
+                </a>
+                <a href="http://www.youtube.com/@BSfashionstudio-h7z" target="_blank" rel="noopener noreferrer" style="color: #ff4d4d; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                    <i class="fa-brands fa-youtube"></i> Subscribe @BSfashionstudio-h7z
+                </a>
+            </p>
             <p>&copy; 2026 Black Stone Inc. <a href="index.html#shop" class="gold-text">Shop the collection</a></p>
         </div>
     </footer>
+
     <script src="app.js"></script>
+    <script>
+        /* ================================================
+           Mystery Box — OTP Entry + Checkpoint Logic
+        ================================================ */
+
+        const OTP_DIGITS = document.querySelectorAll('.otp-digit');
+
+        /* ---------- OTP Input Wiring ---------- */
+        OTP_DIGITS.forEach((input, idx) => {
+            // Only numeric input
+            input.addEventListener('keydown', (e) => {
+                const allowed = ['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight'];
+                if (!allowed.includes(e.key) && !/^\d$/.test(e.key)) {
+                    e.preventDefault();
+                }
+            });
+
+            // Auto-advance or backtrack
+            input.addEventListener('input', (e) => {
+                const val = e.target.value.replace(/\D/g, '');
+                e.target.value = val ? val[0] : '';
+
+                if (val) {
+                    e.target.classList.add('filled');
+                    // Move forward
+                    if (idx < OTP_DIGITS.length - 1) {
+                        OTP_DIGITS[idx + 1].focus();
+                    } else {
+                        input.blur();
+                        // Auto-submit when last digit filled
+                        submitOtpCode();
+                    }
+                } else {
+                    e.target.classList.remove('filled');
+                }
+            });
+
+            // Backspace moves to previous box
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !input.value && idx > 0) {
+                    OTP_DIGITS[idx - 1].focus();
+                    OTP_DIGITS[idx - 1].value = '';
+                    OTP_DIGITS[idx - 1].classList.remove('filled');
+                }
+            });
+
+            // Click clears the box so user can re-type easily
+            input.addEventListener('click', () => {
+                input.select();
+            });
+        });
+
+        // Paste support: distribute across boxes
+        OTP_DIGITS[0].addEventListener('paste', (e) => {
+            e.preventDefault();
+            const pasted = (e.clipboardData || window.clipboardData)
+                .getData('text')
+                .replace(/\D/g, '')
+                .substring(0, 6);
+            pasted.split('').forEach((char, i) => {
+                if (OTP_DIGITS[i]) {
+                    OTP_DIGITS[i].value = char;
+                    OTP_DIGITS[i].classList.add('filled');
+                }
+            });
+            if (pasted.length === 6) submitOtpCode();
+            else if (OTP_DIGITS[pasted.length]) OTP_DIGITS[pasted.length].focus();
+        });
+
+        /* ---------- Get / Validate Code ---------- */
+        function getOtpValue() {
+            return Array.from(OTP_DIGITS).map(d => d.value).join('');
+        }
+
+        function shakeOtpBoxes() {
+            OTP_DIGITS.forEach(d => {
+                d.classList.remove('shake');
+                void d.offsetWidth; // reflow
+                d.classList.add('shake');
+            });
+            OTP_DIGITS.forEach(d => d.addEventListener('animationend', () => d.classList.remove('shake'), { once: true }));
+        }
+
+        function clearOtpBoxes() {
+            OTP_DIGITS.forEach(d => { d.value = ''; d.classList.remove('filled'); });
+            OTP_DIGITS[0].focus();
+        }
+
+        function showOtpAlert(msg, type) {
+            const el = document.getElementById('otpAlertMsg');
+            el.textContent = msg;
+            el.className = 'otp-alert ' + type;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 5000);
+        }
+
+        /* ---------- Checkpoint Animation ---------- */
+        function advanceCheckpoints() {
+            document.getElementById('cp3').classList.replace('active', 'done');
+            document.getElementById('cp4').classList.add('done');
+            setTimeout(() => {
+                document.getElementById('cp5').classList.add('done');
+            }, 600);
+        }
+
+        /* ---------- Submit Logic ---------- */
+        function submitOtpCode() {
+            const code = getOtpValue();
+            if (code.length < 6) {
+                showOtpAlert('Please fill all 6 digits before unlocking.', 'error');
+                return;
+            }
+
+            const state = getMysteryState();
+
+            // Check already used
+            if (state.redeemedCodes && state.redeemedCodes.includes(code)) {
+                showOtpAlert('This code has already been redeemed!', 'error');
+                shakeOtpBoxes();
+                if (typeof bsAudio !== 'undefined') bsAudio.playError();
+                return;
+            }
+
+            // Validate: look up stored mystery codes first
+            let storedCodes = [];
+            try {
+                storedCodes = JSON.parse(localStorage.getItem('blackstone_mystery_codes') || '[]');
+            } catch(e) {}
+
+            const matchedStored = storedCodes.find(c => c.code === code && !c.used);
+            let prizeData = null;
+
+            if (matchedStored) {
+                // Real code from checkout
+                matchedStored.used = true;
+                localStorage.setItem('blackstone_mystery_codes', JSON.stringify(storedCodes));
+                const rarities = ['rare', 'epic', 'legendary'];
+                const r = rarities[Math.floor(Math.random() * rarities.length)];
+                prizeData = {
+                    rarity: r,
+                    title: r.toUpperCase() + ' Garment Reward Chest',
+                    prize: r === 'legendary' ? '₹2,000 Voucher + Signature Hoodie' : (r === 'epic' ? '40% OFF + Silver Ring' : '25% OFF Next Drop'),
+                    desc: 'Verified Black Stone purchase reward.'
+                };
+            } else if (/^\d{6}$/.test(code)) {
+                // Valid 6-digit numeric format — treat as demo/test
+                const rarities = ['rare', 'epic', 'legendary'];
+                const r = rarities[Math.floor(Math.random() * rarities.length)];
+                prizeData = {
+                    rarity: r,
+                    title: r.toUpperCase() + ' Mystery Reward Chest',
+                    prize: r === 'legendary' ? '₹2,000 Voucher + Hoodie' : (r === 'epic' ? '40% OFF Coupon' : '25% OFF Code'),
+                    desc: 'Authentic garment tag reward.'
+                };
+            } else {
+                showOtpAlert('Invalid code. Please enter the 6-digit numeric code from your order.', 'error');
+                shakeOtpBoxes();
+                if (typeof bsAudio !== 'undefined') bsAudio.playError();
+                return;
+            }
+
+            // Success — save to mystery state
+            if (!state.redeemedCodes) state.redeemedCodes = [];
+            state.redeemedCodes.push(code);
+            state.collectedTags = (state.collectedTags || 0) + 1;
+
+            const newBox = {
+                id: 'box-' + Date.now(),
+                title: prizeData.title,
+                rarity: prizeData.rarity,
+                prize: prizeData.prize,
+                desc: prizeData.desc,
+                unlockedVia: code
+            };
+
+            if (!state.unopenedBoxes) state.unopenedBoxes = [];
+            state.unopenedBoxes.unshift(newBox);
+
+            let milestoneAwarded = false;
+            if (state.collectedTags % 5 === 0) {
+                state.unopenedBoxes.unshift({
+                    id: 'grand-' + Date.now(),
+                    title: 'GRAND VAULT MASTER CHEST',
+                    rarity: 'legendary',
+                    prize: 'Heavyweight Signature Hoodie + ₹2,000 Voucher',
+                    desc: 'Unlocked by redeeming 5 Black Stone garment codes!'
+                });
+                milestoneAwarded = true;
+            }
+
+            saveMysteryState(state);
+
+            // UI feedback
+            advanceCheckpoints();
+            clearOtpBoxes();
+
+            if (milestoneAwarded) {
+                showOtpAlert('🎉 Code accepted! You hit 5 codes and unlocked the GRAND VAULT MASTER CHEST!', 'success');
+            } else {
+                showOtpAlert('✅ Code verified! ' + prizeData.rarity.toUpperCase() + ' Chest added to your vault below.', 'success');
+            }
+
+            if (typeof bsAudio !== 'undefined') bsAudio.playUnboxFanfare();
+            if (typeof confettiEngine !== 'undefined' && confettiEngine) confettiEngine.burst(60);
+
+            renderMilestoneTracker();
+            renderInventoryLists();
+
+            // Scroll to chests
+            setTimeout(() => {
+                const grid = document.getElementById('unopenedChestsGrid');
+                if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 500);
+        }
+
+        /* ---------- Test Demo Unbox ---------- */
+        function triggerTestVaultUnbox() {
+            const state = getMysteryState();
+            if (state.unopenedBoxes.length === 0) {
+                state.unopenedBoxes.push({
+                    id: 'vault-demo-' + Date.now(),
+                    title: 'LEGENDARY VAULT REWARD DROP',
+                    rarity: 'legendary',
+                    prize: 'Heavyweight Signature Hoodie + ₹2,000 Credit',
+                    desc: 'Unlocked via Black Stone interactive vault test sequence.'
+                });
+                saveMysteryState(state);
+                renderInventoryLists();
+            }
+            triggerUnboxAnimation(state.unopenedBoxes[0].id);
+        }
+
+        /* ---------- Pre-fill from checkout redirect ---------- */
+        window.addEventListener('load', () => {
+            const prefill = sessionStorage.getItem('blackstone_prefill_mystery_code');
+            if (prefill && /^\d{6}$/.test(prefill)) {
+                prefill.split('').forEach((char, i) => {
+                    if (OTP_DIGITS[i]) {
+                        OTP_DIGITS[i].value = char;
+                        OTP_DIGITS[i].classList.add('filled');
+                    }
+                });
+                sessionStorage.removeItem('blackstone_prefill_mystery_code');
+                // Brief delay so user sees the filled boxes
+                setTimeout(submitOtpCode, 400);
+            }
+
+            // Also trigger milestone/inventory render
+            renderMilestoneTracker();
+            renderInventoryLists();
+        });
+    </script>
 </body>
 </html>

@@ -360,3 +360,107 @@ function session_remaining_seconds(): int {
     if (empty($_SESSION['_last_activity'])) return 0;
     return max(0, SESSION_LIFETIME - (time() - (int)$_SESSION['_last_activity']));
 }
+
+// ===== OTP & Phone / Email Auth Helpers =====
+
+/**
+ * Find user by email, phone, or username.
+ */
+function find_user_by_identifier(string $identifier): ?array {
+    $clean = trim($identifier);
+    if (!$clean) return null;
+
+    return db_fetch_one(
+        "SELECT id, username, email, phone, password_hash, role, is_active,
+                first_name, last_name, email_verified, phone_verified, must_change_password
+         FROM users
+         WHERE (email = ? OR phone = ? OR username = ?) AND is_active = 1
+         LIMIT 1",
+        'sss', [$clean, $clean, $clean]
+    );
+}
+
+/**
+ * Generate and store a secure 6-digit OTP.
+ */
+function otp_generate(string $identifier, string $type = 'register', ?array $temp_data = null): string {
+    $identifier = trim($identifier);
+    $code       = sprintf('%06d', random_int(100000, 999999));
+    $json_data  = $temp_data ? json_encode($temp_data, JSON_UNESCAPED_UNICODE) : null;
+
+    // Invalidate existing unused OTPs of this type
+    db_execute(
+        "UPDATE otps SET is_used = 1 WHERE identifier = ? AND type = ? AND is_used = 0",
+        'ss', [$identifier, $type]
+    );
+
+    // Insert new OTP with 10 minute expiry
+    db_insert(
+        "INSERT INTO otps (identifier, type, otp_code, temp_data, expires_at, is_used, created_at)
+         VALUES (?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 10 MINUTE), 0, NOW())",
+        'ssss', [$identifier, $type, $code, $json_data]
+    );
+
+    // Store in session for easy testing display
+    $_SESSION['last_otp_code']       = $code;
+    $_SESSION['last_otp_identifier'] = $identifier;
+    $_SESSION['last_otp_time']       = time();
+
+    otp_send($identifier, $code, $type);
+
+    return $code;
+}
+
+/**
+ * Dispatch OTP via Email or SMS simulation.
+ */
+function otp_send(string $identifier, string $code, string $type = 'register'): void {
+    log_security('OTP_GENERATED', ['identifier' => $identifier, 'type' => $type]);
+
+    // Send email if identifier is an email address and mail is enabled
+    if (filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
+        $subject = 'Your ' . APP_NAME . ' Verification Code: ' . $code;
+        $body    = "<p>Hello,</p><p>Your verification code for <strong>" . APP_NAME . "</strong> is: <strong style='font-size:24px; color:#D4AF37;'>{$code}</strong></p><p>This code expires in 10 minutes. If you did not request this, please disregard.</p>";
+        if (function_exists('send_mail')) {
+            @send_mail($identifier, $subject, $body);
+        }
+    }
+
+    // Set flash notice with test OTP so developer/user can seamlessly copy-paste on any machine
+    flash('info', "🔐 Verification Code sent to <strong>" . e($identifier) . "</strong>. Demo Code: <strong class='text-warning fs-5'>{$code}</strong>");
+}
+
+/**
+ * Verify submitted 6-digit OTP. Returns stored temp_data on success, or null on failure.
+ */
+function otp_verify(string $identifier, string $code, string $type = 'register'): ?array {
+    $identifier = trim($identifier);
+    $code       = trim($code);
+
+    if (!$identifier || !$code) return null;
+
+    $row = db_fetch_one(
+        "SELECT id, otp_code, temp_data, expires_at
+         FROM otps
+         WHERE identifier = ? AND type = ? AND is_used = 0 AND expires_at > NOW()
+         ORDER BY id DESC LIMIT 1",
+        'ss', [$identifier, $type]
+    );
+
+    if (!$row) {
+        log_security('OTP_VERIFY_NOT_FOUND_OR_EXPIRED', ['identifier' => $identifier, 'type' => $type]);
+        return null;
+    }
+
+    if (!hash_equals($row['otp_code'], $code)) {
+        log_security('OTP_VERIFY_MISMATCH', ['identifier' => $identifier, 'type' => $type]);
+        return null;
+    }
+
+    // Mark OTP as used
+    db_execute("UPDATE otps SET is_used = 1 WHERE id = ?", 'i', [$row['id']]);
+    log_security('OTP_VERIFIED_SUCCESS', ['identifier' => $identifier, 'type' => $type]);
+
+    $temp_data = $row['temp_data'] ? json_decode($row['temp_data'], true) : [];
+    return is_array($temp_data) ? $temp_data : [];
+}

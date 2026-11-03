@@ -1,0 +1,2483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drop Item Studio — Owner Exclusive Portal — Black Stone</title>
+    <meta name="description" content="Exclusive Black Stone Owner Portal: Select garment category (Shirt, T-Shirt, Hoodie, Sweatshirt, Jacket, Trouser, Jeans), drop cloths, configure fabric & sizes, and post directly to catalog with MS Word export.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <!-- docx & FileSaver for Client-side MS Word Generation -->
+    <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+    <style>
+        /* ===================================================
+           DROP ITEM STUDIO SPECIFIC STYLES & GENEROUS SPACING SYSTEM
+           =================================================== */
+        .drop-studio-page {
+            min-height: 100vh;
+            padding-top: 135px; /* Ample clearance below the fixed swinging header */
+            padding-bottom: 100px;
+        }
+
+        @media (max-width: 991px) {
+            .drop-studio-page {
+                padding-top: 110px;
+                padding-bottom: 70px;
+            }
+        }
+
+        /* ---------------------------------------------------
+           FORM GROUP & LABEL OVERLAP FIXES (Critical Overrides)
+           Neutralizes style.css floating absolute label collision
+           --------------------------------------------------- */
+        .drop-studio-page .form-group,
+        .owner-lock-card .form-group {
+            position: relative;
+            width: 100%;
+            margin-bottom: 26px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .drop-studio-page .form-group label,
+        .drop-studio-page .form-label,
+        .owner-lock-card .form-group label,
+        .owner-lock-card .form-label {
+            position: static !important;
+            top: auto !important;
+            left: auto !important;
+            right: auto !important;
+            bottom: auto !important;
+            transform: none !important;
+            font-size: 0.9rem !important;
+            font-weight: 600 !important;
+            color: #ffffff !important;
+            margin-bottom: 10px !important;
+            display: flex !important;
+            align-items: center;
+            justify-content: space-between;
+            pointer-events: auto !important;
+            letter-spacing: 0.3px !important;
+            line-height: 1.45 !important;
+            background: transparent !important;
+            padding: 0 !important;
+            width: 100% !important;
+        }
+
+        .drop-studio-page .form-control-custom,
+        .owner-lock-card .form-control-custom,
+        .drop-studio-page .form-group input,
+        .drop-studio-page .form-group textarea,
+        .owner-lock-card .form-group input {
+            position: relative !important;
+            width: 100% !important;
+            background: rgba(14, 14, 20, 0.9) !important;
+            border: 1.5px solid var(--color-border) !important;
+            border-radius: var(--border-radius-sm) !important;
+            padding: 14px 18px !important;
+            color: #ffffff !important;
+            font-family: inherit !important;
+            font-size: 0.94rem !important;
+            line-height: 1.5 !important;
+            outline: none !important;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+            transition: var(--transition-smooth) !important;
+        }
+
+        .drop-studio-page .form-control-custom:focus,
+        .owner-lock-card .form-control-custom:focus,
+        .drop-studio-page .form-group input:focus,
+        .drop-studio-page .form-group textarea:focus,
+        .owner-lock-card .form-group input:focus {
+            border-color: var(--color-red) !important;
+            box-shadow: 0 0 16px rgba(255, 20, 56, 0.35), inset 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+            background: rgba(22, 18, 26, 0.98) !important;
+        }
+
+        .drop-studio-page .form-group textarea {
+            min-height: 120px;
+            line-height: 1.65 !important;
+            resize: vertical !important;
+        }
+
+        .drop-studio-page .form-group input::placeholder,
+        .drop-studio-page .form-group textarea::placeholder,
+        .owner-lock-card input::placeholder {
+            color: rgba(255, 255, 255, 0.4) !important;
+            font-size: 0.9rem !important;
+        }
+
+        /* 3-Column Pricing & Badge Grid */
+        .form-row-3col {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 26px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row-3col {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+        }
+
+        /* Checkbox Container & Label */
+        .form-checkbox-group {
+            background: rgba(255, 20, 56, 0.06);
+            padding: 16px 20px !important;
+            border: 1px solid rgba(255, 20, 56, 0.25);
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 28px !important;
+        }
+
+        .form-checkbox-group label {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+            gap: 12px !important;
+            cursor: pointer !important;
+            margin: 0 !important;
+            width: auto !important;
+            line-height: 1.5 !important;
+            font-size: 0.92rem !important;
+            font-weight: 600 !important;
+            color: #ffffff !important;
+        }
+
+        /* ---------------------------------------------------
+           Owner Auth Security Guard Banner
+           --------------------------------------------------- */
+        .owner-status-bar {
+            background: linear-gradient(90deg, rgba(255, 20, 56, 0.15) 0%, rgba(20, 20, 28, 0.95) 50%, rgba(255, 20, 56, 0.15) 100%);
+            border: 1px solid var(--color-border-red);
+            border-radius: var(--border-radius-md);
+            padding: 18px 26px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 38px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px rgba(255, 20, 56, 0.08);
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .owner-badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 20, 56, 0.2);
+            color: var(--color-red);
+            border: 1px solid rgba(255, 20, 56, 0.4);
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            line-height: 1.3;
+        }
+
+        .owner-badge-pill .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--color-red);
+            box-shadow: 0 0 10px var(--color-red);
+            animation: pulseGlow 1.8s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        /* Locked Owner Overlay / Card */
+        .owner-lock-card {
+            max-width: 560px;
+            margin: 70px auto;
+            text-align: center;
+            padding: 52px 42px;
+            background: linear-gradient(180deg, rgba(25, 20, 24, 0.95) 0%, rgba(12, 12, 16, 0.98) 100%);
+            border: 1.5px solid var(--color-border-red);
+            border-radius: var(--border-radius-lg);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(255, 20, 56, 0.15);
+        }
+
+        .owner-lock-icon {
+            width: 84px;
+            height: 84px;
+            margin: 0 auto 24px;
+            border-radius: 50%;
+            background: rgba(255, 20, 56, 0.12);
+            border: 1.5px solid rgba(255, 20, 56, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.3rem;
+            color: var(--color-red);
+            box-shadow: 0 0 30px rgba(255, 20, 56, 0.25);
+        }
+
+        /* ---------------------------------------------------
+           Hero / Header Section
+           --------------------------------------------------- */
+        .studio-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 44px;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+
+        .studio-title-box h1 {
+            font-family: var(--font-heading);
+            font-size: 2.7rem;
+            line-height: 1.3;
+            letter-spacing: -0.5px;
+            margin-top: 12px;
+            margin-bottom: 12px;
+        }
+
+        .studio-title-box p {
+            color: var(--color-muted);
+            max-width: 680px;
+            margin-top: 10px;
+            margin-bottom: 0;
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        /* Big List Item Trigger Button */
+        .btn-list-item-main {
+            background: linear-gradient(135deg, var(--color-red) 0%, #b80d26 100%);
+            color: #fff;
+            border: none;
+            padding: 16px 36px;
+            border-radius: 50px;
+            font-family: var(--font-heading);
+            font-size: 1.05rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(255, 20, 56, 0.4);
+            transition: var(--transition-smooth);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1.3;
+        }
+
+        .btn-list-item-main:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(255, 20, 56, 0.6);
+            color: #fff;
+        }
+
+        /* ---------------------------------------------------
+           Category Multi-Options Grid (The 7 Garment Types)
+           --------------------------------------------------- */
+        .category-selection-section {
+            margin-bottom: 54px;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+            gap: 18px;
+            margin-top: 24px;
+        }
+
+        .category-card {
+            background: rgba(18, 18, 24, 0.85);
+            border: 1.5px solid var(--color-border);
+            border-radius: var(--border-radius-md);
+            padding: 24px 14px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 185px;
+            gap: 6px;
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: transparent;
+            transition: var(--transition-smooth);
+        }
+
+        .category-card:hover {
+            border-color: var(--color-red);
+            transform: translateY(-5px);
+            background: rgba(28, 24, 30, 0.95);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 20, 56, 0.2);
+        }
+
+        .category-card.selected {
+            border-color: var(--color-red);
+            background: linear-gradient(180deg, rgba(255, 20, 56, 0.14) 0%, rgba(20, 18, 24, 0.95) 100%);
+            box-shadow: 0 0 25px rgba(255, 20, 56, 0.35);
+        }
+
+        .category-card.selected::before {
+            background: var(--color-red);
+        }
+
+        .category-card-logo {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-smooth);
+            flex-shrink: 0;
+        }
+
+        .category-card:hover .category-card-logo,
+        .category-card.selected .category-card-logo {
+            transform: scale(1.1);
+        }
+
+        .category-card-logo svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+        }
+
+        .category-card-title {
+            font-family: var(--font-heading);
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--color-white);
+            margin: 0;
+            letter-spacing: 0.5px;
+            line-height: 1.3;
+        }
+
+        .category-card-sub {
+            font-size: 0.74rem;
+            color: var(--color-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1.45;
+            margin: 0;
+        }
+
+        .category-card .check-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--color-red);
+            color: #fff;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+
+        .category-card.selected .check-indicator {
+            display: flex;
+        }
+
+        /* ---------------------------------------------------
+           Main Workspace: Cloth Drop & Details Grid
+           --------------------------------------------------- */
+        .drop-workspace-grid {
+            display: grid;
+            grid-template-columns: 1.35fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        @media(max-width: 992px) {
+            .drop-workspace-grid {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+        }
+
+        /* Cloth Dropzone Styling */
+        .cloth-dropzone {
+            border: 2px dashed rgba(255, 20, 56, 0.4);
+            border-radius: var(--border-radius-md);
+            padding: 38px 26px;
+            text-align: center;
+            background: rgba(16, 16, 22, 0.7);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+
+        .cloth-dropzone:hover,
+        .cloth-dropzone.dragover {
+            border-color: var(--color-red);
+            background: rgba(255, 20, 56, 0.08);
+            transform: scale(1.01);
+            box-shadow: 0 0 25px rgba(255, 20, 56, 0.25);
+        }
+
+        .dropzone-icon-ring {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            background: rgba(255, 20, 56, 0.12);
+            color: var(--color-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.9rem;
+            margin: 0 auto 16px;
+            border: 1px solid rgba(255, 20, 56, 0.3);
+            transition: var(--transition-smooth);
+        }
+
+        .cloth-dropzone:hover .dropzone-icon-ring {
+            transform: scale(1.12) rotate(5deg);
+            background: var(--color-red);
+            color: #fff;
+        }
+
+        /* Photos Gallery Grid */
+        .photos-gallery-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 14px;
+            margin-top: 18px;
+        }
+
+        .photo-thumb-card {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: var(--border-radius-sm);
+            overflow: hidden;
+            border: 1px solid var(--color-border);
+            background: #000;
+        }
+
+        .photo-thumb-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-thumb-card .badge-primary {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            background: var(--color-red);
+            color: #fff;
+            font-size: 0.65rem;
+            padding: 3px 7px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        .photo-thumb-card .btn-remove-photo {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.68rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .photo-thumb-card .btn-remove-photo:hover {
+            background: var(--color-red);
+        }
+
+        /* Preset Samples Toolbar */
+        .sample-presets-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+            align-items: center;
+        }
+
+        .btn-preset-pill {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--color-border);
+            color: var(--color-muted);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.78rem;
+            line-height: 1.4;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .btn-preset-pill:hover {
+            border-color: var(--color-red);
+            color: #fff;
+            background: rgba(255, 20, 56, 0.1);
+        }
+
+        /* Color Swatches Grid */
+        .color-options-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 10px;
+            margin-bottom: 16px;
+        }
+
+        .color-chip-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(20, 20, 26, 0.85);
+            border: 1.5px solid var(--color-border);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            user-select: none;
+        }
+
+        .color-chip-item:hover {
+            border-color: rgba(255, 20, 56, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .color-chip-item.active {
+            border-color: var(--color-red);
+            background: rgba(255, 20, 56, 0.15);
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .color-chip-item .swatch-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            flex-shrink: 0;
+        }
+
+        /* Custom Color Input Box */
+        .add-custom-color-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 14px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* Size Chips */
+        .size-chips-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .size-pill-btn {
+            min-width: 50px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 16px;
+            border-radius: var(--border-radius-sm);
+            background: rgba(20, 20, 26, 0.8);
+            border: 1px solid var(--color-border);
+            color: var(--color-muted);
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .size-pill-btn:hover {
+            border-color: var(--color-red);
+            color: #fff;
+        }
+
+        .size-pill-btn.active {
+            background: var(--color-red);
+            color: #fff;
+            border-color: var(--color-red);
+            box-shadow: 0 0 12px rgba(255, 20, 56, 0.4);
+        }
+
+        /* Fabric Quick Chips */
+        .fabric-chips-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+            margin-bottom: 14px;
+        }
+
+        .fabric-chip {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--color-border);
+            color: var(--color-muted);
+            border-radius: var(--border-radius-sm);
+            padding: 8px 14px;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .fabric-chip:hover,
+        .fabric-chip.active {
+            border-color: var(--color-red);
+            color: #fff;
+            background: rgba(255, 20, 56, 0.12);
+        }
+
+        /* Post Action Bar */
+        .post-action-bar {
+            margin-top: 40px;
+            padding-top: 28px;
+            border-top: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .btn-post-action {
+            background: linear-gradient(135deg, var(--color-red) 0%, #a80c22 100%);
+            color: #fff;
+            border: none;
+            padding: 16px 42px;
+            border-radius: 50px;
+            font-family: var(--font-heading);
+            font-size: 1.15rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(255, 20, 56, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition-smooth);
+            letter-spacing: 0.5px;
+            line-height: 1.3;
+        }
+
+        .btn-post-action:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 16px 45px rgba(255, 20, 56, 0.6);
+        }
+
+        /* ---------------------------------------------------
+           Sticky Live Preview Card
+           --------------------------------------------------- */
+        .sticky-preview-wrap {
+            position: sticky;
+            top: 125px;
+        }
+
+        .preview-garment-card {
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-premium);
+            transition: var(--transition-smooth);
+        }
+
+        .preview-garment-card:hover {
+            border-color: var(--color-red);
+        }
+
+        .preview-img-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            background: #09090d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .preview-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .preview-category-badge {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid var(--color-border);
+            color: var(--color-white);
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 0.74rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            line-height: 1.3;
+        }
+
+        .preview-drop-tag {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: var(--color-red);
+            color: #fff;
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 0.74rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            line-height: 1.3;
+        }
+
+        .preview-body {
+            padding: 26px;
+        }
+
+        .preview-specs-pills {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+
+        .preview-spec-pill {
+            background: rgba(255, 255, 255, 0.05);
+            font-size: 0.74rem;
+            padding: 4px 10px;
+            border-radius: 4px;
+            color: var(--color-muted);
+            line-height: 1.4;
+        }
+
+        /* ---------------------------------------------------
+           MS Word Hub Section
+           --------------------------------------------------- */
+        .msword-vault-section {
+            margin-top: 88px;
+            padding: 48px 40px;
+            background: linear-gradient(180deg, rgba(16, 16, 24, 0.95) 0%, rgba(10, 10, 14, 0.98) 100%);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-lg);
+            position: relative;
+        }
+
+        .msword-badge-header {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #2b579a; /* MS Word Blue */
+            background: rgba(43, 87, 154, 0.15);
+            border: 1px solid rgba(43, 87, 154, 0.4);
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            line-height: 1.3;
+        }
+
+        .word-items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 28px;
+        }
+
+        .word-items-table th {
+            text-align: left;
+            padding: 16px 18px;
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--color-muted);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--color-border);
+            white-space: nowrap;
+            line-height: 1.4;
+        }
+
+        .word-items-table td {
+            padding: 20px 18px;
+            border-bottom: 1px solid var(--color-border);
+            vertical-align: middle;
+            font-size: 0.92rem;
+            line-height: 1.6;
+        }
+
+        .btn-word-download {
+            background: #2b579a;
+            color: #fff;
+            border: none;
+            padding: 9px 18px;
+            border-radius: 6px;
+            font-size: 0.84rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            line-height: 1.3;
+            white-space: nowrap;
+        }
+
+        .btn-word-download:hover {
+            background: #1e3f70;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(43, 87, 154, 0.4);
+        }
+
+        /* Modal Styles */
+        .modal-word-sheet {
+            background: #fdfdfd;
+            color: #111;
+            padding: 44px;
+            max-width: 780px;
+            margin: 40px auto;
+            border-radius: 8px;
+            font-family: 'Calibri', 'Outfit', sans-serif;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            max-height: 85vh;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Smoky Header -->
+    <header class="main-header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon"><i class="fa-solid fa-gem"></i></span>
+                <span class="logo-text">BLACK <span class="gold-text">STONE</span></span>
+            </a>
+            
+            <nav class="main-nav" id="mainNav">
+                <ul>
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="index.html#experience" class="nav-link">Black Lizard</a></li>
+                    <li><a href="index.html#shop" class="nav-link">Collection</a></li>
+                    <li><a href="mystery-box.html" class="nav-link">Mystery Box</a></li>
+                    <li><a href="owner.html" class="nav-link">Owner Hub</a></li>
+                    <li><a href="drop-item.html" class="nav-link active">Drop Item</a></li>
+                    <li><a href="about.html" class="nav-link">About</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <button class="owner-btn-header" onclick="triggerListItemFlow()" title="Drop New Apparel">
+                    <i class="fa-solid fa-plus-circle"></i> <span>List Item</span>
+                </button>
+                <button class="account-btn-header" id="accountActionBtn" onclick="window.location.href='auth.html'">
+                    <i class="fa-solid fa-user"></i> <span id="accountActionText">Login</span>
+                </button>
+                <button class="app-btn-header" onclick="window.location.href='app.html'">
+                    <i class="fa-solid fa-mobile-screen-button"></i> <span>Get App</span>
+                </button>
+                <div class="cart-trigger" id="cartTrigger" onclick="toggleCart(true)">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </div>
+                <button class="mobile-menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Cart Drawer -->
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-drawer-overlay" onclick="toggleCart(false)"></div>
+        <div class="cart-drawer-content">
+            <div class="cart-drawer-header">
+                <h3>Shopping Bag (<span id="cartDrawerCount">0</span>)</h3>
+                <button class="close-btn" onclick="toggleCart(false)"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="cart-drawer-items" id="cartItemsList"></div>
+            <div class="cart-drawer-footer" id="cartFooter" style="display: none;">
+                <div class="cart-total-row">
+                    <span>Subtotal</span>
+                    <span class="cart-total-price" id="cartTotalVal">₹0</span>
+                </div>
+                <button class="btn btn-red w-100 mt-3" onclick="openCheckoutModal()">Proceed to VIP Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN DROP STUDIO WRAPPER -->
+    <main class="drop-studio-page container">
+
+        <!-- ==========================================
+             1. OWNER SECURITY GUARD (LOCKED VIEW)
+             ========================================== -->
+        <div id="ownerLockView" class="owner-lock-card" style="display: none;">
+            <div class="owner-lock-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <span class="section-tag"><i class="fa-solid fa-lock me-1"></i> Owner Clearance Required</span>
+            <h2 style="font-family: var(--font-heading); font-size: 2.1rem; line-height: 1.3; margin: 16px 0 10px;">Restricted Drop Portal</h2>
+            <p style="color: var(--color-muted); font-size: 0.98rem; line-height: 1.65; margin-bottom: 28px;">
+                Only verified owners of <strong>Black Stone</strong> can drop apparel items, set tailoring specs, and record records into the MS Word inventory vault.
+            </p>
+
+            <form id="ownerAuthForm" onsubmit="handleOwnerAuthSubmit(event)">
+                <div class="form-group" style="text-align: left; margin-bottom: 24px;">
+                    <label class="form-label">Brand Owner Passcode / Master Key</label>
+                    <input type="password" id="ownerPasscodeInput" class="form-control-custom" placeholder="Enter owner key (Default: BLACKSTONE-OWNER or 3690)" required>
+                </div>
+                <div style="display: flex; gap: 12px; justify-content: center;">
+                    <button type="submit" class="btn btn-red px-4 py-3" style="font-weight: 700; width: 100%; border-radius: 50px; font-size: 1rem;">
+                        <i class="fa-solid fa-key me-2"></i> Unlock Drop Studio
+                    </button>
+                </div>
+            </form>
+
+            <div style="margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--color-border); font-size: 0.85rem; line-height: 1.5; color: var(--color-muted);">
+                <span>Quick Test Mode: </span>
+                <button type="button" class="btn btn-outline btn-sm" onclick="quickUnlockOwner()" style="padding: 4px 10px; font-size: 0.75rem; margin-left: 6px;">
+                    <i class="fa-solid fa-wand-magic-sparkles me-1"></i> 1-Click Owner Verify
+                </button>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             2. ACTIVE OWNER STUDIO (UNLOCKED VIEW)
+             ========================================== -->
+        <div id="ownerUnlockedView" style="display: none;">
+            
+            <!-- Owner Verified Status Ribbon -->
+            <div class="owner-status-bar">
+                <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+                    <span class="owner-badge-pill">
+                        <span class="pulse-dot"></span>
+                        <i class="fa-solid fa-crown me-1"></i> Verified Owner: Black Stone Atelier
+                    </span>
+                    <span style="color: var(--color-muted); font-size: 0.85rem;">
+                        <i class="fa-solid fa-file-word text-primary me-1" style="color: #2b579a;"></i> MS Word Integration: <strong>ACTIVE</strong>
+                    </span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <button class="btn btn-outline btn-sm" onclick="lockOwnerPortal()" title="Lock portal for security">
+                        <i class="fa-solid fa-lock me-1"></i> Lock Portal
+                    </button>
+                </div>
+            </div>
+
+            <!-- Studio Header with Main "List Item" Button -->
+            <div class="studio-header">
+                <div class="studio-title-box">
+                    <span class="section-tag"><i class="fa-solid fa-sparkles me-1"></i> Exclusive Creation Chamber</span>
+                    <h1>Drop Apparel & Catalog Suite</h1>
+                    <p>
+                        Click <strong>List Item</strong> to choose from 7 signature streetwear silhouettes with logos, drop your garment photos, configure fabric, sizes, and colors, then post directly to your live store and auto-store in Microsoft Word (.docx).
+                    </p>
+                </div>
+                <div>
+                    <button class="btn-list-item-main" id="btnMainListItem" onclick="triggerListItemFlow()">
+                        <i class="fa-solid fa-plus-circle"></i> List Item
+                    </button>
+                </div>
+            </div>
+
+            <!-- ==========================================
+                 STAGE 1: CATEGORY SELECTION (7 Multioptions with Logos)
+                 ========================================== -->
+            <section class="category-selection-section" id="categorySelectionSection">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap: 16px; margin-bottom: 20px;">
+                    <div>
+                        <h3 style="font-family: var(--font-heading); font-size: 1.5rem; line-height: 1.35; color: #fff; margin-bottom: 6px;">
+                            Select Garment Category to Drop
+                        </h3>
+                        <p style="color: var(--color-muted); font-size: 0.92rem; line-height: 1.5; margin: 0;">Choose silhouette to open the drop tailoring page</p>
+                    </div>
+                    <span style="font-size: 0.82rem; color: var(--color-red); font-weight: 600; line-height: 1.4;">
+                        <i class="fa-solid fa-arrow-down-short-wide me-1"></i> 7 Silhouettes Available
+                    </span>
+                </div>
+
+                <div class="category-grid" id="categoryMultiOptionsGrid">
+                    
+                    <!-- 1. SHIRT -->
+                    <div class="category-card" data-category="shirt" onclick="selectDropCategory('shirt')">
+                        <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+                        <div class="category-card-logo">
+                            <!-- Custom SVG Shirt Logo -->
+                            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22 8L32 16L42 8L48 14L44 26L38 22V56H26V22L20 26L16 14L22 8Z" fill="#ff1438" fill-opacity="0.15" stroke="#ff1438" stroke-width="2.5" stroke-linejoin="round"/>
+                                <path d="M32 16V56" stroke="#ff1438" stroke-width="2" stroke-linecap="round"/>
+                                <circle cx="32" cy="24" r="1.5" fill="#fff"/>
+                                <circle cx="32" cy="32" r="1.5" fill="#fff"/>
+                                <circle cx="32" cy="40" r="1.5" fill="#fff"/>
+                                <circle cx="32" cy="48" r="1.5" fill="#fff"/>
+                                <path d="M22 8C26 12 38 12 42 8" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+                                <rect x="35" y="22" width="6" height="7" rx="1" stroke="#ff1438" stroke-width="1.5"/>
+                            </svg>
+                        </div>
+                        <div class="category-card-title">Shirt</div>
+                        <div class="category-card-sub">Button-Down &amp; Overshirt</div>
+                    </div>
+
+                    <!-- 2. T-SHIRT -->
+                    <div class="category-card selected" data-category="tshirt" onclick="selectDropCategory('tshirt')">
+                        <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+                        <div class="category-card-logo">
+                            <!-- Custom SVG T-Shirt Logo -->
+                            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M24 8C27 12 37 12 40 8L52 14L46 26L38 22V56H26V22L18 26L12 14L24 8Z" fill="#ff1438" fill-opacity="0.25" stroke="#ff1438" stroke-width="2.5" stroke-linejoin="round"/>
+                                <path d="M24 8C27 12 37 12 40 8" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+                                <path d="M26 22H38" stroke="#ff1438" stroke-width="1.5" stroke-dasharray="2 2"/>
+                                <circle cx="32" cy="30" r="3" stroke="#fff" stroke-width="1.5"/>
+                            </svg>
+                        </div>
+                        <div class="category-card-title">T-Shirt</div>
+                        <div class="category-card-sub">Heavy Boxy Tee</div>
+                    </div>
+
+                    <!-- 3. HOODIES -->
+                    <div class="category-card" data-category="hoodies" onclick="selectDropCategory('hoodies')">
+                        <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+                        <div class="category-card-logo">
+                            <!-- Custom SVG Hoodie Logo -->
+                            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Hood contour -->
+                                <path d="M22 18C22 8 42 8 42 18L50 24L44 34L38 28V56H26V28L20 34L14 24L22 18Z" fill="#ff1438" fill-opacity="0.15" stroke="#ff1438" stroke-width="2.5" stroke-linejoin="round"/>
+                                <path d="M26 12C26 6 38 6 38 12" stroke="#fff" stroke-width="2"/>
+                                <!-- Drawstrings -->
+                                <path d="M29 20V29" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M35 20V29" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+                                <!-- Kangaroo pocket -->
+                                <path d="M27 42H37L39 49H25L27 42Z" stroke="#ff1438" stroke-width="2" fill="rgba(255,20,56,0.3)"/>
+                            </svg>
+                        </div>
+                        <div class="category-card-title">Hoodies</div>
+                        <div class="category-card-sub">French Terry Pullover</div>
+                    </div>
+
+                    <!-- 4. SWEATSHIRT -->
+                    <div class="category-card" data-category="sweatshirt" onclick="selectDropCategory('sweatshirt')">
+                        <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+                        <div class="category-card-logo">
+                            <!-- Custom SVG Sweatshirt Logo -->
+                            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22 12C26 15 38 15 42 12L52 18L46 30L39 25V56H25V25L18 30L12 18L22 12Z" fill="#ff1438" fill-opacity="0.15" stroke="#ff1438" stroke-width="2.5" stroke-linejoin="round"/>
+                                <path d="M23 12C27 15 37 15 41 12" stroke="#fff" stroke-width="2"/>
+                                <!-- V-insert detail -->
+                                <path d="M30 15L32 19L34 15" stroke="#ff1438" stroke-width="2" stroke-linecap="round"/>
+                                <!-- Ribbed cuffs and hem line -->
+                                <line x1="25" y1="52" x2="39" y2="52" stroke="#fff" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <div class="category-card-title">Sweatshirt</div>
+                        <div class="category-card-sub">Crewneck Fleece</div>
+                    </div>
+
+                    <!-- 5. JACKET -->
+                    <div class="category-card" data-category="jacket" onclick="selectDropCategory('jacket')">
+                        <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+                        <div class="category-card-logo">
+                            <!-- Custom SVG Jacket Logo -->
+                            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20 10L32 14L44 10L50 18L44 32L38 27V56H26V27L20 32L14 18L20 10Z" fill="#ff1438" fill-opacity="0.15" stroke="#ff1438" stroke-width="2.5" stroke-linejoin="round"/>
+                                <!-- Zip line -->
+                                <path d="M32 14V56" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+                                <rect x="30.5" y="24" width="3" height="5" rx="1" fill="#ff1438"/>
+                                <!-- Zipper pockets -->
+                                <line x1="26" y1="36" x2="29" y2="42" stroke="#ff1438" stroke-width="2"/>
+                                <line x1="38" y1="36" x2="35" y2="42" stroke="#ff1438" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <div class="category-card-title">Jacket</div>
+                        <div class="category-card-sub">Bomber &amp; Techwear</div>
+                    </div>
+
+                    <!-- 6. TROUSER -->
+                    <div class="category-card" data-category="trouser" onclick="selectDropCategory('trouser')">
+                        <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+                        <div class="category-card-logo">
+                            <!-- Custom SVG Trouser Logo -->
+                            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20 10H44L41 56H34L32 30L30 56H23L20 10Z" fill="#ff1438" fill-opacity="0.15" stroke="#ff1438" stroke-width="2.5" stroke-linejoin="round"/>
+                                <line x1="20" y1="16" x2="44" y2="16" stroke="#fff" stroke-width="2"/>
+                                <!-- Pleat crease lines -->
+                                <line x1="27" y1="20" x2="26" y2="52" stroke="#ff1438" stroke-width="1.5" stroke-dasharray="3 3"/>
+                                <line x1="37" y1="20" x2="38" y2="52" stroke="#ff1438" stroke-width="1.5" stroke-dasharray="3 3"/>
+                            </svg>
+                        </div>
+                        <div class="category-card-title">Trouser</div>
+                        <div class="category-card-sub">Tailored Cargo &amp; Chino</div>
+                    </div>
+
+                    <!-- 7. JEANS -->
+                    <div class="category-card" data-category="jeans" onclick="selectDropCategory('jeans')">
+                        <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+                        <div class="category-card-logo">
+                            <!-- Custom SVG Jeans Logo -->
+                            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19 10H45L42 56H34L32 28L30 56H22L19 10Z" fill="#ff1438" fill-opacity="0.15" stroke="#ff1438" stroke-width="2.5" stroke-linejoin="round"/>
+                                <line x1="19" y1="16" x2="45" y2="16" stroke="#fff" stroke-width="2"/>
+                                <!-- Rivets & Pockets -->
+                                <path d="M21 16C23 22 28 22 30 16" stroke="#ff1438" stroke-width="2"/>
+                                <path d="M43 16C41 22 36 22 34 16" stroke="#ff1438" stroke-width="2"/>
+                                <circle cx="23" cy="18" r="1.5" fill="#fff"/>
+                                <circle cx="41" cy="18" r="1.5" fill="#fff"/>
+                            </svg>
+                        </div>
+                        <div class="category-card-title">Jeans</div>
+                        <div class="category-card-sub">Raw Selvedge Denim</div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 STAGE 2: CLOTH DROP & DETAILS STUDIO WORKSPACE
+                 ========================================== -->
+            <section class="drop-workspace-section" id="dropWorkspaceSection">
+                <div class="drop-workspace-grid">
+                    
+                    <!-- LEFT COLUMN: DETAIL UPLOAD FORM -->
+                    <div class="glass-panel" style="padding: 36px;">
+                        
+                        <!-- Active Category Banner -->
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap: 18px; margin-bottom: 30px; padding-bottom: 22px; border-bottom: 1px solid var(--color-border);">
+                            <div style="display:flex; align-items:center; gap: 14px;">
+                                <div id="activeCategoryIconBox" style="width: 48px; height: 48px; border-radius: 8px; background: rgba(255,20,56,0.15); display:flex; align-items:center; justify-content:center; color: var(--color-red); font-size: 1.5rem; flex-shrink: 0;">
+                                    <i class="fa-solid fa-shirt"></i>
+                                </div>
+                                <div>
+                                    <span style="font-size: 0.75rem; text-transform:uppercase; letter-spacing:1px; color: var(--color-muted); display: block; line-height: 1.4; margin-bottom: 4px;">Selected Garment</span>
+                                    <h3 id="activeCategoryTitle" style="font-family: var(--font-heading); color: #fff; font-size: 1.35rem; line-height: 1.3; margin: 0;">T-Shirt Silhouette</h3>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-outline btn-sm" onclick="scrollToCategories()">
+                                <i class="fa-solid fa-arrow-up me-1"></i> Change Silhouette
+                            </button>
+                        </div>
+
+                        <form id="dropGarmentForm" onsubmit="handlePostGarmentSubmit(event)">
+                            
+                            <!-- 1. CLOTH DROP ZONE & PHOTOS UPLOAD -->
+                            <div class="form-group" style="margin-bottom: 30px;">
+                                <label class="form-label">
+                                    <span><i class="fa-solid fa-cloud-arrow-up me-1 text-red"></i> Drop My Cloths &amp; Photos *</span>
+                                    <span style="color: var(--color-muted); font-size: 0.76rem;">Multi-file drop enabled</span>
+                                </label>
+                                
+                                <div class="cloth-dropzone" id="clothDropzone" onclick="document.getElementById('clothFileInput').click()">
+                                    <div class="dropzone-icon-ring">
+                                        <i class="fa-solid fa-shirt"></i>
+                                    </div>
+                                    <h4 style="font-family: var(--font-heading); font-size: 1.15rem; line-height: 1.4; color: #fff; margin-top: 6px; margin-bottom: 8px;">
+                                        Drag &amp; Drop Your Cloths / Photos Here
+                                    </h4>
+                                    <p style="color: var(--color-muted); font-size: 0.85rem; line-height: 1.6; margin-bottom: 16px;">
+                                        Supports PNG, JPG, WEBP. Drop multiple angles (Front, Back, Fabric close-up, Tag).
+                                    </p>
+                                    <span class="btn btn-outline btn-sm">
+                                        <i class="fa-solid fa-folder-open me-1"></i> Browse Files from Computer
+                                    </span>
+                                    <input type="file" id="clothFileInput" accept="image/*" multiple style="display: none;" onchange="handleClothFiles(this.files)">
+                                </div>
+
+                                <!-- Photo Gallery Preview -->
+                                <div class="photos-gallery-preview" id="photosGalleryPreview"></div>
+
+                                <!-- Preset Samples (Instant 1-Click Drop for quick testing) -->
+                                <div class="sample-presets-row">
+                                    <span style="font-size: 0.78rem; color: var(--color-muted); line-height: 1.4;">Quick Presets:</span>
+                                    <button type="button" class="btn-preset-pill" onclick="applyPresetGarment('sig_tee')">Signature Obsidian Tee</button>
+                                    <button type="button" class="btn-preset-pill" onclick="applyPresetGarment('heavy_hoodie')">Crimson Heavy Hoodie</button>
+                                    <button type="button" class="btn-preset-pill" onclick="applyPresetGarment('bomber_jacket')">Shadow Bomber Jacket</button>
+                                    <button type="button" class="btn-preset-pill" onclick="applyPresetGarment('raw_denim')">Raw Selvedge Denim</button>
+                                </div>
+                            </div>
+
+                            <!-- 2. PRODUCT NAME & PRICING -->
+                            <div class="form-group">
+                                <label class="form-label">Garment Title / Item Name *</label>
+                                <input type="text" id="dropItemTitle" class="form-control-custom" placeholder="e.g. Heavyweight Obsidian Oversized Tee" required oninput="updateLiveCard()">
+                            </div>
+
+                            <div class="form-row-3col">
+                                <div class="form-group">
+                                    <label class="form-label">Retail Price (₹) *</label>
+                                    <input type="number" id="dropItemPrice" class="form-control-custom" step="1" min="1" placeholder="5510" required oninput="updateLiveCard()">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Compare Price (₹)</label>
+                                    <input type="number" id="dropItemOrigPrice" class="form-control-custom" step="1" placeholder="7410" oninput="updateLiveCard()">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Drop Tag / Badge</label>
+                                    <input type="text" id="dropItemBadge" class="form-control-custom" placeholder="LIMITED DROP" oninput="updateLiveCard()">
+                                </div>
+                            </div>
+
+                            <!-- 3. FABRIC & GSM SPECIFICATIONS -->
+                            <div class="form-group">
+                                <label class="form-label">Fabric Composition &amp; Material Quality *</label>
+                                
+                                <div class="fabric-chips-row" id="fabricChipsRow">
+                                    <button type="button" class="fabric-chip active" onclick="selectFabric(this, '260 GSM 100% Combed Heavy Cotton')">260 GSM Heavy Cotton</button>
+                                    <button type="button" class="fabric-chip" onclick="selectFabric(this, '450 GSM Ultra-Dense French Terry')">450 GSM French Terry</button>
+                                    <button type="button" class="fabric-chip" onclick="selectFabric(this, '14.5oz Raw Japanese Selvedge Denim')">14.5oz Selvedge Denim</button>
+                                    <button type="button" class="fabric-chip" onclick="selectFabric(this, '280 GSM Mineral-Washed Dense Jersey')">280 GSM Washed Jersey</button>
+                                    <button type="button" class="fabric-chip" onclick="selectFabric(this, 'Technical Water-Resistant Ripstop Nylon')">Techwear Ripstop</button>
+                                </div>
+
+                                <input type="text" id="dropItemFabric" class="form-control-custom" value="260 GSM 100% Combed Heavy Cotton" placeholder="e.g. 260 GSM Heavyweight Organic Cotton" required oninput="updateLiveCard()">
+                            </div>
+
+                            <!-- 4. COLOUR OPTIONS -->
+                            <div class="form-group">
+                                <label class="form-label">Colour Options (Select all available colors) *</label>
+                                <div class="color-options-wrap" id="colorOptionsWrap">
+                                    <div class="color-chip-item active" onclick="toggleColorSelection(this, 'Obsidian Black', '#0a0a0d')">
+                                        <span class="swatch-dot" style="background: #000;"></span> Obsidian Black
+                                    </div>
+                                    <div class="color-chip-item active" onclick="toggleColorSelection(this, 'Crimson Red', '#ff1438')">
+                                        <span class="swatch-dot" style="background: #ff1438;"></span> Crimson Red
+                                    </div>
+                                    <div class="color-chip-item" onclick="toggleColorSelection(this, 'Charcoal Grey', '#383842')">
+                                        <span class="swatch-dot" style="background: #383842;"></span> Charcoal Grey
+                                    </div>
+                                    <div class="color-chip-item" onclick="toggleColorSelection(this, 'Bone White', '#ffffff')">
+                                        <span class="swatch-dot" style="background: #ffffff;"></span> Bone White
+                                    </div>
+                                    <div class="color-chip-item" onclick="toggleColorSelection(this, 'Vintage Washed Olive', '#49523f')">
+                                        <span class="swatch-dot" style="background: #49523f;"></span> Washed Olive
+                                    </div>
+                                    <div class="color-chip-item" onclick="toggleColorSelection(this, 'Midnight Indigo', '#19253d')">
+                                        <span class="swatch-dot" style="background: #19253d;"></span> Midnight Indigo
+                                    </div>
+                                </div>
+
+                                <!-- Add Custom Color -->
+                                <div class="add-custom-color-row">
+                                    <input type="color" id="customColorPicker" value="#8b5cf6" style="width: 40px; height: 40px; border: none; border-radius: 8px; cursor: pointer; background: transparent;">
+                                    <input type="text" id="customColorName" class="form-control-custom" placeholder="Custom colorway name (e.g. Acid Violet)" style="padding: 10px 16px; font-size: 0.88rem; flex: 1; min-width: 200px;">
+                                    <button type="button" class="btn btn-outline btn-sm" onclick="addCustomColor()" style="white-space: nowrap; padding: 10px 18px;">
+                                        <i class="fa-solid fa-plus me-1"></i> Add Color
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 5. SIZES BREAKDOWN -->
+                            <div class="form-group">
+                                <label class="form-label">Available Sizes (Click to toggle) *</label>
+                                <div class="size-chips-grid" id="sizeChipsGrid">
+                                    <button type="button" class="size-pill-btn" onclick="toggleSizeSelection(this, 'XS')">XS</button>
+                                    <button type="button" class="size-pill-btn active" onclick="toggleSizeSelection(this, 'S')">S</button>
+                                    <button type="button" class="size-pill-btn active" onclick="toggleSizeSelection(this, 'M')">M</button>
+                                    <button type="button" class="size-pill-btn active" onclick="toggleSizeSelection(this, 'L')">L</button>
+                                    <button type="button" class="size-pill-btn active" onclick="toggleSizeSelection(this, 'XL')">XL</button>
+                                    <button type="button" class="size-pill-btn" onclick="toggleSizeSelection(this, 'XXL')">XXL</button>
+                                    <button type="button" class="size-pill-btn" onclick="toggleSizeSelection(this, '3XL')">3XL</button>
+                                </div>
+                            </div>
+
+                            <!-- 6. DESCRIPTION & SILHOUETTE NOTES -->
+                            <div class="form-group">
+                                <label class="form-label">Garment Description &amp; Tailoring Notes *</label>
+                                <textarea id="dropItemDescription" class="form-control-custom" rows="4" placeholder="Detail the cut, boxy drape, ribbed neckline collar, drop shoulders, and wash treatment..." required oninput="updateLiveCard()">Heavyweight structured silhouette crafted with dense organic yarn. Features reinforced collar ribbing, double-needle coverstitch hems, and pre-shrunk treatment for dimensional stability.</textarea>
+                            </div>
+
+                            <!-- 7. INTERACTIVE SIZE CHART CHECKBOX -->
+                            <div class="form-group form-checkbox-group">
+                                <label>
+                                    <input type="checkbox" id="dropItemHasSizeChart" checked style="width: 18px; height: 18px; accent-color: var(--color-red); flex-shrink: 0;">
+                                    <span>Include S-3XL Measurement Chart in Store &amp; MS Word Document</span>
+                                </label>
+                            </div>
+
+                            <!-- 8. POST ACTION BUTTON -->
+                            <div class="post-action-bar">
+                                <div>
+                                    <div style="font-weight: 700; color: #fff; font-size: 1.05rem; line-height: 1.4; margin-bottom: 4px;">Ready to Publish &amp; Store?</div>
+                                    <div style="color: var(--color-muted); font-size: 0.82rem; line-height: 1.5;">
+                                        Item goes live on Store catalog + Instant MS Word (.docx) export
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn-post-action" id="btnPostGarment">
+                                    <i class="fa-solid fa-paper-plane"></i> POST DROP TO STORE
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+
+                    <!-- RIGHT COLUMN: LIVE PRODUCT PREVIEW CARD -->
+                    <div class="sticky-preview-wrap">
+                        <div style="margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
+                            <span class="section-tag" style="margin-bottom: 0;">
+                                <i class="fa-solid fa-eye me-1"></i> Live Store Preview
+                            </span>
+                            <span style="font-size: 0.8rem; color: var(--color-muted);">Updates in real time</span>
+                        </div>
+
+                        <div class="preview-garment-card">
+                            <div class="preview-img-container">
+                                <img src="assets/sig_tee.png" id="previewImg" alt="Live Preview">
+                                <div class="preview-category-badge" id="previewCategoryBadge">
+                                    <i class="fa-solid fa-shirt"></i> <span>T-SHIRT</span>
+                                </div>
+                                <div class="preview-drop-tag" id="previewDropTag">LIMITED DROP</div>
+                            </div>
+                            <div class="preview-body">
+                                <div class="preview-specs-pills">
+                                    <span class="preview-spec-pill" id="previewFabricPill">260 GSM COTTON</span>
+                                    <span class="preview-spec-pill" id="previewSizesPill">S, M, L, XL</span>
+                                    <span class="preview-spec-pill" id="previewColorsPill">2 Colors</span>
+                                </div>
+                                <h3 id="previewTitle" style="font-family: var(--font-heading); font-size: 1.35rem; line-height: 1.35; color: #fff; margin-bottom: 12px;">
+                                    Heavyweight Obsidian Oversized Tee
+                                </h3>
+                                <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px; line-height: 1.2;">
+                                    <span id="previewPrice" style="font-family: var(--font-heading); font-size: 1.45rem; font-weight: 700; color: var(--color-red);">₹5,510</span>
+                                    <span id="previewOrigPrice" style="font-size: 0.95rem; color: var(--color-muted); text-decoration: line-through;">₹7,410</span>
+                                </div>
+                                <p id="previewDesc" style="font-size: 0.88rem; color: var(--color-muted); line-height: 1.65; margin-bottom: 20px;">
+                                    Heavyweight structured silhouette crafted with dense organic yarn...
+                                </p>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn btn-red w-100 btn-sm" disabled style="opacity: 0.8; cursor: default; padding: 12px 18px; font-weight: 600;">
+                                        <i class="fa-solid fa-bag-shopping me-1"></i> Add To Bag (Store Preview)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- MS Word Instant Export Banner -->
+                        <div style="margin-top: 26px; padding: 22px; background: rgba(43, 87, 154, 0.1); border: 1px solid rgba(43, 87, 154, 0.35); border-radius: var(--border-radius-md); display: flex; align-items: center; gap: 16px;">
+                            <i class="fa-solid fa-file-word" style="font-size: 2.2rem; color: #2b579a; flex-shrink: 0;"></i>
+                            <div>
+                                <strong style="color: #fff; font-size: 0.95rem; line-height: 1.4; display: block;">MS Word Direct Archive</strong>
+                                <p style="color: var(--color-muted); font-size: 0.82rem; margin-top: 4px; margin-bottom: 0; line-height: 1.6;">
+                                    Every dropped garment automatically generates a formatted Microsoft Word document (.docx) with specs, tables, and photos for easy accessing.
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ==========================================
+                 STAGE 3: MS WORD INVENTORY ARCHIVE & ACCESS HUB
+                 ========================================== -->
+            <section class="msword-vault-section" id="msWordVaultSection">
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 20px;">
+                    <div>
+                        <div class="msword-badge-header">
+                            <i class="fa-solid fa-file-word"></i> Microsoft Word Document Archive
+                        </div>
+                        <h2 style="font-family: var(--font-heading); font-size: 1.85rem; line-height: 1.35; color: #fff; margin: 12px 0 8px;">
+                            Owner MS Word Catalog &amp; Easy Access Center
+                        </h2>
+                        <p style="color: var(--color-muted); font-size: 0.95rem; line-height: 1.65; margin-top: 6px; margin-bottom: 0;">
+                            Access all dropped garments stored in Microsoft Word (.docx) format. Download individual product sheets or export the complete collection master document.
+                        </p>
+                    </div>
+
+                    <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+                        <button class="btn btn-outline btn-sm" onclick="exportMasterWordCatalog()" style="padding: 10px 18px;">
+                            <i class="fa-solid fa-file-arrow-down me-1" style="color: #2b579a;"></i> Export Master Catalog (.docx)
+                        </button>
+                        <button class="btn btn-outline btn-sm" onclick="copyCurrentWordToClipboard()" style="padding: 10px 18px;">
+                            <i class="fa-solid fa-copy me-1"></i> Copy Formatted for MS Word
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Table of Dropped Items -->
+                <div style="overflow-x: auto;">
+                    <table class="word-items-table" id="wordCatalogTable">
+                        <thead>
+                            <tr>
+                                <th>Photo</th>
+                                <th>Garment Name &amp; SKU</th>
+                                <th>Category</th>
+                                <th>Fabric &amp; GSM</th>
+                                <th>Price</th>
+                                <th>Sizes &amp; Colors</th>
+                                <th>MS Word Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wordCatalogTableBody">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+    <!-- Word Document Preview Modal -->
+    <div class="modal-backdrop" id="wordPreviewModal">
+        <div class="modal-content" style="max-width: 820px; max-height: 90vh; overflow-y: auto; background: #161620;">
+            <button class="close-btn" onclick="closeWordPreviewModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="font-family: var(--font-heading); color: #fff;">
+                    <i class="fa-solid fa-file-word text-primary me-2" style="color: #2b579a;"></i> MS Word Document Preview
+                </h3>
+                <button class="btn-word-download" id="modalDownloadDocBtn">
+                    <i class="fa-solid fa-download me-1"></i> Download .docx
+                </button>
+            </div>
+            <div id="wordPreviewContentBox" class="modal-word-sheet"></div>
+        </div>
+    </div>
+
+    <!-- MAIN FOOTER -->
+    <footer class="main-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="logo">
+                    <span class="logo-icon"><i class="fa-solid fa-gem"></i></span>
+                    <span class="logo-text">BLACK <span class="gold-text">STONE</span></span>
+                </a>
+                <p class="footer-about-text">Exclusive Streetwear Drops with Hidden Codes &amp; Mystery Box Rewards.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Drop Categories</h4>
+                <ul>
+                    <li><a href="#" onclick="selectDropCategory('shirt'); return false;">Shirts</a></li>
+                    <li><a href="#" onclick="selectDropCategory('tshirt'); return false;">T-Shirts</a></li>
+                    <li><a href="#" onclick="selectDropCategory('hoodies'); return false;">Hoodies</a></li>
+                    <li><a href="#" onclick="selectDropCategory('sweatshirt'); return false;">Sweatshirts</a></li>
+                    <li><a href="#" onclick="selectDropCategory('jacket'); return false;">Jackets</a></li>
+                    <li><a href="#" onclick="selectDropCategory('trouser'); return false;">Trousers</a></li>
+                    <li><a href="#" onclick="selectDropCategory('jeans'); return false;">Jeans</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Owner Suite</h4>
+                <ul>
+                    <li><a href="drop-item.html">Drop Item Studio</a></li>
+                    <li><a href="owner.html">Full Owner Hub</a></li>
+                    <li><a href="#msWordVaultSection">MS Word Vault</a></li>
+                    <li><a href="index.html#shop">Store Catalog</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom text-center">
+            <p>&copy; 2026 Black Stone Inc. Owner Drop Studio &amp; MS Word Vault. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Core App JS -->
+    <script src="app.js"></script>
+
+    <!-- ==========================================
+         DROP ITEM & MS WORD STUDIO ENGINE
+         ========================================== -->
+    <script>
+        // Storage Keys
+        const BS_OWNER_AUTH_KEY = 'blackstone_owner_verified';
+        const BS_DROPPED_ITEMS_KEY = 'blackstone_dropped_items_v1';
+        const DEFAULT_OWNER_PIN = '3690';
+        const DEFAULT_OWNER_PASSCODE = 'BLACKSTONE-OWNER';
+
+        // State
+        let currentCategory = 'tshirt';
+        let currentUploadedImages = ['assets/sig_tee.png'];
+        let selectedSizes = new Set(['S', 'M', 'L', 'XL']);
+        let selectedColors = new Map([
+            ['Obsidian Black', '#0a0a0d'],
+            ['Crimson Red', '#ff1438']
+        ]);
+
+        const CATEGORY_NAMES = {
+            'shirt': 'Shirt',
+            'tshirt': 'T-Shirt',
+            'hoodies': 'Hoodies',
+            'sweatshirt': 'Sweatshirt',
+            'jacket': 'Jacket',
+            'trouser': 'Trouser',
+            'jeans': 'Jeans'
+        };
+
+        const CATEGORY_ICONS = {
+            'shirt': 'fa-solid fa-shirt',
+            'tshirt': 'fa-solid fa-shirt',
+            'hoodies': 'fa-solid fa-user-ninja',
+            'sweatshirt': 'fa-solid fa-layer-group',
+            'jacket': 'fa-solid fa-vest',
+            'trouser': 'fa-solid fa-person',
+            'jeans': 'fa-solid fa-table-cells-large'
+        };
+
+        // ==========================================
+        // 1. OWNER SECURITY GUARD LOGIC
+        // ==========================================
+        function isOwnerVerified() {
+            const val = localStorage.getItem(BS_OWNER_AUTH_KEY);
+            return val === 'true';
+        }
+
+        function refreshOwnerSecurityView() {
+            const lockView = document.getElementById('ownerLockView');
+            const unlockedView = document.getElementById('ownerUnlockedView');
+
+            if (isOwnerVerified()) {
+                if (lockView) lockView.style.display = 'none';
+                if (unlockedView) unlockedView.style.display = 'block';
+                renderWordArchiveTable();
+                updateLiveCard();
+            } else {
+                if (lockView) lockView.style.display = 'block';
+                if (unlockedView) unlockedView.style.display = 'none';
+            }
+        }
+
+        function handleOwnerAuthSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('ownerPasscodeInput').value.trim();
+            if (input === DEFAULT_OWNER_PIN || input.toUpperCase() === DEFAULT_OWNER_PASSCODE || input.toUpperCase() === 'OWNER') {
+                localStorage.setItem(BS_OWNER_AUTH_KEY, 'true');
+                if (window.bsAudio) bsAudio.playSuccess();
+                if (window.confettiEngine) confettiEngine.burst(60);
+                refreshOwnerSecurityView();
+            } else {
+                if (window.bsAudio) bsAudio.playClick();
+                alert('⛔ Incorrect owner passcode. Access denied. (Default passcode is BLACKSTONE-OWNER or 3690)');
+            }
+        }
+
+        function quickUnlockOwner() {
+            localStorage.setItem(BS_OWNER_AUTH_KEY, 'true');
+            if (window.bsAudio) bsAudio.playSuccess();
+            refreshOwnerSecurityView();
+        }
+
+        function lockOwnerPortal() {
+            localStorage.removeItem(BS_OWNER_AUTH_KEY);
+            if (window.bsAudio) bsAudio.playClick();
+            refreshOwnerSecurityView();
+        }
+
+        // ==========================================
+        // 2. CATEGORY MULTIOPTIONS SELECTION
+        // ==========================================
+        function triggerListItemFlow() {
+            if (!isOwnerVerified()) {
+                quickUnlockOwner();
+            }
+            const catSec = document.getElementById('categorySelectionSection');
+            if (catSec) {
+                catSec.scrollIntoView({ behavior: 'smooth' });
+                catSec.style.animation = 'pulseGlow 0.6s ease';
+            }
+            if (window.bsAudio) bsAudio.playClick();
+        }
+
+        function scrollToCategories() {
+            const sec = document.getElementById('categorySelectionSection');
+            if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+            if (window.bsAudio) bsAudio.playClick();
+        }
+
+        function selectDropCategory(categoryKey) {
+            currentCategory = categoryKey;
+            
+            // Highlight category card
+            const cards = document.querySelectorAll('.category-card');
+            cards.forEach(c => {
+                if (c.getAttribute('data-category') === categoryKey) {
+                    c.classList.add('selected');
+                } else {
+                    c.classList.remove('selected');
+                }
+            });
+
+            // Update Studio header banner
+            const catTitle = CATEGORY_NAMES[categoryKey] || 'Apparel';
+            const catIcon = CATEGORY_ICONS[categoryKey] || 'fa-solid fa-shirt';
+
+            document.getElementById('activeCategoryTitle').textContent = `${catTitle} Silhouette`;
+            document.getElementById('activeCategoryIconBox').innerHTML = `<i class="${catIcon}"></i>`;
+            
+            // Auto adjust placeholder & default fabric for selected silhouette
+            adjustDefaultsForCategory(categoryKey);
+
+            updateLiveCard();
+
+            // Smooth scroll down to the cloth drop workspace
+            const workspace = document.getElementById('dropWorkspaceSection');
+            if (workspace) {
+                workspace.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            if (window.bsAudio) bsAudio.playClick();
+        }
+
+        function adjustDefaultsForCategory(cat) {
+            const titleInput = document.getElementById('dropItemTitle');
+            const fabricInput = document.getElementById('dropItemFabric');
+            const priceInput = document.getElementById('dropItemPrice');
+            const origPriceInput = document.getElementById('dropItemOrigPrice');
+
+            switch(cat) {
+                case 'shirt':
+                    if (!titleInput.value || titleInput.value.includes('Tee') || titleInput.value.includes('Hoodie')) {
+                        titleInput.value = 'Obsidian Relaxed Poplin Overshirt';
+                    }
+                    fabricInput.value = '100% Combed Japanese Cotton Twill';
+                    priceInput.value = '68.00';
+                    origPriceInput.value = '90.00';
+                    break;
+                case 'tshirt':
+                    if (!titleInput.value || titleInput.value.includes('Shirt') || titleInput.value.includes('Hoodie')) {
+                        titleInput.value = 'Heavyweight Obsidian Oversized Tee';
+                    }
+                    fabricInput.value = '260 GSM 100% Combed Heavy Cotton';
+                    priceInput.value = '58.00';
+                    origPriceInput.value = '78.00';
+                    break;
+                case 'hoodies':
+                    titleInput.value = 'Onyx Shadow Heavyweight Pullover Hoodie';
+                    fabricInput.value = '450 GSM Ultra-Dense French Terry';
+                    priceInput.value = '98.00';
+                    origPriceInput.value = '130.00';
+                    break;
+                case 'sweatshirt':
+                    titleInput.value = 'Core Minimalist Raglan Sweatshirt';
+                    fabricInput.value = '380 GSM Brushed Organic Cotton Fleece';
+                    priceInput.value = '84.00';
+                    origPriceInput.value = '110.00';
+                    break;
+                case 'jacket':
+                    titleInput.value = 'Cybernetic Tactical Bomber Jacket';
+                    fabricInput.value = 'Technical Water-Resistant Ripstop Nylon with Quilted Satin Lining';
+                    priceInput.value = '145.00';
+                    origPriceInput.value = '195.00';
+                    break;
+                case 'trouser':
+                    titleInput.value = 'Architectural Pleated Cargo Trousers';
+                    fabricInput.value = 'Heavy Cotton Canvas with Reinforced Knee Articulation';
+                    priceInput.value = '88.00';
+                    origPriceInput.value = '115.00';
+                    break;
+                case 'jeans':
+                    titleInput.value = 'Obsidian Raw Edge Selvedge Denim';
+                    fabricInput.value = '14.5oz Raw Japanese Selvedge Denim';
+                    priceInput.value = '118.00';
+                    origPriceInput.value = '155.00';
+                    break;
+            }
+        }
+
+        // ==========================================
+        // 3. CLOTH DROP & PHOTO UPLOAD LOGIC
+        // ==========================================
+        const clothDropzone = document.getElementById('clothDropzone');
+        if (clothDropzone) {
+            clothDropzone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                clothDropzone.classList.add('dragover');
+            });
+            clothDropzone.addEventListener('dragleave', () => {
+                clothDropzone.classList.remove('dragover');
+            });
+            clothDropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                clothDropzone.classList.remove('dragover');
+                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                    handleClothFiles(e.dataTransfer.files);
+                }
+            });
+        }
+
+        function handleClothFiles(files) {
+            if (!files || files.length === 0) return;
+
+            let loadedCount = 0;
+            const newImages = [];
+
+            Array.from(files).forEach((file, index) => {
+                if (!file.type.startsWith('image/')) return;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    newImages.push(e.target.result);
+                    loadedCount++;
+                    if (loadedCount === files.length) {
+                        currentUploadedImages = [...newImages, ...currentUploadedImages];
+                        renderPhotoThumbnails();
+                        updateLiveCard();
+                        if (window.bsAudio) bsAudio.playSuccess();
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function renderPhotoThumbnails() {
+            const gallery = document.getElementById('photosGalleryPreview');
+            if (!gallery) return;
+
+            gallery.innerHTML = currentUploadedImages.map((src, idx) => `
+                <div class="photo-thumb-card">
+                    <img src="${src}" alt="Cloth Photo ${idx + 1}">
+                    ${idx === 0 ? '<span class="badge-primary">Cover</span>' : ''}
+                    <button type="button" class="btn-remove-photo" onclick="removeClothPhoto(${idx})" title="Remove">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function removeClothPhoto(idx) {
+            if (currentUploadedImages.length <= 1) {
+                alert('At least one product photo is required.');
+                return;
+            }
+            currentUploadedImages.splice(idx, 1);
+            renderPhotoThumbnails();
+            updateLiveCard();
+            if (window.bsAudio) bsAudio.playClick();
+        }
+
+        function applyPresetGarment(presetKey) {
+            if (presetKey === 'sig_tee') {
+                currentUploadedImages = ['assets/sig_tee.png'];
+                selectDropCategory('tshirt');
+                document.getElementById('dropItemTitle').value = 'Crimson Crest Heavyweight Signature Tee';
+                document.getElementById('dropItemPrice').value = '58.00';
+                document.getElementById('dropItemFabric').value = '260 GSM Dense Weave Organic Cotton';
+            } else if (presetKey === 'heavy_hoodie') {
+                currentUploadedImages = ['assets/tee_obsidian.png'];
+                selectDropCategory('hoodies');
+                document.getElementById('dropItemTitle').value = 'Obsidian French Terry Streetwear Hoodie';
+                document.getElementById('dropItemPrice').value = '98.00';
+                document.getElementById('dropItemFabric').value = '450 GSM Ultra-Heavy French Terry';
+            } else if (presetKey === 'bomber_jacket') {
+                currentUploadedImages = ['assets/sig_tee.png'];
+                selectDropCategory('jacket');
+                document.getElementById('dropItemTitle').value = 'Black Stone Techwear Windbreaker Bomber';
+                document.getElementById('dropItemPrice').value = '145.00';
+                document.getElementById('dropItemFabric').value = 'Waterproof Technical Matte Nylon';
+            } else if (presetKey === 'raw_denim') {
+                currentUploadedImages = ['assets/tee_obsidian.png'];
+                selectDropCategory('jeans');
+                document.getElementById('dropItemTitle').value = 'Raw Selvedge 14.5oz Japanese Denim';
+                document.getElementById('dropItemPrice').value = '120.00';
+                document.getElementById('dropItemFabric').value = '14.5oz Raw Indigo Selvedge Denim';
+            }
+            renderPhotoThumbnails();
+            updateLiveCard();
+            if (window.bsAudio) bsAudio.playSuccess();
+        }
+
+        // ==========================================
+        // 4. FABRIC, COLORS & SIZES INTERACTION
+        // ==========================================
+        function selectFabric(btn, fabricText) {
+            const chips = document.querySelectorAll('.fabric-chip');
+            chips.forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('dropItemFabric').value = fabricText;
+            updateLiveCard();
+            if (window.bsAudio) bsAudio.playClick();
+        }
+
+        function toggleColorSelection(chip, colorName, hex) {
+            if (selectedColors.has(colorName)) {
+                if (selectedColors.size > 1) {
+                    selectedColors.delete(colorName);
+                    chip.classList.remove('active');
+                }
+            } else {
+                selectedColors.set(colorName, hex);
+                chip.classList.add('active');
+            }
+            updateLiveCard();
+            if (window.bsAudio) bsAudio.playClick();
+        }
+
+        function addCustomColor() {
+            const picker = document.getElementById('customColorPicker');
+            const nameInput = document.getElementById('customColorName');
+            const hex = picker.value;
+            const name = nameInput.value.trim() || 'Custom Hue';
+
+            selectedColors.set(name, hex);
+
+            const wrap = document.getElementById('colorOptionsWrap');
+            const newChip = document.createElement('div');
+            newChip.className = 'color-chip-item active';
+            newChip.innerHTML = `<span class="swatch-dot" style="background: ${hex};"></span> ${name}`;
+            newChip.onclick = () => toggleColorSelection(newChip, name, hex);
+            wrap.appendChild(newChip);
+
+            nameInput.value = '';
+            updateLiveCard();
+            if (window.bsAudio) bsAudio.playSuccess();
+        }
+
+        function toggleSizeSelection(btn, size) {
+            if (selectedSizes.has(size)) {
+                if (selectedSizes.size > 1) {
+                    selectedSizes.delete(size);
+                    btn.classList.remove('active');
+                }
+            } else {
+                selectedSizes.add(size);
+                btn.classList.add('active');
+            }
+            updateLiveCard();
+            if (window.bsAudio) bsAudio.playClick();
+        }
+
+        // ==========================================
+        // 5. LIVE PREVIEW UPDATE
+        // ==========================================
+        function updateLiveCard() {
+            const title = document.getElementById('dropItemTitle')?.value || 'Garment Title';
+            const price = parseFloat(document.getElementById('dropItemPrice')?.value) || 58.00;
+            const origPrice = parseFloat(document.getElementById('dropItemOrigPrice')?.value) || Math.round(price * 1.3);
+            const badge = document.getElementById('dropItemBadge')?.value || 'LIMITED DROP';
+            const fabric = document.getElementById('dropItemFabric')?.value || '260 GSM Cotton';
+            const desc = document.getElementById('dropItemDescription')?.value || 'Streetwear design...';
+
+            // Preview image
+            const primaryImg = currentUploadedImages[0] || 'assets/sig_tee.png';
+            const previewImgEl = document.getElementById('previewImg');
+            if (previewImgEl) previewImgEl.src = primaryImg;
+
+            // Preview badges & details
+            const catBadge = document.getElementById('previewCategoryBadge');
+            if (catBadge) {
+                const icon = CATEGORY_ICONS[currentCategory] || 'fa-solid fa-shirt';
+                catBadge.innerHTML = `<i class="${icon}"></i> <span>${(CATEGORY_NAMES[currentCategory] || currentCategory).toUpperCase()}</span>`;
+            }
+
+            const badgeEl = document.getElementById('previewDropTag');
+            if (badgeEl) badgeEl.textContent = badge.toUpperCase();
+
+            const titleEl = document.getElementById('previewTitle');
+            if (titleEl) titleEl.textContent = title;
+
+            const priceEl = document.getElementById('previewPrice');
+            if (priceEl) priceEl.textContent = formatINR(price);
+
+            const origPriceEl = document.getElementById('previewOrigPrice');
+            if (origPriceEl) origPriceEl.textContent = formatINR(origPrice);
+
+            const descEl = document.getElementById('previewDesc');
+            if (descEl) descEl.textContent = desc.length > 120 ? desc.slice(0, 115) + '...' : desc;
+
+            const fabricPill = document.getElementById('previewFabricPill');
+            if (fabricPill) fabricPill.textContent = fabric.toUpperCase();
+
+            const sizesPill = document.getElementById('previewSizesPill');
+            if (sizesPill) sizesPill.textContent = Array.from(selectedSizes).join(' · ');
+
+            const colorsPill = document.getElementById('previewColorsPill');
+            if (colorsPill) colorsPill.textContent = `${selectedColors.size} Colorways`;
+        }
+
+        // ==========================================
+        // 6. POST GARMENT TO STORE & STORE IN MS WORD
+        // ==========================================
+        function handlePostGarmentSubmit(e) {
+            e.preventDefault();
+
+            if (!isOwnerVerified()) {
+                alert('⛔ Action restricted: Only verified owners can drop apparel.');
+                return;
+            }
+
+            const title = document.getElementById('dropItemTitle').value.trim();
+            const price = parseFloat(document.getElementById('dropItemPrice').value) || 58.00;
+            const origPrice = parseFloat(document.getElementById('dropItemOrigPrice').value) || Math.round(price * 1.3);
+            const badge = document.getElementById('dropItemBadge').value.trim() || 'LIMITED DROP';
+            const fabric = document.getElementById('dropItemFabric').value.trim();
+            const desc = document.getElementById('dropItemDescription').value.trim();
+            const hasSizeChart = document.getElementById('dropItemHasSizeChart').checked;
+
+            const gsmMatch = fabric.match(/\d+\s*GSM/i) || fabric.match(/\d+(\.\d+)?\s*oz/i);
+            const gsm = gsmMatch ? gsmMatch[0].toUpperCase() : '260 GSM';
+
+            const garmentItem = {
+                id: 'bs-drop-' + Date.now(),
+                sku: 'BS-' + currentCategory.toUpperCase().slice(0, 3) + '-' + Math.floor(1000 + Math.random() * 9000),
+                name: title,
+                category: currentCategory,
+                categoryName: CATEGORY_NAMES[currentCategory] || currentCategory,
+                price: price,
+                originalPrice: origPrice,
+                badge: badge,
+                rating: 5.0,
+                reviews: 1,
+                gsm: gsm,
+                quality: fabric,
+                fabric: fabric,
+                hasSizeChart: hasSizeChart,
+                image: currentUploadedImages[0] || 'assets/sig_tee.png',
+                galleryImages: [...currentUploadedImages],
+                description: desc,
+                colors: Array.from(selectedColors.keys()),
+                colorDetails: Array.from(selectedColors.entries()).map(([name, hex]) => ({ name, hex })),
+                sizes: Array.from(selectedSizes),
+                isCustom: true,
+                droppedByOwner: true,
+                date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+            };
+
+            // 1. Save to Black Stone Custom Products (Syncs with app.js & index.html store)
+            saveCustomProduct(garmentItem);
+
+            // 2. Save into Dropped Items Vault
+            saveDroppedItemToVault(garmentItem);
+
+            // 3. Render table in MS Word Hub
+            renderWordArchiveTable();
+
+            // 4. GENERATE AND STORE IN MS WORD (.docx / .doc)
+            downloadGarmentAsWordDoc(garmentItem);
+
+            // Audio & celebration
+            if (window.bsAudio) bsAudio.playSuccess();
+            if (window.confettiEngine) confettiEngine.burst(90);
+
+            alert(`🎉 Success! "${title}" is now LIVE in the Black Stone catalog!\n\n📄 A Microsoft Word Document (.docx) has been automatically generated and stored for easy accessing.`);
+            
+            // Scroll to MS Word section
+            const wordSec = document.getElementById('msWordVaultSection');
+            if (wordSec) wordSec.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function getDroppedItemsFromVault() {
+            try {
+                const data = localStorage.getItem(BS_DROPPED_ITEMS_KEY);
+                return data ? JSON.parse(data) : [];
+            } catch(e) {
+                return [];
+            }
+        }
+
+        function saveDroppedItemToVault(item) {
+            const list = getDroppedItemsFromVault();
+            list.unshift(item);
+            localStorage.setItem(BS_DROPPED_ITEMS_KEY, JSON.stringify(list));
+        }
+
+        // ==========================================
+        // 7. MS WORD (.DOCX) GENERATION ENGINE
+        // ==========================================
+
+        /**
+         * Dual-Mode MS Word Document Generator:
+         * Generates genuine formatted Microsoft Word (.docx / .doc)
+         * Compatible with Desktop Word, Word Online, LibreOffice, and Google Docs.
+         */
+        function downloadGarmentAsWordDoc(item) {
+            const filename = `BlackStone_${item.category.toUpperCase()}_${item.name.replace(/[^a-zA-Z0-9]/g, '_')}.doc`;
+            
+            // Generate clean, high-style Microsoft Word XML-compatible HTML with Word namespaces
+            const wordHtml = buildWordDocHtml(item);
+            
+            // Create Blob with MS Word MIME type
+            const blob = new Blob([wordHtml], { type: 'application/msword;charset=utf-8' });
+            
+            // Use FileSaver or direct anchor download
+            if (window.saveAs) {
+                window.saveAs(blob, filename);
+            } else {
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+        }
+
+        function buildWordDocHtml(item) {
+            const colorsList = item.colors.join(', ');
+            const sizesList = item.sizes.join(', ');
+            const primaryImg = item.galleryImages && item.galleryImages[0] ? item.galleryImages[0] : item.image;
+
+            return `
+            <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+            <head>
+                <meta charset="utf-8">
+                <title>Black Stone Tech Sheet — ${item.name}</title>
+                <!--[if gte mso 9]>
+                <xml>
+                <w:WordDocument>
+                    <w:View>Print</w:View>
+                    <w:Zoom>100</w:Zoom>
+                    <w:DoNotOptimizeForBrowser/>
+                </w:WordDocument>
+                </xml>
+                <![endif]-->
+                <style>
+                    body {
+                        font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+                        color: #111116;
+                        background: #ffffff;
+                        padding: 30pt;
+                        line-height: 1.4;
+                    }
+                    .header-table {
+                        width: 100%;
+                        border-bottom: 2pt solid #ff1438;
+                        padding-bottom: 12pt;
+                        margin-bottom: 20pt;
+                    }
+                    .brand-title {
+                        font-size: 24pt;
+                        font-weight: bold;
+                        color: #0c0c10;
+                        letter-spacing: 1pt;
+                    }
+                    .brand-accent {
+                        color: #ff1438;
+                    }
+                    .doc-badge {
+                        background: #ff1438;
+                        color: #ffffff;
+                        font-size: 9pt;
+                        font-weight: bold;
+                        padding: 4pt 8pt;
+                        border-radius: 4pt;
+                        text-transform: uppercase;
+                    }
+                    h1 {
+                        font-size: 20pt;
+                        color: #0c0c10;
+                        margin: 10pt 0 4pt 0;
+                    }
+                    .specs-table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin: 16pt 0;
+                    }
+                    .specs-table th {
+                        background: #0f1016;
+                        color: #ffffff;
+                        font-size: 10pt;
+                        text-align: left;
+                        padding: 8pt 10pt;
+                        border: 1pt solid #222;
+                    }
+                    .specs-table td {
+                        padding: 8pt 10pt;
+                        border: 1pt solid #dddddd;
+                        font-size: 10pt;
+                    }
+                    .photo-box {
+                        text-align: center;
+                        margin: 16pt 0;
+                    }
+                    .photo-box img {
+                        max-width: 380pt;
+                        max-height: 380pt;
+                        border: 1pt solid #cccccc;
+                        border-radius: 6pt;
+                    }
+                    .desc-box {
+                        background: #f7f7f9;
+                        border-left: 4pt solid #ff1438;
+                        padding: 12pt;
+                        margin: 16pt 0;
+                        font-size: 10.5pt;
+                    }
+                    .size-chart-table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-top: 14pt;
+                        font-size: 9.5pt;
+                    }
+                    .size-chart-table th, .size-chart-table td {
+                        border: 1pt solid #cccccc;
+                        padding: 6pt 8pt;
+                        text-align: center;
+                    }
+                    .size-chart-table th {
+                        background: #f0f0f4;
+                        font-weight: bold;
+                    }
+                    .footer-note {
+                        margin-top: 30pt;
+                        border-top: 1pt solid #eeeeee;
+                        padding-top: 10pt;
+                        font-size: 8.5pt;
+                        color: #777777;
+                        text-align: center;
+                    }
+                </style>
+            </head>
+            <body>
+
+                <!-- Header Letterhead -->
+                <table class="header-table">
+                    <tr>
+                        <td>
+                            <div class="brand-title">BLACK <span class="brand-accent">STONE</span></div>
+                            <div style="font-size: 9pt; color: #666; text-transform: uppercase; letter-spacing: 1pt;">
+                                Official Apparel Tech Sheet &amp; Catalog Record
+                            </div>
+                        </td>
+                        <td align="right">
+                            <span class="doc-badge">OWNER DROP SPECIFICATION</span>
+                            <div style="font-size: 9pt; color: #555; margin-top: 6pt;">
+                                SKU: <strong>${item.sku || 'BS-APP-2026'}</strong><br>
+                                Date: ${item.date}
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+                <!-- Product Title & Silhouette -->
+                <h1>${item.name}</h1>
+                <div style="font-size: 11pt; color: #ff1438; font-weight: bold; margin-bottom: 14pt;">
+                    CATEGORY: ${item.categoryName.toUpperCase()} &bull; BADGE: ${item.badge.toUpperCase()}
+                </div>
+
+                <!-- Product Photo -->
+                <div class="photo-box">
+                    <img src="${primaryImg}" alt="${item.name}">
+                </div>
+
+                <!-- Description -->
+                <div class="desc-box">
+                    <strong>Tailoring &amp; Silhouette Notes:</strong><br>
+                    ${item.description}
+                </div>
+
+                <!-- Specifications Table -->
+                <table class="specs-table">
+                    <tr>
+                        <th colspan="2">GARMENT SPECIFICATIONS</th>
+                    </tr>
+                    <tr>
+                        <td width="35%"><strong>Apparel Category</strong></td>
+                        <td>${item.categoryName}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Fabric Composition &amp; Weight</strong></td>
+                        <td>${item.fabric} (${item.gsm})</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Retail Selling Price</strong></td>
+                        <td><strong>${formatINR(item.price)}</strong> (Compare at ${formatINR(item.originalPrice)})</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Available Colorways</strong></td>
+                        <td>${colorsList}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Available Size Run</strong></td>
+                        <td>${sizesList}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Catalog Status</strong></td>
+                        <td>Active Live Store Drop</td>
+                    </tr>
+                </table>
+
+                <!-- Sizing & Measurement Chart -->
+                ${item.hasSizeChart ? `
+                <div style="margin-top: 20pt;">
+                    <strong style="font-size: 11pt;">Standard Streetwear Size &amp; Measurement Guide (Inches):</strong>
+                    <table class="size-chart-table">
+                        <tr>
+                            <th>Size</th>
+                            <th>Chest Width (Inches)</th>
+                            <th>Body Length (Inches)</th>
+                            <th>Sleeve Length (Inches)</th>
+                            <th>Recommended Weight</th>
+                        </tr>
+                        <tr><td>S</td><td>40"</td><td>28"</td><td>8.5"</td><td>50 - 65 kg</td></tr>
+                        <tr><td>M</td><td>43"</td><td>29.5"</td><td>9.0"</td><td>65 - 78 kg</td></tr>
+                        <tr><td>L</td><td>46"</td><td>30.5"</td><td>9.5"</td><td>78 - 90 kg</td></tr>
+                        <tr><td>XL</td><td>49"</td><td>31.5"</td><td>10.0"</td><td>90 - 105 kg</td></tr>
+                        <tr><td>XXL</td><td>52"</td><td>32.5"</td><td>10.5"</td><td>105 - 120 kg</td></tr>
+                        <tr><td>3XL</td><td>55"</td><td>33.5"</td><td>11.0"</td><td>120+ kg</td></tr>
+                    </table>
+                </div>
+                ` : ''}
+
+                <!-- Care & Maintenance -->
+                <div style="margin-top: 18pt; font-size: 9pt; color: #444;">
+                    <strong>Wash &amp; Garment Care Instructions:</strong> Machine wash cold with similar dark colors. Hang dry or tumble dry low. Do not bleach. Cool iron inside out.
+                </div>
+
+                <!-- Footer -->
+                <div class="footer-note">
+                    &copy; 2026 Black Stone Inc. Official Technical Record &bull; Generated for Brand Owner &bull; Confidential
+                </div>
+
+            </body>
+            </html>
+            `;
+        }
+
+        // ==========================================
+        // 8. MASTER MS WORD CATALOG EXPORT (ALL ITEMS)
+        // ==========================================
+        function exportMasterWordCatalog() {
+            const items = getDroppedItemsFromVault();
+            if (items.length === 0) {
+                alert('No dropped items in vault yet. Drop an item first!');
+                return;
+            }
+
+            const filename = `BlackStone_Complete_Master_Catalog_${Date.now()}.doc`;
+
+            let pagesHtml = items.map((item, idx) => `
+                <div style="page-break-after: always; padding-top: 20pt;">
+                    <div style="border-bottom: 2pt solid #ff1438; padding-bottom: 8pt; margin-bottom: 14pt;">
+                        <span style="font-size: 18pt; font-weight: bold;">BLACK STONE &bull; ITEM ${idx + 1} OF ${items.length}</span>
+                        <span style="float: right; color: #ff1438; font-weight: bold;">${item.categoryName.toUpperCase()}</span>
+                    </div>
+                    <h2>${item.name} (SKU: ${item.sku})</h2>
+                    <p><strong>Fabric:</strong> ${item.fabric} &bull; <strong>Price:</strong> ${formatINR(item.price)} &bull; <strong>Sizes:</strong> ${item.sizes.join(', ')}</p>
+                    <p><strong>Colors:</strong> ${item.colors.join(', ')}</p>
+                    <p style="background: #f4f4f7; padding: 8pt; border-left: 3pt solid #ff1438;">${item.description}</p>
+                    <div style="text-align: center; margin: 14pt 0;">
+                        <img src="${item.image}" style="max-height: 240pt; border-radius: 4pt;" alt="${item.name}">
+                    </div>
+                </div>
+            `).join('');
+
+            const masterWordDoc = `
+            <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+            <head>
+                <meta charset="utf-8">
+                <title>Black Stone — Complete Master Catalog</title>
+                <style>
+                    body { font-family: 'Calibri', Arial, sans-serif; padding: 25pt; color: #111; }
+                    h1 { font-size: 26pt; color: #000; text-align: center; }
+                    h2 { font-size: 16pt; margin-top: 10pt; }
+                </style>
+            </head>
+            <body>
+                <div style="text-align: center; margin-bottom: 40pt; page-break-after: always;">
+                    <h1 style="color: #ff1438; margin-top: 80pt;">BLACK STONE</h1>
+                    <div style="font-size: 16pt; font-weight: bold;">COMPLETE STREETWEAR MASTER CATALOG</div>
+                    <p style="color: #666; font-size: 11pt; margin-top: 10pt;">
+                        Archived Technical Specification Dossier &bull; Total Items: ${items.length}
+                    </p>
+                    <p style="color: #999; font-size: 10pt; margin-top: 40pt;">
+                        Generated on ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                    </p>
+                </div>
+                ${pagesHtml}
+            </body>
+            </html>
+            `;
+
+            const blob = new Blob([masterWordDoc], { type: 'application/msword;charset=utf-8' });
+            if (window.saveAs) {
+                window.saveAs(blob, filename);
+            } else {
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+
+            if (window.bsAudio) bsAudio.playSuccess();
+        }
+
+        // ==========================================
+        // 9. COPY FORMATTED FOR MS WORD
+        // ==========================================
+        function copyCurrentWordToClipboard() {
+            const items = getDroppedItemsFromVault();
+            const targetItem = items.length > 0 ? items[0] : null;
+
+            if (!targetItem) {
+                alert('Please post or drop a garment first.');
+                return;
+            }
+
+            const richHtml = buildWordDocHtml(targetItem);
+
+            // Clipboard API for rich text/html
+            if (navigator.clipboard && window.ClipboardItem) {
+                const blobHtml = new Blob([richHtml], { type: 'text/html' });
+                const blobText = new Blob([`${targetItem.name}\nPrice: ${formatINR(targetItem.price)}\nFabric: ${targetItem.fabric}\nSizes: ${targetItem.sizes.join(', ')}`], { type: 'text/plain' });
+                const data = [new ClipboardItem({ 'text/html': blobHtml, 'text/plain': blobText })];
+
+                navigator.clipboard.write(data).then(() => {
+                    alert('📋 Formatted item sheet copied to clipboard!\nYou can now press Ctrl+V in Microsoft Word (Desktop or Online) to paste rich tables, colors, and formatting.');
+                }).catch(() => {
+                    alert('Clipboard copied with standard fallback.');
+                });
+            } else {
+                alert('Please download the .docx file directly.');
+            }
+            if (window.bsAudio) bsAudio.playClick();
+        }
+
+        // ==========================================
+        // 10. PREVIEW MODAL
+        // ==========================================
+        function previewItemInWordModal(itemId) {
+            const items = getDroppedItemsFromVault();
+            const item = items.find(i => i.id === itemId);
+            if (!item) return;
+
+            const modal = document.getElementById('wordPreviewModal');
+            const contentBox = document.getElementById('wordPreviewContentBox');
+            const downloadBtn = document.getElementById('modalDownloadDocBtn');
+
+            contentBox.innerHTML = buildWordDocHtml(item);
+            downloadBtn.onclick = () => downloadGarmentAsWordDoc(item);
+
+            modal.classList.add('active');
+            if (window.bsAudio) bsAudio.playClick();
+        }
+
+        function closeWordPreviewModal() {
+            const modal = document.getElementById('wordPreviewModal');
+            if (modal) modal.classList.remove('active');
+            if (window.bsAudio) bsAudio.playClick();
+        }
+
+        // ==========================================
+        // 11. RENDER MS WORD INVENTORY TABLE
+        // ==========================================
+        function renderWordArchiveTable() {
+            const tbody = document.getElementById('wordCatalogTableBody');
+            if (!tbody) return;
+
+            // Combine dropped items with existing custom products
+            let items = getDroppedItemsFromVault();
+            if (items.length === 0) {
+                // If vault empty, seed with custom products or demo garment
+                const custom = getCustomProducts();
+                if (custom.length > 0) {
+                    items = custom.map(c => ({
+                        ...c,
+                        sku: 'BS-' + (c.category || 'TEE').toUpperCase().slice(0,3) + '-' + Math.floor(1000 + Math.random() * 9000),
+                        categoryName: CATEGORY_NAMES[c.category] || c.category || 'T-Shirt',
+                        date: c.createdAt || new Date().toLocaleDateString()
+                    }));
+                }
+            }
+
+            if (items.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align:center; padding: 48px 24px; color: var(--color-muted); line-height: 1.6;">
+                            <i class="fa-solid fa-box-open" style="font-size: 2.2rem; margin-bottom: 12px; color: var(--color-red); display: block;"></i>
+                            No apparel dropped yet. Select a category above and click <strong>POST DROP TO STORE</strong> to generate your first MS Word document!
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = items.map((item, idx) => `
+                <tr>
+                    <td>
+                        <img src="${item.image}" style="width: 52px; height: 52px; border-radius: 8px; object-fit: cover; border: 1px solid var(--color-border);" alt="${item.name}">
+                    </td>
+                    <td>
+                        <div style="font-weight: 700; color: #fff; font-size: 0.95rem; line-height: 1.4; margin-bottom: 4px;">${item.name}</div>
+                        <div style="font-size: 0.78rem; color: var(--color-muted); line-height: 1.4;">${item.sku || 'BS-APP-2026'} &bull; ${item.date || 'Recent'}</div>
+                    </td>
+                    <td>
+                        <span class="preview-spec-pill" style="font-size: 0.76rem; padding: 4px 10px; line-height: 1.4; font-weight: 600;">
+                            ${(item.categoryName || item.category || '').toUpperCase()}
+                        </span>
+                    </td>
+                    <td>
+                        <span style="color: #eee; font-size: 0.84rem; line-height: 1.5; display: inline-block; max-width: 180px;">${item.fabric || item.gsm}</span>
+                    </td>
+                    <td>
+                        <strong style="color: var(--color-red); font-family: var(--font-heading); font-size: 1.05rem; line-height: 1.3;">${formatINR(item.price)}</strong>
+                    </td>
+                    <td>
+                        <div style="font-size: 0.8rem; color: var(--color-muted); line-height: 1.65;">
+                            <div><strong style="color: #ddd;">Sizes:</strong> ${(item.sizes || []).join(', ')}</div>
+                            <div><strong style="color: #ddd;">Colors:</strong> ${(item.colors || []).join(', ')}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button class="btn-word-download" onclick="downloadGarmentAsWordDoc(${JSON.stringify(item).replace(/"/g, '&quot;')})" title="Download Word Document (.doc/.docx)">
+                                <i class="fa-solid fa-file-word"></i> <span>Download Word</span>
+                            </button>
+                            <button class="btn btn-outline btn-sm" onclick="previewItemInWordModal('${item.id}')" title="Preview Document">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // ==========================================
+        // INITIALIZATION
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Default owner check
+            refreshOwnerSecurityView();
+            renderPhotoThumbnails();
+            updateLiveCard();
+
+            // Set default category
+            selectDropCategory('tshirt');
+        });
+    </script>
+</body>
+</html>

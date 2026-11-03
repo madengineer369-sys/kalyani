@@ -1,0 +1,625 @@
+/* ==========================================================================
+   BLACK STONE — VIP MEMBER & USER PORTAL STYLES (user.css)
+   Aesthetic: Obsidian Void (#050507), Crimson Neon (#ff1438), Imperial Gold (#d4af37)
+   ========================================================================== */
+
+:root {
+    --user-bg: #050507;
+    --user-bg-elevated: #0d0d12;
+    --user-card: rgba(20, 20, 26, 0.7);
+    --user-card-border: rgba(255, 255, 255, 0.08);
+    --user-card-hover: rgba(255, 20, 56, 0.25);
+    --user-red: #ff1438;
+    --user-red-glow: rgba(255, 20, 56, 0.4);
+    --user-gold: #d4af37;
+    --user-gold-glow: rgba(212, 175, 55, 0.35);
+    --user-text: #ffffff;
+    --user-muted: rgba(255, 255, 255, 0.6);
+    --user-radius-lg: 20px;
+    --user-radius-md: 14px;
+    --user-radius-sm: 8px;
+    --font-heading: 'Space Grotesk', -apple-system, sans-serif;
+    --font-body: 'Outfit', sans-serif;
+    --font-mono: 'Courier Prime', monospace;
+}
+
+body.user-portal-body {
+    background-color: var(--user-bg);
+    color: var(--user-text);
+    font-family: var(--font-body);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background-image: 
+        radial-gradient(ellipse at 15% 10%, rgba(255, 20, 56, 0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 85% 20%, rgba(212, 175, 55, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 50% 90%, rgba(255, 20, 56, 0.06) 0%, transparent 60%);
+    background-attachment: fixed;
+    overflow-x: hidden;
+}
+
+/* User Container */
+.user-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 120px 24px 60px;
+}
+
+/* Hero / VIP Header */
+.user-vip-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding: 32px 36px;
+    background: var(--user-card);
+    border: 1px solid var(--user-card-border);
+    border-radius: var(--user-radius-lg);
+    backdrop-filter: blur(20px);
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+}
+
+.user-vip-hero::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 280px;
+    height: 100%;
+    background: radial-gradient(circle at 100% 50%, rgba(255, 20, 56, 0.15) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.user-profile-summary {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.user-avatar-hex {
+    width: 74px;
+    height: 74px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(255, 20, 56, 0.25), rgba(212, 175, 55, 0.2));
+    border: 2px solid var(--user-red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--user-red);
+    box-shadow: 0 0 20px var(--user-red-glow);
+}
+
+.user-name-title {
+    font-family: var(--font-heading);
+    font-size: 1.85rem;
+    font-weight: 700;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.vip-badge-pill {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    font-family: var(--font-heading);
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: rgba(255, 20, 56, 0.15);
+    border: 1px solid var(--user-red);
+    color: var(--user-red);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.vip-badge-pill.gold {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: var(--user-gold);
+    color: var(--user-gold);
+}
+
+.user-subinfo {
+    color: var(--user-muted);
+    font-size: 0.9rem;
+    margin: 0;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.user-subinfo span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Quick Actions in Hero */
+.user-hero-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Stats Row */
+.user-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-bottom: 36px;
+}
+
+.user-stat-card {
+    background: var(--user-card);
+    border: 1px solid var(--user-card-border);
+    border-radius: var(--user-radius-md);
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    backdrop-filter: blur(16px);
+}
+
+.user-stat-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--user-red);
+    box-shadow: 0 10px 25px rgba(255, 20, 56, 0.15);
+}
+
+.user-stat-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-stat-icon.red { color: var(--user-red); border-color: rgba(255, 20, 56, 0.3); background: rgba(255, 20, 56, 0.1); }
+.user-stat-icon.gold { color: var(--user-gold); border-color: rgba(212, 175, 55, 0.3); background: rgba(212, 175, 55, 0.1); }
+.user-stat-icon.purple { color: #a855f7; border-color: rgba(168, 85, 247, 0.3); background: rgba(168, 85, 247, 0.1); }
+.user-stat-icon.cyan { color: #06b6d4; border-color: rgba(6, 182, 212, 0.3); background: rgba(6, 182, 212, 0.1); }
+
+.user-stat-info h3 {
+    margin: 0 0 4px 0;
+    font-family: var(--font-heading);
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.user-stat-info p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--user-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Tabs Bar */
+.user-tabs-nav {
+    display: flex;
+    gap: 8px;
+    border-bottom: 1px solid var(--user-card-border);
+    margin-bottom: 32px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+}
+
+.user-tab-btn {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--user-muted);
+    font-family: var(--font-heading);
+    font-size: 0.98rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 14px 22px;
+    border-radius: var(--user-radius-sm) var(--user-radius-sm) 0 0;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    white-space: nowrap;
+}
+
+.user-tab-btn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.user-tab-btn.active {
+    color: #fff;
+    border-bottom: 2px solid var(--user-red);
+    background: rgba(255, 20, 56, 0.08);
+}
+
+.user-tab-btn .tab-badge {
+    background: var(--user-red);
+    color: #fff;
+    font-size: 0.72rem;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+/* Tab Content Panels */
+.user-tab-pane {
+    display: none;
+    animation: fadeInTab 0.35s ease;
+}
+
+.user-tab-pane.active {
+    display: block;
+}
+
+@keyframes fadeInTab {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Section Title */
+.panel-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.panel-section-header h2 {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 6-Digit Garment Code Cards */
+.code-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.garment-code-card {
+    background: var(--user-card);
+    border: 1px solid var(--user-card-border);
+    border-radius: var(--user-radius-md);
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(16px);
+}
+
+.garment-code-card:hover {
+    border-color: rgba(255, 20, 56, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.garment-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.garment-title {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+}
+
+.garment-order-id {
+    font-size: 0.8rem;
+    color: var(--user-muted);
+    font-family: var(--font-mono);
+}
+
+/* 6-Digit Code Highlight Box */
+.otp-display-box {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1.5px dashed rgba(255, 20, 56, 0.4);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.otp-number {
+    font-family: var(--font-heading);
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: 6px;
+    color: var(--user-gold);
+    text-shadow: 0 0 12px var(--user-gold-glow);
+}
+
+.otp-copy-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.otp-copy-btn:hover {
+    background: var(--user-red);
+    border-color: var(--user-red);
+}
+
+.garment-card-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-redeem-direct {
+    flex: 1;
+    background: linear-gradient(135deg, var(--user-red), #b30b24);
+    border: none;
+    color: #fff;
+    padding: 11px 16px;
+    border-radius: 8px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.88rem;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.btn-redeem-direct:hover {
+    box-shadow: 0 0 18px var(--user-red-glow);
+    transform: scale(1.02);
+}
+
+/* Orders Table */
+.user-orders-table-card {
+    background: var(--user-card);
+    border: 1px solid var(--user-card-border);
+    border-radius: var(--user-radius-md);
+    overflow: hidden;
+    backdrop-filter: blur(16px);
+}
+
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+}
+
+.user-table th {
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--user-muted);
+    font-family: var(--font-heading);
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: left;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--user-card-border);
+}
+
+.user-table td {
+    padding: 18px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    vertical-align: middle;
+}
+
+.user-table tr:hover td {
+    background: rgba(255, 255, 255, 0.015);
+}
+
+.status-chip {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-chip.delivered { background: rgba(74, 222, 128, 0.12); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.3); }
+.status-chip.shipped { background: rgba(6, 182, 212, 0.12); color: #06b6d4; border: 1px solid rgba(6, 182, 212, 0.3); }
+.status-chip.processing { background: rgba(212, 175, 55, 0.12); color: var(--user-gold); border: 1px solid rgba(212, 175, 55, 0.3); }
+
+/* Holographic VIP Identity Card */
+.id-card-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0 40px;
+}
+
+.vip-id-card-3d {
+    width: 100%;
+    max-width: 540px;
+    aspect-ratio: 1.586;
+    background: linear-gradient(135deg, #0a0a0f 0%, #15151e 40%, #07070a 100%);
+    border-radius: 20px;
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    padding: 30px;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 20, 56, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.vip-id-card-3d:hover {
+    transform: translateY(-6px) rotateX(4deg) rotateY(-2deg);
+    box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.9), 0 0 40px rgba(255, 20, 56, 0.35);
+}
+
+.id-card-shimmer {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.08) 45%, rgba(255, 20, 56, 0.15) 50%, rgba(212, 175, 55, 0.12) 55%, transparent 60%);
+    pointer-events: none;
+}
+
+.id-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.id-card-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.id-card-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    position: relative;
+    z-index: 1;
+}
+
+.id-holder-name {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+    letter-spacing: 0.5px;
+}
+
+.id-holder-number {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    color: var(--user-gold);
+    letter-spacing: 2px;
+}
+
+.id-qr-box {
+    width: 64px;
+    height: 64px;
+    background: #fff;
+    border-radius: 8px;
+    padding: 6px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.id-qr-box i {
+    font-size: 3rem;
+    color: #000;
+}
+
+/* Address & Settings Grid */
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 24px;
+}
+
+.settings-card {
+    background: var(--user-card);
+    border: 1px solid var(--user-card-border);
+    border-radius: var(--user-radius-md);
+    padding: 28px;
+    backdrop-filter: blur(16px);
+}
+
+.settings-card h3 {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    margin: 0 0 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.form-group-custom {
+    margin-bottom: 18px;
+}
+
+.form-group-custom label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--user-muted);
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.form-input-custom {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--user-card-border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-input-custom:focus {
+    border-color: var(--user-red);
+    box-shadow: 0 0 0 3px rgba(255, 20, 56, 0.15);
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 768px) {
+    .user-container { padding: 90px 16px 40px; }
+    .user-vip-hero { flex-direction: column; align-items: flex-start; padding: 24px; }
+    .user-hero-actions { width: 100%; }
+    .user-hero-actions button, .user-hero-actions a { flex: 1; text-align: center; }
+    .code-cards-grid { grid-template-columns: 1fr; }
+    .otp-number { font-size: 1.4rem; letter-spacing: 4px; }
+    .user-orders-table-card { overflow-x: auto; }
+}
+

@@ -52,7 +52,7 @@ $current_usr = is_logged_in() ? get_auth_user() : null;
 
         <!-- Brand -->
         <a class="navbar-brand fw-bold" href="<?= e(url('index.php')) ?>">
-            <i class="bi bi-shield-lock-fill me-2 text-accent"></i><?= APP_NAME ?>
+            <i class="bi bi-gem me-2 text-accent"></i><span class="brand-wordmark">BLACK <span class="gold-text ms-1">STONE</span><span class="india-flag-mark" role="img" aria-label="Indian flag"></span></span>
         </a>
 
         <!-- Mobile Toggle -->
@@ -63,11 +63,40 @@ $current_usr = is_logged_in() ? get_auth_user() : null;
 
         <div class="collapse navbar-collapse" id="navContent">
 
+            <!-- Primary Clothing Collections Links -->
+            <ul class="navbar-nav me-auto ms-lg-3 mb-2 mb-lg-0 gap-1">
+                <li class="nav-item">
+                    <a class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'index.php' ? 'active' : '' ?>" href="<?= e(url('index.php')) ?>">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= basename($_SERVER['PHP_SELF']) === 't-shirts.php' ? 'active' : '' ?>" href="<?= e(url('t-shirts.php')) ?>">T-Shirts</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'hoodies.php' ? 'active' : '' ?>" href="<?= e(url('hoodies.php')) ?>">Hoodies</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'trousers.php' ? 'active' : '' ?>" href="<?= e(url('trousers.php')) ?>">Trousers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'shorts.php' ? 'active' : '' ?>" href="<?= e(url('shorts.php')) ?>">Shorts</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'mystery-box.php' ? 'active' : '' ?>" href="<?= e(url('mystery-box.php')) ?>">
+                        <i class="bi bi-gift-fill me-1 text-warning"></i>Mystery Box
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'code-zone.php' ? 'active' : '' ?>" href="<?= e(url('code-zone.php')) ?>">
+                        <i class="bi bi-ticket-perforated me-1 text-info"></i>Code Zone
+                    </a>
+                </li>
+            </ul>
+
             <!-- Search Bar -->
-            <form class="d-flex mx-auto nav-search" action="<?= e(url('search.php')) ?>" method="GET" role="search">
+            <form class="d-flex me-3 nav-search my-2 my-lg-0" action="<?= e(url('search.php')) ?>" method="GET" role="search">
                 <div class="input-group">
                     <input class="form-control search-input" type="search" name="q"
-                           placeholder="Search products…"
+                           placeholder="Search apparel…"
                            value="<?= e($_GET['q'] ?? '') ?>"
                            maxlength="200" autocomplete="off"
                            aria-label="Search products">
@@ -78,34 +107,12 @@ $current_usr = is_logged_in() ? get_auth_user() : null;
             </form>
 
             <!-- Right Nav -->
-            <ul class="navbar-nav ms-auto align-items-center gap-1">
-
-                <!-- Categories Dropdown -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-grid me-1"></i>Categories
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-dark">
-                        <?php
-                        $nav_cats = db_fetch_all("SELECT id,name,slug FROM categories WHERE parent_id IS NULL AND is_active=1 ORDER BY sort_order LIMIT 10");
-                        foreach ($nav_cats as $cat):
-                        ?>
-                        <li><a class="dropdown-item" href="<?= e(url('search.php?category=' . $cat['id'])) ?>">
-                            <i class="bi bi-tag me-2"></i><?= e($cat['name']) ?>
-                        </a></li>
-                        <?php endforeach; ?>
-                        <?php if (empty($nav_cats)): ?>
-                        <li><span class="dropdown-item text-muted">No categories yet</span></li>
-                        <?php endif; ?>
-                    </ul>
-                </li>
-
-                <?php if (is_logged_in()): ?>
+            <ul class="navbar-nav align-items-center gap-2">
 
                 <!-- Cart -->
                 <li class="nav-item">
                     <a class="nav-link position-relative cart-link" href="<?= e(url('cart.php')) ?>">
-                        <i class="bi bi-cart3 fs-5"></i>
+                        <i class="bi bi-bag-fill fs-5 text-accent"></i>
                         <?php if ($cart_count > 0): ?>
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-accent cart-badge">
                             <?= $cart_count < 100 ? $cart_count : '99+' ?>
@@ -113,6 +120,8 @@ $current_usr = is_logged_in() ? get_auth_user() : null;
                         <?php endif; ?>
                     </a>
                 </li>
+
+                <?php if (is_logged_in()): ?>
 
                 <!-- User Dropdown -->
                 <li class="nav-item dropdown">

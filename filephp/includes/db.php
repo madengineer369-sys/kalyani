@@ -45,6 +45,12 @@ function db_connect(): mysqli {
     $conn->query("SET SESSION sql_mode='STRICT_ALL_TABLES,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO'");
     $conn->query("SET SESSION time_zone='+05:30'");
 
+    static $schema_checked = false;
+    if (!$schema_checked) {
+        db_ensure_schema($conn);
+        $schema_checked = true;
+    }
+
     return $conn;
 }
 
@@ -165,4 +171,51 @@ function db_last_id(): int   { return (int) db_connect()->insert_id; }
 /** Sanitise SQL for safe logging (strip extra whitespace). */
 function _safe_sql(string $sql): string {
     return preg_replace('/\s+/', ' ', trim($sql));
+}
+
+/**
+ * Self-healing schema migration: Ensures tables, columns, categories & upload directories exist.
+ */
+function db_ensure_schema(mysqli $conn): void {
+    // 1. Ensure upload directory exists
+    if (defined('UPLOAD_PATH') && !is_dir(UPLOAD_PATH)) {
+        @mkdir(UPLOAD_PATH, 0755, true);
+    }
+
+    // 2. Ensure otps table exists
+    $conn->query("CREATE TABLE IF NOT EXISTS `otps` (
+        `id`           INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        `identifier`   VARCHAR(255) NOT NULL,
+        `type`         ENUM('register','login','reset') NOT NULL DEFAULT 'register',
+        `otp_code`     VARCHAR(10)  NOT NULL,
+        `temp_data`    JSON                  DEFAULT NULL,
+        `expires_at`   DATETIME     NOT NULL,
+        `is_used`      TINYINT(1)   NOT NULL DEFAULT 0,
+        `created_at`   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (`id`),
+        INDEX `idx_identifier` (`identifier`),
+        INDEX `idx_expires_at` (`expires_at`),
+        INDEX `idx_is_used`    (`is_used`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+
+    // 3. Ensure phone_verified column in users table
+    $col_check = $conn->query("SHOW COLUMNS FROM `users` LIKE 'phone_verified'");
+    if ($col_check && $col_check->num_rows === 0) {
+        $conn->query("ALTER TABLE `users` ADD COLUMN `phone_verified` TINYINT(1) NOT NULL DEFAULT 0 AFTER `email_verified`");
+    }
+
+    // 4. Ensure clothing categories exist
+    $cat_count = 0;
+    $res = $conn->query("SELECT COUNT(*) FROM `categories` WHERE `slug` IN ('t-shirts', 'hoodies', 'trousers', 'shorts')");
+    if ($res) {
+        $row = $res->fetch_row();
+        $cat_count = (int)($row[0] ?? 0);
+    }
+    if ($cat_count < 4) {
+        $conn->query("INSERT IGNORE INTO `categories` (`name`, `slug`, `description`, `is_active`, `sort_order`) VALUES
+            ('T-Shirts', 't-shirts', 'Heavyweight 240-280GSM luxury streetwear tees with custom neck ribbing and signature graphics.', 1, 1),
+            ('Hoodies', 'hoodies', 'Heavyweight 450GSM French terry hoodies with drop shoulders and custom metallic hardware.', 1, 2),
+            ('Trousers', 'trousers', 'Relaxed utilitarian cargo pants, wide-leg trousers, and tailored streetwear essentials.', 1, 3),
+            ('Shorts', 'shorts', 'Heavyweight fleece shorts and luxury double-layer breathable court mesh shorts.', 1, 4)");
+    }
 }
